@@ -34,6 +34,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href={{ route('warehouse.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>معرفی انبارها</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href={{ route('product-no-unit.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>معرفی واحد شمارش کالا</p>
@@ -49,6 +55,12 @@
                             <a href={{ route('products.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>معرفی کالاها</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('services.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>معرفی خدمات</p>
                             </a>
                         </li>
                         <li class="nav-item">

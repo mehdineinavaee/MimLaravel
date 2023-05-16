@@ -46,6 +46,7 @@ use App\Http\Controllers\SellFactorAdvancedController;
 use App\Http\Controllers\SellFactorController;
 use App\Http\Controllers\SellReportController;
 use App\Http\Controllers\SellStatisticsReportController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TarafHesabBenefitController;
 use App\Http\Controllers\TarafHesabBuyReportController;
@@ -53,6 +54,7 @@ use App\Http\Controllers\TarafHesabController;
 use App\Http\Controllers\TarafHesabGroupController;
 use App\Http\Controllers\TarafHesabPeriodController;
 use App\Http\Controllers\TtmsController;
+use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseMoveController;
 use App\Http\Controllers\WarehouseWastageFactorController;
 use App\Http\Controllers\WastageFactorController;
@@ -68,6 +70,8 @@ Route::resource('fund', FundController::class);
 Route::resource('product-farei-asli', ProductFareiAsliController::class);
 Route::resource('product-no-unit', ProductNoUnitController::class);
 Route::resource('products', ProductController::class);
+Route::resource('services', ServiceController::class);
+Route::resource('warehouse', WarehouseController::class);
 Route::resource('staff', StaffController::class);
 Route::resource('taraf-hesab', TarafHesabController::class);
 Route::resource('taraf-hesab-group', TarafHesabGroupController::class);
@@ -135,3 +139,15 @@ Route::resource('receive-cheques-report', ReceiveChequesReportController::class)
 
 // Facilities
 Route::resource('phone-book', PhoneBookController::class);
+
+// Essential Routes
+Route::get('fetch-taraf-hesab', [TarafHesabController::class, 'fetchTarafHesab']);
+Route::get('fetch-staff', [StaffController::class, 'fetchStaff']);
+Route::get('fetch-warehouse', [WarehouseController::class, 'fetchWarehouse']);
+Route::get('fetch-product-no-unit', [ProductNoUnitController::class, 'fetchProductNoUnit']);
+Route::get('fetch-product', [ProductController::class, 'fetchProduct']);
+Route::get('fetch-arzesh-afzoude-groups', [ArzeshAfzoudeGroupController::class, 'fetchArzeshAfzoudeGroups']);
+Route::get('fetch-service', [ServiceController::class, 'fetchService']);
+Route::get('fetch-banks-types', [BankTypeController::class, 'fetchBanksTypes']);
+Route::get('fetch-bank-accounts', [BankAccountController::class, 'fetchBankAccounts']);
+Route::get('fetch-fund', [FundController::class, 'fetchFund']);

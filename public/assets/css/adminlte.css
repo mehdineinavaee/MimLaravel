@@ -13001,7 +13001,8 @@ label:not(.form-check-label):not(.custom-file-label) {
 .select2-container--default .select2-selection--single,
 .select2-selection .select2-selection--single {
     border: 1px solid #d2d6de;
-    padding: 6px 12px;
+    /* padding: 6px 12px; */
+    padding: 18px 12px;
     height: 34px;
 }
 
@@ -13029,7 +13030,8 @@ label:not(.form-check-label):not(.custom-file-label) {
     padding-left: 0;
     padding-right: 0;
     height: auto;
-    margin-top: -4px;
+    /* margin-top: -4px; */
+    margin-top: -13px;
 }
 
 .select2-container[dir="rtl"]

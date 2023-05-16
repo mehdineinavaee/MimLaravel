@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TarafHesabGroupRequest;
 use App\Models\TarafHesabGroup;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,9 @@ class TarafHesabGroupController extends Controller
      */
     public function index()
     {
-        return view('taarife-payeh/taraf-hesab-group.index');
+        $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
+        $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
+        return view('taarife-payeh/taraf-hesab-group.index', compact('categories', 'allCategories'));
     }
 
     /**
@@ -33,9 +36,23 @@ class TarafHesabGroupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TarafHesabGroupRequest $request)
     {
-        //
+        $input = $request->all();
+        $input['parent_id'] = empty($input['parent_id']) ? 0 : $input['parent_id'];
+
+        if ($input['parent_id'] == 0) {
+            $checkingExsist = TarafHesabGroup::where('title', '=', $request->title)->first();
+            if ($checkingExsist === null) {
+                TarafHesabGroup::create($input);
+                return back();
+            } else {
+                dd("EXIST");
+            }
+        } else {
+            TarafHesabGroup::create($input);
+            return back();
+        }
     }
 
     /**

@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('taraf_hesab_groups', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->integer('parent_id');
             $table->timestamps();
         });
     }

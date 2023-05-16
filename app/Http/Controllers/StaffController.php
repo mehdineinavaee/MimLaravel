@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StaffRequest;
 use App\Models\Staff;
 use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {
+    public function fetchStaff()
+    {
+        $staffs = Staff::orderBy('id', 'desc')->get();
+        // $staffs = Staff::all();
+        return response()->json([
+            'staffs' => $staffs,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +43,17 @@ class StaffController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StaffRequest $request)
     {
-        //
+        $staff = new Staff();
+        $staff->first_name = $request->input('first_name');
+        $staff->last_name = $request->input('last_name');
+        $staff->father = $request->input('father');
+        $staff->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'پرسنل جدید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +73,20 @@ class StaffController extends Controller
      * @param  \App\Models\Staff  $staff
      * @return \Illuminate\Http\Response
      */
-    public function edit(Staff $staff)
+    public function edit($id)
     {
-        //
+        $staff = Staff::find($id);
+        if ($staff) {
+            return response()->json([
+                'status' => 200,
+                'staff' => $staff,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'پرسنل یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +96,24 @@ class StaffController extends Controller
      * @param  \App\Models\Staff  $staff
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Staff $staff)
+    public function update(StaffRequest $request, $id)
     {
-        //
+        $staff = Staff::find($id);
+        if ($staff) {
+            $staff->first_name = $request->input('first_name');
+            $staff->last_name = $request->input('last_name');
+            $staff->father = $request->input('father');
+            $staff->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'پرسنل ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +122,13 @@ class StaffController extends Controller
      * @param  \App\Models\Staff  $staff
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Staff $staff)
+    public function destroy($id)
     {
-        //
+        $staff = Staff::find($id);
+        $staff->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'پرسنل حذف شد',
+        ]);
     }
 }

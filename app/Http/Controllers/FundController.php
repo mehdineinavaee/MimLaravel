@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FundRequest;
 use App\Models\Fund;
 use Illuminate\Http\Request;
 
 class FundController extends Controller
 {
+    public function fetchFund()
+    {
+        $funds = Fund::orderBy('id', 'desc')->get();
+        return response()->json([
+            'funds' => $funds,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +42,17 @@ class FundController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FundRequest $request)
     {
-        //
+        $fund = new Fund();
+        $fund->form_type = $request->input('form_type');
+        $fund->daramad_code = $request->input('daramad_code');
+        $fund->daramad_name = $request->input('daramad_name');
+        $fund->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'درآمد، هزینه، صندوق جدید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +72,20 @@ class FundController extends Controller
      * @param  \App\Models\Fund  $fund
      * @return \Illuminate\Http\Response
      */
-    public function edit(Fund $fund)
+    public function edit($id)
     {
-        //
+        $fund = Fund::find($id);
+        if ($fund) {
+            return response()->json([
+                'status' => 200,
+                'fund' => $fund,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'درآمد، هزینه، صندوق یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +95,24 @@ class FundController extends Controller
      * @param  \App\Models\Fund  $fund
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Fund $fund)
+    public function update(Request $request, $id)
     {
-        //
+        $fund = Fund::find($id);
+        if ($fund) {
+            $fund->form_type = $request->input('form_type');
+            $fund->daramad_code = $request->input('daramad_code');
+            $fund->daramad_name = $request->input('daramad_name');
+            $fund->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'درآمد، هزینه، صندوق ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +121,13 @@ class FundController extends Controller
      * @param  \App\Models\Fund  $fund
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Fund $fund)
+    public function destroy($id)
     {
-        //
+        $fund = Fund::find($id);
+        $fund->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'درآمد، هزینه، صندوق حذف شد',
+        ]);
     }
 }

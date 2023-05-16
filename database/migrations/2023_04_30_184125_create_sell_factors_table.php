@@ -15,6 +15,12 @@ return new class extends Migration
     {
         Schema::create('sell_factors', function (Blueprint $table) {
             $table->id();
+            $table->string('customer_type')->nullable(); // نوع مشتری
+            $table->string('fullname')->nullable(); // نام و نام خانوادگی
+            $table->string('factor_no')->nullable(); // شماره فاکتور
+            $table->string('factor_date')->nullable(); // تاریخ فاکتور
+            $table->string('intermediary')->nullable(); // واسطه
+            $table->string('commission')->nullable(); // پورسانت
             $table->timestamps();
         });
     }

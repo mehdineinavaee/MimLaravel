@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class TarafHesabGroup extends Model
 {
     use HasFactory;
+    public $fillable = ['title', 'parent_id'];
+
+    public function childs()
+    {
+        return $this->hasMany(TarafHesabGroup::class, 'parent_id', 'id');
+    }
 }

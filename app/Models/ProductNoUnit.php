@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ProductNoUnit extends Model
 {
     use HasFactory;
+    public $fillable = ['code', 'title', 'chk_active'];
 }

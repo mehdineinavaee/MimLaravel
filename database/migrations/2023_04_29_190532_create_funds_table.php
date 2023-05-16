@@ -15,6 +15,11 @@ return new class extends Migration
     {
         Schema::create('funds', function (Blueprint $table) {
             $table->id();
+            $table->string('chk_active')->nullable(); // فعال
+            $table->string('chk_system')->nullable(); // سیستمی
+            $table->string('form_type')->nullable(); // نوع فرم
+            $table->string('daramad_code')->nullable(); // کد درآمد
+            $table->string('daramad_name')->nullable(); // نام درآمد
             $table->timestamps();
         });
     }

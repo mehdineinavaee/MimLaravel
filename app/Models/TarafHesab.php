@@ -9,6 +9,6 @@ class TarafHesab extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'code', 'fullname', 'tel', 'phone', 'seller', 'buyer', 'middleman', 'address', 'active', 'introduce-date', 'national-code', 'economic-code', 'zip-code', 'province', 'city', 'broker', 'commission', 'person-type', 'ceo-fullname', 'birthdate', 'occupation', 'fax', 'activity-type', 'email', 'website', 'credit-limit'
+        'chk_seller', 'chk_buyer', 'chk_broker', 'chk_investor', 'chk_block_list', 'chk_active', 'chk_move_phone', 'code', 'fullname', 'zip_code', 'phone', 'city', 'broker', 'commission', 'address', 'person_type', 'ceo_fullname', 'national_code', 'birthdate', 'occupation', 'fax', 'tel', 'activity_type', 'economic_code', 'email', 'website', 'credit_limit', 'opt_warning', 'opt_prohibition_sale', 'opt_uncleared', 'opt_customer_balance', 'not_spent'
     ];
 }

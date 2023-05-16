@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BanksTypesRequest;
 use App\Models\BankType;
 use Illuminate\Http\Request;
 
 class BankTypeController extends Controller
 {
+    public function fetchBanksTypes()
+    {
+        $banks_types = BankType::orderBy('id', 'desc')->get();
+        return response()->json([
+            'banks_types' => $banks_types,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +42,16 @@ class BankTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BanksTypesRequest $request)
     {
-        //
+        $banks_types = new BankType();
+        $banks_types->bank_code = $request->input('bank_code');
+        $banks_types->bank_name = $request->input('bank_name');
+        $banks_types->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'بانک جدید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +71,20 @@ class BankTypeController extends Controller
      * @param  \App\Models\BankType  $bankType
      * @return \Illuminate\Http\Response
      */
-    public function edit(BankType $bankType)
+    public function edit($id)
     {
-        //
+        $banks_types = BankType::find($id);
+        if ($banks_types) {
+            return response()->json([
+                'status' => 200,
+                'banks_types' => $banks_types,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'بانک یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +94,23 @@ class BankTypeController extends Controller
      * @param  \App\Models\BankType  $bankType
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, BankType $bankType)
+    public function update(BanksTypesRequest $request, $id)
     {
-        //
+        $banks_types = BankType::find($id);
+        if ($banks_types) {
+            $banks_types->bank_code = $request->input('bank_code');
+            $banks_types->bank_name = $request->input('bank_name');
+            $banks_types->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'بانک ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +119,13 @@ class BankTypeController extends Controller
      * @param  \App\Models\BankType  $bankType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BankType $bankType)
+    public function destroy($id)
     {
-        //
+        $banks_types = BankType::find($id);
+        $banks_types->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'بانک حذف شد',
+        ]);
     }
 }

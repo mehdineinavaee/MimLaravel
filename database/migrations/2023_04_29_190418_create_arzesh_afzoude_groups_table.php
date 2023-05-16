@@ -15,6 +15,11 @@ return new class extends Migration
     {
         Schema::create('arzesh_afzoude_groups', function (Blueprint $table) {
             $table->id();
+            $table->string('group_name')->nullable(); // نام گروه
+            $table->string('financial_year')->nullable(); // سال مالی
+            $table->string('avarez')->nullable(); // عوارض
+            $table->string('maliyat')->nullable(); // مالیات
+            $table->string('saghfe_moamelat')->nullable(); // سقف معاملات
             $table->timestamps();
         });
     }

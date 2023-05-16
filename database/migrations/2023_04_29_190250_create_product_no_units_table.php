@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('product_no_units', function (Blueprint $table) {
             $table->id();
+            $table->string('code'); // کد واحد
+            $table->string('title'); // نام واحد کالا
+            $table->string('chk_active')->nullable(); // فعال
             $table->timestamps();
         });
     }

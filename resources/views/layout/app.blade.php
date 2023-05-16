@@ -22,7 +22,6 @@
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            @include('layout.messages')
             @yield('content')
         </div>
         <!-- /.content-wrapper -->

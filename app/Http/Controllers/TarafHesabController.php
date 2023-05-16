@@ -2,11 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TarafHesabRequest;
 use App\Models\TarafHesab;
+use App\Models\TarafHesabGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TarafHesabController extends Controller
 {
+    public function fetchTarafHesab()
+    {
+        $taraf_hesabs = TarafHesab::orderBy('id', 'desc')->get();
+        // $taraf_hesabs = TarafHesab::all();
+        return response()->json([
+            'taraf_hesabs' => $taraf_hesabs,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +26,9 @@ class TarafHesabController extends Controller
      */
     public function index()
     {
-        return view('taarife-payeh/taraf-hesab.index');
+        $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
+        $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
+        return view('taarife-payeh/taraf-hesab.index', compact('categories', 'allCategories'));
     }
 
     /**
@@ -33,10 +47,12 @@ class TarafHesabController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TarafHesabRequest $request)
     {
         $tarafHesab = new TarafHesab();
+        $tarafHesab->code = $request->input('code');
         $tarafHesab->fullname = $request->input('fullname');
+        $tarafHesab->phone = $request->input('phone');
         $tarafHesab->save();
         return response()->json([
             'status' => 200,
@@ -61,9 +77,20 @@ class TarafHesabController extends Controller
      * @param  \App\Models\TarafHesab  $tarafHesab
      * @return \Illuminate\Http\Response
      */
-    public function edit(TarafHesab $tarafHesab)
+    public function edit($id)
     {
-        //
+        $taraf_hesab = TarafHesab::find($id);
+        if ($taraf_hesab) {
+            return response()->json([
+                'status' => 200,
+                'taraf_hesab' => $taraf_hesab,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'طرف حساب یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -73,9 +100,24 @@ class TarafHesabController extends Controller
      * @param  \App\Models\TarafHesab  $tarafHesab
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TarafHesab $tarafHesab)
+    public function update(TarafHesabRequest $request,  $id)
     {
-        //
+        $tarafHesab = TarafHesab::find($id);
+        if ($tarafHesab) {
+            $tarafHesab->code = $request->input('code');
+            $tarafHesab->fullname = $request->input('fullname');
+            $tarafHesab->phone = $request->input('phone');
+            $tarafHesab->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'طرف حساب ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -84,8 +126,13 @@ class TarafHesabController extends Controller
      * @param  \App\Models\TarafHesab  $tarafHesab
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TarafHesab $tarafHesab)
+    public function destroy($id)
     {
-        //
+        $taraf_hesab = TarafHesab::find($id);
+        $taraf_hesab->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'طرف حساب حذف شد',
+        ]);
     }
 }

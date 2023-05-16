@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ArzeshAfzoudeGroupRequest;
 use App\Models\ArzeshAfzoudeGroup;
 use Illuminate\Http\Request;
 
 class ArzeshAfzoudeGroupController extends Controller
 {
+    public function fetchArzeshAfzoudeGroups()
+    {
+        $arzesh_afzoude_groups = ArzeshAfzoudeGroup::orderBy('id', 'desc')->get();
+        return response()->json([
+            'arzesh_afzoude_groups' => $arzesh_afzoude_groups,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +42,17 @@ class ArzeshAfzoudeGroupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArzeshAfzoudeGroupRequest $request)
     {
-        //
+        $arzesh_afzoude_group = new ArzeshAfzoudeGroup();
+        $arzesh_afzoude_group->group_name = $request->input('group_name');
+        $arzesh_afzoude_group->financial_year = $request->input('financial_year');
+        $arzesh_afzoude_group->avarez = $request->input('avarez');
+        $arzesh_afzoude_group->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'گروه ارزش افزوده جدید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +72,20 @@ class ArzeshAfzoudeGroupController extends Controller
      * @param  \App\Models\ArzeshAfzoudeGroup  $arzeshAfzoudeGroup
      * @return \Illuminate\Http\Response
      */
-    public function edit(ArzeshAfzoudeGroup $arzeshAfzoudeGroup)
+    public function edit($id)
     {
-        //
+        $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
+        if ($arzesh_afzoude_group) {
+            return response()->json([
+                'status' => 200,
+                'arzesh_afzoude_group' => $arzesh_afzoude_group,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'گروه ارزش افزوده یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +95,24 @@ class ArzeshAfzoudeGroupController extends Controller
      * @param  \App\Models\ArzeshAfzoudeGroup  $arzeshAfzoudeGroup
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ArzeshAfzoudeGroup $arzeshAfzoudeGroup)
+    public function update(ArzeshAfzoudeGroupRequest $request, $id)
     {
-        //
+        $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
+        if ($arzesh_afzoude_group) {
+            $arzesh_afzoude_group->group_name = $request->input('group_name');
+            $arzesh_afzoude_group->financial_year = $request->input('financial_year');
+            $arzesh_afzoude_group->avarez = $request->input('avarez');
+            $arzesh_afzoude_group->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'گروه ارزش افزوده ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +121,13 @@ class ArzeshAfzoudeGroupController extends Controller
      * @param  \App\Models\ArzeshAfzoudeGroup  $arzeshAfzoudeGroup
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ArzeshAfzoudeGroup $arzeshAfzoudeGroup)
+    public function destroy($id)
     {
-        //
+        $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
+        $arzesh_afzoude_group->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'گروه ارزش افزوده حذف شد',
+        ]);
     }
 }
