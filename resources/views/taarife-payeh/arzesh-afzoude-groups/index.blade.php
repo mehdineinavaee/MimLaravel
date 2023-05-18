@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped">
+            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -68,31 +68,31 @@
                     $.each(response.arzesh_afzoude_groups, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                        <td>" +
+                                                            <td>" +
                             (index + 1) +
                             "</td>\
-                                                        <td>" +
+                                                            <td>" +
                             item.group_name +
                             "</td>\
-                                                        <td>" +
+                                                            <td>" +
                             item.financial_year +
                             "</td>\
-                                                        <td>" +
+                                                            <td>" +
                             item.avarez +
                             "</td>\
-                                                        <td>" +
+                                                            <td>" +
                             item.maliyat +
                             "</td>\
-                                                        <td>" +
+                                                            <td>" +
                             item.saghfe_moamelat +
                             '</td>\
-                                                        <td style="text-align: center"><button type="button" value="' +
+                                                            <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_arzesh_afzoude_groups btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                        <button type="button" value="/arzesh-afzoude-groups/' +
+                                                            <button type="button" value="/arzesh-afzoude-groups/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                        </tr>'
+                                                            </tr>'
                         );
                     });
                 },

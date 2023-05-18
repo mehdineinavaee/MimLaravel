@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CityRequest;
 use App\Models\City;
 use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
+    public function fetchCities()
+    {
+        $cities = City::orderBy('city_name', 'asc')->get();
+        return response()->json([
+            'cities' => $cities,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +42,16 @@ class CityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CityRequest $request)
     {
-        //
+        $city = new City();
+        $city->city_code = $request->input('city_code');
+        $city->city_name = $request->input('city_name');
+        $city->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'شهر جدید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +71,20 @@ class CityController extends Controller
      * @param  \App\Models\City  $city
      * @return \Illuminate\Http\Response
      */
-    public function edit(City $city)
+    public function edit($id)
     {
-        //
+        $city = City::find($id);
+        if ($city) {
+            return response()->json([
+                'status' => 200,
+                'city' => $city,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'شهر یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +94,23 @@ class CityController extends Controller
      * @param  \App\Models\City  $city
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, City $city)
+    public function update(CityRequest $request, $id)
     {
-        //
+        $city = City::find($id);
+        if ($city) {
+            $city->city_code = $request->input('city_code');
+            $city->city_name = $request->input('city_name');
+            $city->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'شهر ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +119,13 @@ class CityController extends Controller
      * @param  \App\Models\City  $city
      * @return \Illuminate\Http\Response
      */
-    public function destroy(City $city)
+    public function destroy($id)
     {
-        //
+        $city = City::find($id);
+        $city->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'شهر حذف شد',
+        ]);
     }
 }

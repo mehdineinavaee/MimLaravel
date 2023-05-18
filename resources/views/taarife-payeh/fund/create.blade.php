@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="createInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="createInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createInfoLabel">درآمد، هزینه، صندوق جدید</h5>
@@ -27,7 +27,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_form_type">نوع فرم</label>
                             <select id="add_form_type" name="add_form_type" class="form-control select2"
@@ -46,7 +46,7 @@
                             <div id="add_form_type_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_daramad_code">کد درآمد</label>
                             <input type="text" id="add_daramad_code" name="add_daramad_code" class="form-control"
@@ -54,7 +54,7 @@
                             <div id="add_daramad_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_daramad_name">نام درآمد</label>
                             <input type="text" id="add_daramad_name" name="add_daramad_name" class="form-control"

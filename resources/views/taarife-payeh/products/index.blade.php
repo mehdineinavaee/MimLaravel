@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped">
+            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -82,52 +82,52 @@
                     $.each(response.products, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                    <td>" +
+                        <td>" +
                             (index + 1) +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.code +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.main_group +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.sub_group +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.product_name +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.product_unit +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.sell_price +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.value_added_group +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.chk_active +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.introduce_date +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.latest_buy_price +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.main_barcode +
                             "</td>\
-                    <td>" +
+                        <td>" +
                             item.order_point +
                             '</td>\
-                    <td style="text-align: center"><button type="button" value="' +
+                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_product btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                        <button type="button" value="/products/' +
+                                            <button type="button" value="/products/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                        </tr>'
+                                            </tr>'
                         );
                     });
                 },

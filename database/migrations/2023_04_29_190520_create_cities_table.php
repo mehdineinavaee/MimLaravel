@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
+            $table->string('city_code')->nullable(); // کد شهر
+            $table->string('city_name')->nullable(); // نام شهر
             $table->timestamps();
         });
     }

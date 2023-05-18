@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="editInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="editInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editInfoLabel">ویرایش درآمد، هزینه، صندوق</h5>
@@ -28,7 +28,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <div class="form-group mb-3">
                                 <label for="edit_form_type">نوع فرم</label>
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_daramad_code">کد درآمد</label>
                             <input type="text" id="edit_daramad_code" name="edit_daramad_code" class="form-control"
@@ -57,7 +57,7 @@
                             <div id="edit_daramad_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <div class="form-group mb-3">
                                 <label for="edit_daramad_name">نام درآمد</label>
@@ -98,9 +98,9 @@
                         })
                     } else {
                         $("#edit_fund_id").val(fund_id);
-                        $("#edit_form_type").val(response.funds.edit_form_type);
-                        $("#edit_daramad_code").val(response.funds.edit_daramad_code);
-                        $("#edit_daramad_name").val(response.funds.edit_daramad_name);
+                        $("#edit_form_type").val(response.fund.form_type);
+                        $("#edit_daramad_code").val(response.fund.daramad_code);
+                        $("#edit_daramad_name").val(response.fund.daramad_name);
                     }
                 },
             });

@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped">
+            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -122,112 +122,112 @@
                     $.each(response.taraf_hesabs, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.chk_seller +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.chk_buyer +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.chk_broker +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.chk_investor +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.chk_block_list +
                             "</td>\
-                                                <td>" +
+                                                    <td>" +
                             item.chk_active +
                             "</td>\
-                                                <td>" +
+                                                    <td>" +
                             item.chk_move_phone +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.code +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.fullname +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.zip_code +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.phone +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.city +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.broker +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.commission +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.address +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.person_type +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.ceo_fullname +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.national_code +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.birthdate +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.occupation +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.fax +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.tel +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.activity_type +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.economic_code +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.email +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.website +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.credit_limit +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.opt_warning +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.opt_prohibition_sale +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.opt_uncleared +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.opt_customer_balance +
                             "</td>\
-                                                                                                                                                <td>" +
+                                                                                                                                                    <td>" +
                             item.not_spent +
                             '</td>\
-                                                                                                                                                                                            <td style="text-align: center"><button type="button" value="' +
+                                                                                                                                                                                                <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_taraf_hesab btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                                                                                                                                                            <button type="button" value="/taraf-hesab/' +
+                                                                                                                                                                                                <button type="button" value="/taraf-hesab/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                                                                                                                                                            </tr>'
+                                                                                                                                                                                                </tr>'
                         );
                     });
                 },

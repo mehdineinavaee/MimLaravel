@@ -54,6 +54,7 @@
 <script>
     $(function() {
         $('#example1').DataTable({
+            "ordering": false,
             language: {
                 "decimal": "",
                 "emptyTable": "داده ای وجود ندارد",

@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped">
+            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -64,25 +64,25 @@
                     $.each(response.productNoUnits, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-            <td>" +
+                <td>" +
                             (index + 1) +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.code +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.title +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.chk_active +
                             '</td>\
-            <td style="text-align: center"><button type="button" value="' +
+                <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_product_no_unit btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                        <button type="button" value="/product-no-unit/' +
+                                                            <button type="button" value="/product-no-unit/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                        </tr>'
+                                                            </tr>'
                         );
                     });
                 },
