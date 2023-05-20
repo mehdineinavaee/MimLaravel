@@ -15,6 +15,15 @@ return new class extends Migration
     {
         Schema::create('returning_cheques', function (Blueprint $table) {
             $table->id();
+            $table->string('form_date'); // تاریخ فرم
+            $table->string('form_number')->nullable(); // شماره فرم
+            $table->string('mark_back'); // پشت نمره
+            $table->string('serial_number'); // شماره سریال چک
+            $table->string('total'); // مبلغ چک
+            $table->string('due_date'); // سر رسید
+            $table->string('bank_account_details'); // مشخصات حساب بانکی
+            $table->string('payer'); // پرداخت کننده
+            $table->string('considerations'); // ملاحظات
             $table->timestamps();
         });
     }

@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TransferPersonRequest;
 use App\Models\TransferPerson;
 use Illuminate\Http\Request;
 
 class TransferPersonController extends Controller
 {
+    public function fetchTransferPerson()
+    {
+        $transfer_person = TransferPerson::orderBy('id', 'desc')->get();
+        return response()->json([
+            'transfer_person' => $transfer_person,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +42,20 @@ class TransferPersonController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TransferPersonRequest $request)
     {
-        //
+        $transfer_person = new TransferPerson();
+        $transfer_person->from_taraf_hesab = $request->input('from_taraf_hesab');
+        $transfer_person->to_taraf_hesab = $request->input('to_taraf_hesab');
+        $transfer_person->form_date = $request->input('form_date');
+        $transfer_person->form_number = $request->input('form_number');
+        $transfer_person->cash_amount = $request->input('cash_amount');
+        $transfer_person->considerations = $request->input('considerations');
+        $transfer_person->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'انتقال بین اشخاص جدید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +75,20 @@ class TransferPersonController extends Controller
      * @param  \App\Models\TransferPerson  $transferPerson
      * @return \Illuminate\Http\Response
      */
-    public function edit(TransferPerson $transferPerson)
+    public function edit($id)
     {
-        //
+        $transfer_person = TransferPerson::find($id);
+        if ($transfer_person) {
+            return response()->json([
+                'status' => 200,
+                'transfer_person' => $transfer_person,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'انتقال بین اشخاص یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +98,27 @@ class TransferPersonController extends Controller
      * @param  \App\Models\TransferPerson  $transferPerson
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TransferPerson $transferPerson)
+    public function update(TransferPersonRequest $request, $id)
     {
-        //
+        $transfer_person = TransferPerson::find($id);
+        if ($transfer_person) {
+            $transfer_person->from_taraf_hesab = $request->input('from_taraf_hesab');
+            $transfer_person->to_taraf_hesab = $request->input('to_taraf_hesab');
+            $transfer_person->form_date = $request->input('form_date');
+            $transfer_person->form_number = $request->input('form_number');
+            $transfer_person->cash_amount = $request->input('cash_amount');
+            $transfer_person->considerations = $request->input('considerations');
+            $transfer_person->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'انتقال بین اشخاص ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +127,13 @@ class TransferPersonController extends Controller
      * @param  \App\Models\TransferPerson  $transferPerson
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TransferPerson $transferPerson)
+    public function destroy($id)
     {
-        //
+        $transfer_person = TransferPerson::find($id);
+        $transfer_person->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'انتقال بین اشخاص حذف شد',
+        ]);
     }
 }

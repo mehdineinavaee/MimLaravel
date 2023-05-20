@@ -13,7 +13,7 @@ class BankToBankRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,18 @@ class BankToBankRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'from_bank' => 'required',
+            'to_bank' => 'required',
+            'form_date' => 'required',
+            'form_number' => 'required',
+            'cash_amount' => 'required',
+            'considerations1' => 'required',
+            'date' => 'required',
+            'bank_account_details' => 'required',
+            'deposit_amount' => 'required',
+            'wage' => 'required',
+            'issue_tracking' => 'required',
+            'considerations2' => 'required',
         ];
     }
 }

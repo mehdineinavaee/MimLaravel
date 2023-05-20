@@ -27,7 +27,7 @@
                         <th style="min-width: 100px">پشت نمره</th>
                         <th style="min-width: 130px">شماره سریال چک</th>
                         <th style="min-width: 200px">مبلغ چک</th>
-                        <th style="min-width: 90px">سر رسید</th>
+                        <th style="min-width: 90px">تاریخ سر رسید</th>
                         <th style="min-width: 150px">مشخصات حساب بانکی</th>
                         <th style="min-width: 90px">پرداخت کننده</th>
                         <th style="min-width: 80px"></th>
@@ -45,7 +45,7 @@
                         <th>پشت نمره</th>
                         <th>شماره سریال چک</th>
                         <th>مبلغ چک</th>
-                        <th>سر رسید</th>
+                        <th>تاریخ سر رسید</th>
                         <th>مشخصات حساب بانکی</th>
                         <th>پرداخت کننده</th>
                         <th></th>
@@ -76,43 +76,43 @@
                     $.each(response.deposits, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                                <td>" +
+                                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.form_number +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.form_date +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.place +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.mark_back +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.serial_number +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.total +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.due_date +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.bank_account_details +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.payer +
                             '</td>\
-                                                                <td style="text-align: center"><button type="button" value="' +
+                                                                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_deposit btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                                <button type="button" value="/deposit/' +
+                                                                    <button type="button" value="/deposit/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                                </tr>'
+                                                                    </tr>'
                         );
                     });
                 },

@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BankToFundRequest;
 use App\Models\BankToFund;
 use Illuminate\Http\Request;
 
 class BankToFundController extends Controller
 {
+    public function fetchBankToFund()
+    {
+        $bank_to_fund = BankToFund::orderBy('id', 'desc')->get();
+        return response()->json([
+            'bank_to_fund' => $bank_to_fund,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +42,25 @@ class BankToFundController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BankToFundRequest $request)
     {
-        //
+        $bank_to_fund = new BankToFund();
+        $bank_to_fund->bank = $request->input('bank');
+        $bank_to_fund->form_date = $request->input('form_date');
+        $bank_to_fund->form_number = $request->input('form_number');
+        $bank_to_fund->cash_amount = $request->input('cash_amount');
+        $bank_to_fund->considerations1 = $request->input('considerations1');
+        $bank_to_fund->date = $request->input('date');
+        $bank_to_fund->bank_account_details = $request->input('bank_account_details');
+        $bank_to_fund->deposit_amount = $request->input('deposit_amount');
+        $bank_to_fund->wage = $request->input('wage');
+        $bank_to_fund->issue_tracking = $request->input('issue_tracking');
+        $bank_to_fund->considerations2 = $request->input('considerations2');
+        $bank_to_fund->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'از بانک به صندوق جدید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +80,20 @@ class BankToFundController extends Controller
      * @param  \App\Models\BankToFund  $bankToFund
      * @return \Illuminate\Http\Response
      */
-    public function edit(BankToFund $bankToFund)
+    public function edit($id)
     {
-        //
+        $bank_to_fund = BankToFund::find($id);
+        if ($bank_to_fund) {
+            return response()->json([
+                'status' => 200,
+                'bank_to_fund' => $bank_to_fund,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'از بانک به صندوق یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +103,32 @@ class BankToFundController extends Controller
      * @param  \App\Models\BankToFund  $bankToFund
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, BankToFund $bankToFund)
+    public function update(BankToFundRequest $request, $id)
     {
-        //
+        $bank_to_fund = BankToFund::find($id);
+        if ($bank_to_fund) {
+            $bank_to_fund->bank = $request->input('bank');
+            $bank_to_fund->form_date = $request->input('form_date');
+            $bank_to_fund->form_number = $request->input('form_number');
+            $bank_to_fund->cash_amount = $request->input('cash_amount');
+            $bank_to_fund->considerations1 = $request->input('considerations1');
+            $bank_to_fund->date = $request->input('date');
+            $bank_to_fund->bank_account_details = $request->input('bank_account_details');
+            $bank_to_fund->deposit_amount = $request->input('deposit_amount');
+            $bank_to_fund->wage = $request->input('wage');
+            $bank_to_fund->issue_tracking = $request->input('issue_tracking');
+            $bank_to_fund->considerations2 = $request->input('considerations2');
+            $bank_to_fund->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'از بانک به صندوق ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +137,13 @@ class BankToFundController extends Controller
      * @param  \App\Models\BankToFund  $bankToFund
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BankToFund $bankToFund)
+    public function destroy($id)
     {
-        //
+        $bank_to_fund = BankToFund::find($id);
+        $bank_to_fund->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'از بانک به صندوق حذف شد',
+        ]);
     }
 }

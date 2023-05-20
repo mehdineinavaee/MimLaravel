@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Notification extends Model
 {
     use HasFactory;
+    public $fillable = ['form_date', 'form_number', 'mark_back', 'serial_number', 'total', 'due_date', 'bank_account_details', 'payer', 'considerations'];
 }

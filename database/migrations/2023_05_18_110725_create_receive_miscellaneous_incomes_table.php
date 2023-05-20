@@ -15,6 +15,17 @@ return new class extends Migration
     {
         Schema::create('receive_miscellaneous_incomes', function (Blueprint $table) {
             $table->id();
+            $table->string('income_title')->nullable(); // عنوان درآمد
+            $table->string('form_date')->nullable(); // تاریخ فرم
+            $table->string('form_number')->nullable(); // شماره فرم
+            $table->string('cash_amount')->nullable(); // مبلغ نقدی
+            $table->string('considerations1')->nullable(); // ملاحظات
+            $table->string('date')->nullable(); // تاریخ
+            $table->string('bank_account_details')->nullable(); // مشخصات حساب بانکی
+            $table->string('deposit_amount')->nullable(); // مبلغ واریزی
+            $table->string('wage')->nullable(); // کارمزد
+            $table->string('issue_tracking')->nullable(); // شماره پیگیری
+            $table->string('considerations2')->nullable(); // ملاحظات
             $table->timestamps();
         });
     }

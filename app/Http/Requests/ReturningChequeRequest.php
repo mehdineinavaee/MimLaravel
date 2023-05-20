@@ -13,7 +13,7 @@ class ReturningChequeRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,15 @@ class ReturningChequeRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'form_date' => 'required',
+            'form_number' => 'required',
+            'mark_back' => 'required',
+            'serial_number' => 'required',
+            'total' => 'required',
+            'due_date' => 'required',
+            'bank_account_details' => 'required',
+            'payer' => 'required',
+            'considerations' => 'required',
         ];
     }
 }

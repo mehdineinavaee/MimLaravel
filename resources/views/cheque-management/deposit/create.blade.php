@@ -67,10 +67,15 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
-                            <label for="add_due_date">سر رسید</label>
-                            <input type="text" id="add_due_date" name="add_due_date" class="form-control"
-                                autocomplete="off" />
-                            <div id="add_due_date_error" class="invalid-feedback"></div>
+                            <label for="add_due_date">تاریخ سر رسید</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" id="add_due_date" name="add_due_date"
+                                    class="normal-example form-control" autocomplete="off" />
+                                <div id="add_due_date_error" class="invalid-feedback"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">

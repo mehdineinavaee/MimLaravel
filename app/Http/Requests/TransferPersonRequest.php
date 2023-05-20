@@ -13,7 +13,7 @@ class TransferPersonRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class TransferPersonRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'from_taraf_hesab' => 'required',
+            'to_taraf_hesab' => 'required',
+            'form_date' => 'required',
+            'form_number' => 'required',
+            'cash_amount' => 'required',
+            'considerations' => 'required',
         ];
     }
 }
