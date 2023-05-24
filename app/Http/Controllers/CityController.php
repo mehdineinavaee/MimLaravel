@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CityRequest;
 use App\Models\City;
 use Illuminate\Http\Request;
+use App\Exports\CityExport;
+use Excel;
 
 class CityController extends Controller
 {
+    public function exportCSV()
+    {
+        return Excel::download(new CityExport, 'citylist.xlsx');
+    }
+
     public function fetchCities()
     {
         $cities = City::orderBy('city_name', 'asc')->get();

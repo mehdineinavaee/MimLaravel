@@ -388,49 +388,56 @@
             $(document).on('click', '.addTarafHesab', function(e) {
                 e.preventDefault();
 
-                var data = {
-                    'code': $('#add_code').val(),
-                    'fullname': $('#add_fullname').val(),
-                    'phone': $('#add_phone').val(),
+                var add_sellerCheckBox = document.getElementById("add_sellerCheckBox").checked;
+                if (add_sellerCheckBox) {
+                    alert("Selected");
+                } else {
+                    alert("Not Selected");
                 }
-                // console.log(data);
 
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
+                // var data = {
+                //     'code': $('#add_code').val(),
+                //     'fullname': $('#add_fullname').val(),
+                //     'phone': $('#add_phone').val(),
+                // }
+                // // console.log(data);
 
-                $.ajax({
-                    type: "POST",
-                    url: "/taraf-hesab",
-                    data: data,
-                    dataType: "json",
+                // $.ajaxSetup({
+                //     headers: {
+                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //     }
+                // });
 
-                    success: function(response) {
-                        Swal.fire(
-                                response.message,
-                                response.status,
-                                'success'
-                            )
-                            .then((result) => {
-                                $("#createInfo").modal("hide");
-                                $("#createInfo").find("input").val("");
-                                add_clearErrors();
-                                fetchTarafHesab();
-                            });
-                    },
+                // $.ajax({
+                //     type: "POST",
+                //     url: "/taraf-hesab",
+                //     data: data,
+                //     dataType: "json",
 
-                    error: function(errors) {
-                        add_clearErrors();
-                        $.each(errors.responseJSON.errors, function(key, err_values) {
-                            // console.log(key);
-                            // console.log(err_values);
-                            $("#add_" + key + "_error").text(err_values[0]);
-                            $("#add_" + key).addClass("is-invalid");
-                        });
-                    }
-                });
+                //     success: function(response) {
+                //         Swal.fire(
+                //                 response.message,
+                //                 response.status,
+                //                 'success'
+                //             )
+                //             .then((result) => {
+                //                 $("#createInfo").modal("hide");
+                //                 $("#createInfo").find("input").val("");
+                //                 add_clearErrors();
+                //                 fetchTarafHesab();
+                //             });
+                //     },
+
+                //     error: function(errors) {
+                //         add_clearErrors();
+                //         $.each(errors.responseJSON.errors, function(key, err_values) {
+                //             // console.log(key);
+                //             // console.log(err_values);
+                //             $("#add_" + key + "_error").text(err_values[0]);
+                //             $("#add_" + key).addClass("is-invalid");
+                //         });
+                //     }
+                // });
             });
         });
 

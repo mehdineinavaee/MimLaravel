@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PayChequeOperationRequest extends FormRequest
+class ReceiptChequeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class PayChequeOperationRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,14 @@ class PayChequeOperationRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'form_date' => 'required',
+            'form_number' => 'required',
+            'serial_number' => 'required',
+            'total' => 'required',
+            'due_date' => 'required',
+            'bank_account_details' => 'required',
+            'receiver' => 'required',
+            'considerations' => 'required',
         ];
     }
 }

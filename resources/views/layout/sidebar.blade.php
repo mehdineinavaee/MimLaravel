@@ -511,11 +511,40 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href={{ route('pay-cheques-operations.index') }} class="nav-link">
-                                <i class="fa fa-circle-o nav-icon"></i>
-                                <p>عملیات چک های پرداختی</p>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                                <p>
+                                    عملیات چک های پرداختی
+                                    <i class="right fa fa-angle-left"></i>
+                                </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href={{ route('receipt-cheque.index') }} class="nav-link">
+                                        <i class="fa fa-circle nav-icon"></i>
+                                        <p>اعلام وصول چک</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href={{ route('pay-returning-cheque.index') }} class="nav-link">
+                                        <i class="fa fa-circle nav-icon"></i>
+                                        <p>برگشت چک</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href={{ route('cashing-cheque.index') }} class="nav-link">
+                                        <i class="fa fa-circle nav-icon"></i>
+                                        <p>پس گرفتن چک</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href={{ route('cancel-cheque.index') }} class="nav-link">
+                                        <i class="fa fa-circle nav-icon"></i>
+                                        <p>ابطال چک</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a href={{ route('cheque-book.index') }} class="nav-link">

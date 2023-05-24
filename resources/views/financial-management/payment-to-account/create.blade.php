@@ -17,7 +17,8 @@
                         <label for="add_taraf_hesab_name">نام طرف حساب</label>
                         <select id="add_taraf_hesab_name" name="add_taraf_hesab_name" class="form-control select2"
                             style="width: 100%;">
-                            <option value="" selected>طرف حساب را انتخاب کنید</option>
+                            <option value="" selected>طرف حساب را انتخاب کنید
+                            </option>
                             {{-- @foreach ($publishers as $publisher) --}}
                             <option value="1">
                                 طرف حساب 1
@@ -58,7 +59,7 @@
                     <h6 class="font-weight-bold">نقد</h6>
                 </div>
                 <div class="tabs" id="add_tab02">
-                    <h6 class="text-muted">چک های دریافتی</h6>
+                    <h6 class="text-muted">چک های پرداختی</h6>
                 </div>
                 <div class="tabs" id="add_tab03">
                     <h6 class="text-muted">خرج چک</h6>
@@ -83,8 +84,11 @@
                             <div class="form-group mb-3">
                                 <label for="add_cash_amount">مبلغ نقدی</label>
                                 <input type="text" id="add_cash_amount" name="add_cash_amount" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'add_cash_amount_price');" />
                                 <div id="add_cash_amount_error" class="invalid-feedback"></div>
+                                <div id="add_cash_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -95,50 +99,97 @@
                                 <div id="add_considerations1_error" class="invalid-feedback"></div>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="form-group mb-3">
+                                <label for="add_payment_for">بابت</label>
+                                <input type="text" id="add_payment_for" name="add_payment_for"
+                                    class="form-control" autocomplete="off" />
+                                <div id="add_payment_for_error" class="invalid-feedback"></div>
+                            </div>
+                        </div>
                     </div>
                 </fieldset>
                 <fieldset id="add_tab021">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
-                                style="text-align: center;">
-                                <thead>
-                                    <tr>
-                                        <th>ردیف</th>
-                                        <th style="min-width: 200px">مبلغ چک</th>
-                                        <th style="min-width: 200px">پشت نمره</th>
-                                        <th style="min-width: 200px">تاریخ صدور</th>
-                                        <th style="min-width: 200px">تاریخ سر رسید</th>
-                                        <th style="min-width: 200px">شماره سریال چک</th>
-                                        <th style="min-width: 200px">نام بانک و شعبه</th>
-                                        <th style="min-width: 200px">شماره حساب</th>
-                                        <th style="min-width: 200px">ملاحظات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>ردیف</th>
-                                        <th>مبلغ چک</th>
-                                        <th>پشت نمره</th>
-                                        <th>تاریخ صدور</th>
-                                        <th>تاریخ سر رسید</th>
-                                        <th>شماره سریال چک</th>
-                                        <th>نام بانک و شعبه</th>
-                                        <th>شماره حساب</th>
-                                        <th>ملاحظات</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                            <button type="button" class="btn btn-success mb-2" data-toggle="modal"
+                                data-target="#addChequeBookList">
+                                فهرست سریال چک
+                            </button>
+                            <div class="row pt-4">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="add_tab2_cheque_total">مبلغ چک</label>
+                                        <input type="text" id="add_tab2_cheque_total" name="add_tab2_cheque_total"
+                                            class="form-control" autocomplete="off"
+                                            onkeyup="separateNum(this.value,this,'add_tab2_cheque_total_price');" />
+                                        <div id="add_tab2_cheque_total_error" class="invalid-feedback"></div>
+                                        <div id="add_tab2_cheque_total_price"
+                                            style="text-align: justify; color:green">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="add_tab2_issue_date">تاریخ صدور</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            <input type="text" id="add_tab2_issue_date" name="add_tab2_issue_date"
+                                                class="normal-example form-control" autocomplete="off" />
+                                            <div id="add_tab2_issue_date_error" class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="add_tab2_due_date">تاریخ سر رسید</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            <input type="text" id="add_tab2_due_date" name="add_tab2_due_date"
+                                                class="normal-example form-control" autocomplete="off" />
+                                            <div id="add_tab2_due_date_error" class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="add_tab2_cheque_serial_number">سریال چک</label>
+                                        <input type="text" id="add_tab2_cheque_serial_number"
+                                            name="add_tab2_cheque_serial_number" class="form-control"
+                                            autocomplete="off" />
+                                        <div id="add_tab2_cheque_serial_number_error" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="add_tab2_bank_account_details">مشخصات حساب بانکی</label>
+                                        <input type="text" id="add_tab2_bank_account_details"
+                                            name="add_tab2_bank_account_details" class="form-control"
+                                            autocomplete="off" />
+                                        <div id="add_tab2_bank_account_details_error" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="add_tab2_consideration">ملاحظات</label>
+                                        <input type="text" id="add_tab2_consideration"
+                                            name="add_tab2_consideration" class="form-control" autocomplete="off" />
+                                        <div id="add_tab2_consideration_error" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </fieldset>
                 <fieldset class="show" id="add_tab031">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
+                            <table id="tblAddPaymentToAccount2"
+                                class="table-responsive table table-bordered table-striped"
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
@@ -191,7 +242,8 @@
                                 <label for="add_bank_account_details">مشخصات حساب بانکی</label>
                                 <select id="add_bank_account_details" name="add_bank_account_details"
                                     class="form-control select2" style="width: 100%;">
-                                    <option value="" selected>حساب بانکی را انتخاب کنید</option>
+                                    <option value="" selected>حساب بانکی را
+                                        انتخاب کنید</option>
                                     {{-- @foreach ($publishers as $publisher) --}}
                                     <option value="1">
                                         حساب 1
@@ -208,16 +260,21 @@
                             <div class="form-group mb-3">
                                 <label for="add_deposit_amount">مبلغ واریزی</label>
                                 <input type="text" id="add_deposit_amount" name="add_deposit_amount"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control" autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'add_deposit_amount_price');" />
                                 <div id="add_deposit_amount_error" class="invalid-feedback"></div>
+                                <div id="add_deposit_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="add_wage">کارمزد</label>
                                 <input type="text" id="add_wage" name="add_wage" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off" onkeyup="separateNum(this.value,this,'add_wage_price');" />
                                 <div id="add_wage_error" class="invalid-feedback"></div>
+                                <div id="add_wage_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -251,7 +308,8 @@
                 <fieldset id="add_tab061">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
+                            <table id="tblAddPaymentToAccount3"
+                                class="table-responsive table table-bordered table-striped"
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
@@ -290,6 +348,7 @@
         </div>
     </div>
 </div>
+@include('financial-management.payment-to-account.add-cheque-book-list')
 <!-- End Modal -->
 @push('js')
     <script>
@@ -303,6 +362,13 @@
                     'form_number': $('#add_form_number').val(),
                     'cash_amount': $('#add_cash_amount').val(),
                     'considerations1': $('#add_considerations1').val(),
+                    'payment_for': $('#add_payment_for').val(),
+                    'tab2_cheque_total': $('#add_tab2_cheque_total').val(),
+                    'tab2_issue_date': $('#add_tab2_issue_date').val(),
+                    'tab2_due_date': $('#add_tab2_due_date').val(),
+                    'tab2_cheque_serial_number': $('#add_tab2_cheque_serial_number').val(),
+                    'tab2_bank_account_details': $('#add_tab2_bank_account_details').val(),
+                    'tab2_consideration': $('#add_tab2_consideration').val(),
                     'date': $('#add_date').val(),
                     'bank_account_details': $('#add_bank_account_details').val(),
                     'deposit_amount': $('#add_deposit_amount').val(),
@@ -335,12 +401,16 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
+                                add_clearPrice();
+                                add_defaultSelectedValue();
                                 fetchPaymentToAccount();
                             });
                     },
 
                     error: function(errors) {
                         add_clearErrors();
+                        add_clearPrice();
+                        add_defaultSelectedValue();
                         $.each(errors.responseJSON.errors, function(key, err_values) {
                             // console.log(key);
                             // console.log(err_values);
@@ -382,6 +452,8 @@
             $("#add_tab01 h6").removeClass("text-muted");
             $("fieldset").removeClass("show");
             add_clearErrors();
+            add_clearPrice();
+            add_defaultSelectedValue();
         })
 
         function add_clearErrors() {
@@ -395,6 +467,20 @@
             $("#add_cash_amount").removeClass("is-invalid");
             $("#add_considerations1_error").text("");
             $("#add_considerations1").removeClass("is-invalid");
+            $("#add_payment_for_error").text("");
+            $("#add_payment_for").removeClass("is-invalid");
+            $("#add_tab2_cheque_total_error").text("");
+            $("#add_tab2_cheque_total").removeClass("is-invalid");
+            $("#add_tab2_issue_date_error").text("");
+            $("#add_tab2_issue_date").removeClass("is-invalid");
+            $("#add_tab2_due_date_error").text("");
+            $("#add_tab2_due_date").removeClass("is-invalid");
+            $("#add_tab2_cheque_serial_number_error").text("");
+            $("#add_tab2_cheque_serial_number").removeClass("is-invalid");
+            $("#add_tab2_bank_account_details_error").text("");
+            $("#add_tab2_bank_account_details").removeClass("is-invalid");
+            $("#add_tab2_consideration_error").text("");
+            $("#add_tab2_consideration").removeClass("is-invalid");
             $("#add_date_error").text("");
             $("#add_date").removeClass("is-invalid");
             $("#add_bank_account_details_error").text("");
@@ -409,6 +495,18 @@
             $("#add_considerations2").removeClass("is-invalid");
             $("#add_paid_discount_error").text("");
             $("#add_paid_discount").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_cash_amount_price").text("");
+            $("#add_tab2_cheque_total_price").text("");
+            $("#add_deposit_amount_price").text("");
+            $("#add_wage_price").text("");
+        }
+
+        function add_defaultSelectedValue() {
+            $(add_taraf_hesab_name).prop('selectedIndex', 0).change();
+            $(add_bank_account_details).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

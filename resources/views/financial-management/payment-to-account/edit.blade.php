@@ -58,7 +58,7 @@
                     <h6 class="font-weight-bold">نقد</h6>
                 </div>
                 <div class="tabs" id="edit_tab02">
-                    <h6 class="text-muted">چک های دریافتی</h6>
+                    <h6 class="text-muted">چک های پرداختی</h6>
                 </div>
                 <div class="tabs" id="edit_tab03">
                     <h6 class="text-muted">خرج چک</h6>
@@ -84,8 +84,11 @@
                             <div class="form-group mb-3">
                                 <label for="edit_cash_amount">مبلغ نقدی</label>
                                 <input type="text" id="edit_cash_amount" name="edit_cash_amount" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'edit_cash_amount_price');" />
                                 <div id="edit_cash_amount_error" class="invalid-feedback"></div>
+                                <div id="edit_cash_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -96,43 +99,90 @@
                                 <div id="edit_considerations1_error" class="invalid-feedback"></div>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="form-group mb-3">
+                                <label for="edit_payment_for">بابت</label>
+                                <input type="text" id="edit_payment_for" name="edit_payment_for"
+                                    class="form-control" autocomplete="off" />
+                                <div id="edit_payment_for_error" class="invalid-feedback"></div>
+                            </div>
+                        </div>
                     </div>
                 </fieldset>
                 <fieldset id="edit_tab021">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
-                                style="text-align: center;">
-                                <thead>
-                                    <tr>
-                                        <th>ردیف</th>
-                                        <th style="min-width: 200px">مبلغ چک</th>
-                                        <th style="min-width: 200px">پشت نمره</th>
-                                        <th style="min-width: 200px">تاریخ صدور</th>
-                                        <th style="min-width: 200px">تاریخ سر رسید</th>
-                                        <th style="min-width: 200px">شماره سریال چک</th>
-                                        <th style="min-width: 200px">نام بانک و شعبه</th>
-                                        <th style="min-width: 200px">شماره حساب</th>
-                                        <th style="min-width: 200px">ملاحظات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>ردیف</th>
-                                        <th>مبلغ چک</th>
-                                        <th>پشت نمره</th>
-                                        <th>تاریخ صدور</th>
-                                        <th>تاریخ سر رسید</th>
-                                        <th>شماره سریال چک</th>
-                                        <th>نام بانک و شعبه</th>
-                                        <th>شماره حساب</th>
-                                        <th>ملاحظات</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                            <button type="button" class="btn btn-success mb-2" data-toggle="modal"
+                                data-target="#editChequeBookList">
+                                فهرست سریال چک
+                            </button>
+                            <div class="row pt-4">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="edit_tab2_cheque_total">مبلغ چک</label>
+                                        <input type="text" id="edit_tab2_cheque_total"
+                                            name="edit_tab2_cheque_total" class="form-control" autocomplete="off"
+                                            onkeyup="separateNum(this.value,this,'edit_tab2_cheque_total_price');" />
+                                        <div id="edit_tab2_cheque_total_error" class="invalid-feedback"></div>
+                                        <div id="edit_tab2_cheque_total_price"
+                                            style="text-align: justify; color:green">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="edit_tab2_issue_date">تاریخ صدور</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            <input type="text" id="edit_tab2_issue_date"
+                                                name="edit_tab2_issue_date" class="normal-example form-control"
+                                                autocomplete="off" />
+                                            <div id="edit_tab2_issue_date_error" class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="edit_tab2_due_date">تاریخ سر رسید</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            <input type="text" id="edit_tab2_due_date" name="edit_tab2_due_date"
+                                                class="normal-example form-control" autocomplete="off" />
+                                            <div id="edit_tab2_due_date_error" class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="edit_tab2_cheque_serial_number">سریال چک</label>
+                                        <input type="text" id="edit_tab2_cheque_serial_number"
+                                            name="edit_tab2_cheque_serial_number" class="form-control"
+                                            autocomplete="off" />
+                                        <div id="edit_tab2_cheque_serial_number_error" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="edit_tab2_bank_account_details">مشخصات حساب بانکی</label>
+                                        <input type="text" id="edit_tab2_bank_account_details"
+                                            name="edit_tab2_bank_account_details" class="form-control"
+                                            autocomplete="off" />
+                                        <div id="edit_tab2_bank_account_details_error" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label for="edit_tab2_consideration">ملاحظات</label>
+                                        <input type="text" id="edit_tab2_consideration"
+                                            name="edit_tab2_consideration" class="form-control" autocomplete="off" />
+                                        <div id="edit_tab2_consideration_error" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </fieldset>
@@ -209,16 +259,21 @@
                             <div class="form-group mb-3">
                                 <label for="edit_deposit_amount">مبلغ واریزی</label>
                                 <input type="text" id="edit_deposit_amount" name="edit_deposit_amount"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control" autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'edit_deposit_amount_price');" />
                                 <div id="edit_deposit_amount_error" class="invalid-feedback"></div>
+                                <div id="edit_deposit_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="edit_wage">کارمزد</label>
                                 <input type="text" id="edit_wage" name="edit_wage" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off" onkeyup="separateNum(this.value,this,'edit_wage_price');" />
                                 <div id="edit_wage_error" class="invalid-feedback"></div>
+                                <div id="edit_wage_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -291,6 +346,7 @@
         </div>
     </div>
 </div>
+@include('financial-management.payment-to-account.edit-cheque-book-list')
 <!-- End Modal -->
 @push('js')
     <script>
@@ -313,16 +369,30 @@
                         })
                     } else {
                         $("#edit_payment_to_account_id").val(payment_to_account_id);
-                        $("#edit_taraf_hesab_name").val(response.payment_to_account
-                            .taraf_hesab_name);
+                        $(edit_taraf_hesab_name).prop('selectedIndex', response.payment_to_account
+                            .taraf_hesab_name).change();
                         $("#edit_form_date").val(response.payment_to_account.form_date);
                         $("#edit_form_number").val(response.payment_to_account.form_number);
                         $("#edit_cash_amount").val(response.payment_to_account.cash_amount);
                         $("#edit_considerations1").val(response.payment_to_account
                             .considerations1);
+                        $("#edit_payment_for").val(response.payment_to_account
+                            .payment_for);
+                        $("#edit_tab2_cheque_total").val(response.payment_to_account
+                            .tab2_cheque_total);
+                        $("#edit_tab2_issue_date").val(response.payment_to_account
+                            .tab2_issue_date);
+                        $("#edit_tab2_due_date").val(response.payment_to_account
+                            .tab2_due_date);
+                        $("#edit_tab2_cheque_serial_number").val(response.payment_to_account
+                            .tab2_cheque_serial_number);
+                        $("#edit_tab2_bank_account_details").val(response.payment_to_account
+                            .tab2_bank_account_details);
+                        $("#edit_tab2_consideration").val(response.payment_to_account
+                            .tab2_consideration);
                         $("#edit_date").val(response.payment_to_account.date);
-                        $("#edit_bank_account_details").val(response.payment_to_account
-                            .bank_account_details);
+                        $(edit_bank_account_details).prop('selectedIndex', response.payment_to_account
+                            .bank_account_details).change();
                         $("#edit_deposit_amount").val(response.payment_to_account.deposit_amount);
                         $("#edit_wage").val(response.payment_to_account.wage);
                         $("#edit_issue_tracking").val(response.payment_to_account.issue_tracking);
@@ -343,6 +413,13 @@
                 form_number: $("#edit_form_number").val(),
                 cash_amount: $("#edit_cash_amount").val(),
                 considerations1: $("#edit_considerations1").val(),
+                payment_for: $("#edit_payment_for").val(),
+                tab2_cheque_total: $('#edit_tab2_cheque_total').val(),
+                tab2_issue_date: $('#edit_tab2_issue_date').val(),
+                tab2_due_date: $('#edit_tab2_due_date').val(),
+                tab2_cheque_serial_number: $('#edit_tab2_cheque_serial_number').val(),
+                tab2_bank_account_details: $('#edit_tab2_bank_account_details').val(),
+                tab2_consideration: $('#edit_tab2_consideration').val(),
                 date: $("#edit_date").val(),
                 bank_account_details: $("#edit_bank_account_details").val(),
                 deposit_amount: $("#edit_deposit_amount").val(),
@@ -374,11 +451,15 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                             fetchPaymentToAccount();
                         });
                 },
                 error: function(errors) {
                     edit_clearErrors();
+                    edit_clearPrice();
+                    edit_defaultSelectedValue();
                     $.each(errors.responseJSON.errors, function(key, err_values) {
                         // console.log(key);
                         // console.log(err_values);
@@ -419,6 +500,8 @@
             $("#edit_tab01 h6").removeClass("text-muted");
             $("fieldset").removeClass("show");
             edit_clearErrors();
+            edit_clearPrice();
+            edit_defaultSelectedValue();
         })
 
         function edit_clearErrors() {
@@ -432,6 +515,20 @@
             $("#edit_cash_amount").removeClass("is-invalid");
             $("#edit_considerations1_error").text("");
             $("#edit_considerations1").removeClass("is-invalid");
+            $("#edit_payment_for_error").text("");
+            $("#edit_payment_for").removeClass("is-invalid");
+            $("#edit_tab2_cheque_total_error").text("");
+            $("#edit_tab2_cheque_total").removeClass("is-invalid");
+            $("#edit_tab2_issue_date_error").text("");
+            $("#edit_tab2_issue_date").removeClass("is-invalid");
+            $("#edit_tab2_due_date_error").text("");
+            $("#edit_tab2_due_date").removeClass("is-invalid");
+            $("#edit_tab2_cheque_serial_number_error").text("");
+            $("#edit_tab2_cheque_serial_number").removeClass("is-invalid");
+            $("#edit_tab2_bank_account_details_error").text("");
+            $("#edit_tab2_bank_account_details").removeClass("is-invalid");
+            $("#edit_tab2_consideration_error").text("");
+            $("#edit_tab2_consideration").removeClass("is-invalid");
             $("#edit_date_error").text("");
             $("#edit_date").removeClass("is-invalid");
             $("#edit_bank_account_details_error").text("");
@@ -446,6 +543,18 @@
             $("#edit_considerations2").removeClass("is-invalid");
             $("#edit_paid_discount_error").text("");
             $("#edit_paid_discount").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_cash_amount_price").text("");
+            $("#edit_tab2_cheque_total_price").text("");
+            $("#edit_deposit_amount_price").text("");
+            $("#edit_wage_price").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_taraf_hesab_name).prop('selectedIndex', 0).change();
+            $(edit_bank_account_details).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

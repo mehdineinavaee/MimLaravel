@@ -2,11 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\FactorsTypesReport;
 use Illuminate\Http\Request;
+use PDF;
 
 class FactorsTypesReportController extends Controller
 {
+    public function generate()
+    {
+        $cities = City::get();
+
+        $data = [
+            'title' => 'به پی دی اف من خوش آمدید',
+            'date' => date('m/d/Y'),
+            'cities' => $cities
+        ];
+
+        $pdf = PDF::loadView('buy-sell-reports/factors-types-report.myPDF', $data);
+        return $pdf->stream('document.pdf');
+    }
+
     /**
      * Display a listing of the resource.
      *

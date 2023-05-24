@@ -195,6 +195,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class
     ],
 
     /*
@@ -210,6 +212,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'PDF' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdf::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class
     ])->toArray(),
 
 ];

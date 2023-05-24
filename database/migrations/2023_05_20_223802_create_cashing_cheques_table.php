@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pay_cheques_operations', function (Blueprint $table) {
+        Schema::create('cashing_cheques', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pay_cheques_operations');
+        Schema::dropIfExists('cashing_cheques');
     }
 };

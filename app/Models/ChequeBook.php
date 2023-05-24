@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ChequeBook extends Model
 {
     use HasFactory;
+    public $fillable = ['code', 'receive_date', 'bank_account_details', 'quantity', 'cheque_from', 'cheque_to'];
 }

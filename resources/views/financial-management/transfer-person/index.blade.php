@@ -70,31 +70,34 @@
                     $.each(response.transfer_person, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                            <td>" +
+                                <td>" +
                             (index + 1) +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.from_taraf_hesab +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.to_taraf_hesab +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.form_date +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.form_number +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.cash_amount +
+                            "</td>\
+                                <td>" +
+                            item.considerations +
                             '</td>\
-                            <td style="text-align: center"><button type="button" value="' +
+                                <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_transfer_person btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                            <button type="button" value="/transfer-person/' +
+                                <button type="button" value="/transfer-person/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                            </tr>'
+                                </tr>'
                         );
                     });
                 },

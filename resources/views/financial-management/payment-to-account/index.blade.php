@@ -26,6 +26,7 @@
                         <th style="min-width: 200px">شماره فرم</th>
                         <th style="min-width: 90px">مبلغ نقدی</th>
                         <th style="min-width: 90px">ملاحظات</th>
+                        <th style="min-width: 90px">بابت</th>
                         <th style="min-width: 90px">تاریخ</th>
                         <th style="min-width: 90px">مشخصات حساب بانکی</th>
                         <th style="min-width: 90px">مبلغ واریزی</th>
@@ -36,7 +37,7 @@
                         <th style="min-width: 80px"></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="data">
 
                 </tbody>
                 <tfoot>
@@ -47,6 +48,7 @@
                         <th>شماره فرم</th>
                         <th>مبلغ نقدی</th>
                         <th>ملاحظات</th>
+                        <th>بابت</th>
                         <th>تاریخ</th>
                         <th>مشخصات حساب بانکی</th>
                         <th>مبلغ واریزی</th>
@@ -78,9 +80,9 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("tbody").html("");
+                    $("#data").html("");
                     $.each(response.payment_to_accounts, function(index, item) {
-                        $("tbody").append(
+                        $("#data").append(
                             "<tr>\
                     <td>" +
                             (index + 1) +
@@ -95,10 +97,14 @@
                             item.form_number +
                             "</td>\
                     <td>" +
-                            item.cash_amount +
+                            new Intl.NumberFormat().format(item.cash_amount) +
+                            " ریال" +
                             "</td>\
                     <td>" +
                             item.considerations1 +
+                            "</td>\
+                    <td>" +
+                            item.payment_for +
                             "</td>\
                     <td>" +
                             item.date +
@@ -107,10 +113,12 @@
                             item.bank_account_details +
                             "</td>\
                     <td>" +
-                            item.deposit_amount +
+                            new Intl.NumberFormat().format(item.deposit_amount) +
+                            " ریال" +
                             "</td>\
                     <td>" +
-                            item.wage +
+                            new Intl.NumberFormat().format(item.wage) +
+                            " ریال" +
                             "</td>\
                     <td>" +
                             item.issue_tracking +

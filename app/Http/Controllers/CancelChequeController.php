@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PayChequesOperation;
+use App\Models\CancelCheque;
 use Illuminate\Http\Request;
 
-class PayChequesOperationController extends Controller
+class CancelChequeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class PayChequesOperationController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/pay-cheques-operations.index');
+        return view('cheque-management/cancel-cheque.index');
     }
 
     /**
@@ -41,10 +41,10 @@ class PayChequesOperationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PayChequesOperation  $payChequesOperation
+     * @param  \App\Models\CancelCheque  $cancelCheque
      * @return \Illuminate\Http\Response
      */
-    public function show(PayChequesOperation $payChequesOperation)
+    public function show(CancelCheque $cancelCheque)
     {
         //
     }
@@ -52,10 +52,10 @@ class PayChequesOperationController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PayChequesOperation  $payChequesOperation
+     * @param  \App\Models\CancelCheque  $cancelCheque
      * @return \Illuminate\Http\Response
      */
-    public function edit(PayChequesOperation $payChequesOperation)
+    public function edit(CancelCheque $cancelCheque)
     {
         //
     }
@@ -64,10 +64,10 @@ class PayChequesOperationController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PayChequesOperation  $payChequesOperation
+     * @param  \App\Models\CancelCheque  $cancelCheque
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PayChequesOperation $payChequesOperation)
+    public function update(Request $request, CancelCheque $cancelCheque)
     {
         //
     }
@@ -75,10 +75,10 @@ class PayChequesOperationController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PayChequesOperation  $payChequesOperation
+     * @param  \App\Models\CancelCheque  $cancelCheque
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PayChequesOperation $payChequesOperation)
+    public function destroy(CancelCheque $cancelCheque)
     {
         //
     }

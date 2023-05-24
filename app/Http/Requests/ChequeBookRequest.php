@@ -13,7 +13,7 @@ class ChequeBookRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class ChequeBookRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'code' => 'required',
+            'receive_date' => 'required',
+            'bank_account_details' => 'required',
+            'quantity' => 'required',
+            'cheque_from' => 'required',
+            'cheque_to' => 'required',
         ];
     }
 }
