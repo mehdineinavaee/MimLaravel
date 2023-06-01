@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('main_group')->nullable(); // گروه اصلی
             $table->string('sub_group')->nullable(); // گروه فرعی
             $table->string('product_name')->nullable(); // نام کالا
-            $table->string('product_unit')->nullable(); // واحد کالا
             $table->string('sell_price')->nullable(); // فی فروش
             $table->string('value_added_group')->nullable(); // گروه ارزش افزوده
             $table->string('chk_active')->nullable(); // فعال

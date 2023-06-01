@@ -1,29 +1,7 @@
-@font-face {
-    font-family: Vazir;
-    src: url("../fonts/Vazir/Vazir.ttf") format("truetype");
-    font-weight: normal;
-    font-display: swap;
-}
-
-.Vazir {
-    font-family: "Vazir";
-}
-
-@font-face {
-    font-family: Shabnam;
-    src: url("../fonts/Shabnam/Shabnam.ttf") format("truetype");
-    font-weight: normal;
-    font-display: swap;
-}
-
-.Shabnam {
-    font-family: "Shabnam";
-}
-
 /*---------------------------------- End of fonts ---------------------------------- */
 
 body {
-    font-family: "Vazir", "Shabnam", sans-serif !important;
+    font-family: "vazir", "shabnam", sans-serif !important;
 }
 
 .ltr {

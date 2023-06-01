@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountGroupController;
 use App\Http\Controllers\AccountHeadingController;
 use App\Http\Controllers\AccountingDocumentController;
 use App\Http\Controllers\AnnouncementController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\ChequeReturnController;
 use App\Http\Controllers\CirculationPayChequeReportController;
 use App\Http\Controllers\CirculationReceiveChequeController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\FactorsBenefitController;
 use App\Http\Controllers\FactorsTypesReportController;
@@ -34,7 +36,9 @@ use App\Http\Controllers\InventoryProductController;
 use App\Http\Controllers\InventoryProductsPeriodController;
 use App\Http\Controllers\InventoryWarehouseController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\KolController;
 use App\Http\Controllers\ManualController;
+use App\Http\Controllers\MoeinController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderingProductController;
 use App\Http\Controllers\PayChequeController;
@@ -44,8 +48,10 @@ use App\Http\Controllers\PaymentToAccountController;
 use App\Http\Controllers\PayReturningChequeController;
 use App\Http\Controllers\PeriodReportController;
 use App\Http\Controllers\PhoneBookController;
+use App\Http\Controllers\ProductAsliController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductFareiAsliController;
+use App\Http\Controllers\ProductFareiController;
 use App\Http\Controllers\ProductNoUnitController;
 use App\Http\Controllers\ProductsBarcodeController;
 use App\Http\Controllers\ProductsBenefitController;
@@ -64,6 +70,7 @@ use App\Http\Controllers\SellStatisticsReportController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SpentChequeController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\TafsilController;
 use App\Http\Controllers\TarafHesabBenefitController;
 use App\Http\Controllers\TarafHesabBuyReportController;
 use App\Http\Controllers\TarafHesabController;
@@ -80,13 +87,19 @@ use App\Http\Controllers\WithdrawalPartnerController;
 
 // Taarife Payeh
 Route::get('/', [HomeController::class, 'index'])->name('/');
+Route::resource('account-group', AccountGroupController::class);
 Route::resource('account-headings', AccountHeadingController::class);
+Route::resource('kol', KolController::class);
+Route::resource('moein', MoeinController::class);
+Route::resource('tafsil', TafsilController::class);
 Route::resource('arzesh-afzoude-groups', ArzeshAfzoudeGroupController::class);
 Route::resource('bank-accounts', BankAccountController::class);
 Route::resource('banks-types', BankTypeController::class);
 Route::resource('cities', CityController::class);
 Route::resource('fund', FundController::class);
 Route::resource('product-farei-asli', ProductFareiAsliController::class);
+Route::resource('product-asli', ProductAsliController::class);
+Route::resource('product-farei', ProductFareiController::class);
 Route::resource('product-no-unit', ProductNoUnitController::class);
 Route::resource('products', ProductController::class);
 Route::resource('services', ServiceController::class);
@@ -112,6 +125,7 @@ Route::resource('factors-types-report', FactorsTypesReportController::class);
 Route::resource('period-report', PeriodReportController::class);
 Route::resource('sell-report', SellReportController::class);
 Route::resource('sell-statistics-report', SellStatisticsReportController::class);
+Route::resource('customer-report', CustomerReportController::class);
 Route::resource('taraf-hesab-buy-report', TarafHesabBuyReportController::class);
 
 
@@ -178,13 +192,19 @@ Route::resource('users', UserController::class);
 Route::resource('phone-book', PhoneBookController::class);
 
 // Fetch Routes
+Route::get('fetch-account-group', [AccountGroupController::class, 'fetchAccountGroup']);
 Route::get('fetch-account-heading', [AccountHeadingController::class, 'fetchAccountHeading']);
+Route::get('fetch-kol', [KolController::class, 'fetchKol']);
+Route::get('fetch-moein', [MoeinController::class, 'fetchMoein']);
+Route::get('fetch-tafsil', [TafsilController::class, 'fetchTafsil']);
 Route::get('fetch-arzesh-afzoude-groups', [ArzeshAfzoudeGroupController::class, 'fetchArzeshAfzoudeGroups']);
 Route::get('fetch-bank-accounts', [BankAccountController::class, 'fetchBankAccounts']);
 Route::get('fetch-banks-types', [BankTypeController::class, 'fetchBanksTypes']);
 Route::get('fetch-cities', [CityController::class, 'fetchCities']);
 Route::get('fetch-fund', [FundController::class, 'fetchFund']);
 Route::get('fetch-product-farei-asli', [ProductFareiAsliController::class, 'fetchProductFareiAsli']);
+Route::get('fetch-product-asli', [ProductAsliController::class, 'fetchProductAsli']);
+Route::get('fetch-product-farei', [ProductFareiController::class, 'fetchProductFarei']);
 Route::get('fetch-product-no-unit', [ProductNoUnitController::class, 'fetchProductNoUnit']);
 Route::get('fetch-product', [ProductController::class, 'fetchProduct']);
 Route::get('fetch-service', [ServiceController::class, 'fetchService']);
@@ -205,6 +225,7 @@ Route::get('fetch-factors-types-report', [FactorsTypesReportController::class, '
 Route::get('fetch-period-report', [PeriodReportController::class, 'fetchPeriodReport']);
 Route::get('fetch-sell-report', [SellReportController::class, 'fetchSellReport']);
 Route::get('fetch-sell-statistics-report', [SellStatisticsReportController::class, 'fetchSellStatisticsReport']);
+Route::get('fetch-customer-report', [CustomerReportController::class, 'fetchCustomerReport']);
 Route::get('fetch-taraf-hesab-buy-report', [TarafHesabBuyReportController::class, 'fetchTarafHesabBuyReport']);
 Route::get('fetch-factors-benefit', [FactorsBenefitController::class, 'fetchFactorsBenefit']);
 Route::get('fetch-products-benefit', [ProductsBenefitController::class, 'fetchProductsBenefit']);
@@ -254,5 +275,7 @@ Route::get('fetch-users', [UserController::class, 'fetchUser']);
 Route::get('fetch-phone-book', [PhoneBookController::class, 'fetchPhoneBook']);
 
 // Report Routes
-Route::get('/pdf', [FactorsTypesReportController::class, 'generate'])->name('generate');
-Route::get('/csv', [CityController::class, 'exportCSV'])->name('exportCSV');
+Route::get('/taraf-hesab-pdf', [TarafHesabController::class, 'tarafHesabPDF'])->name('tarafHesabPDF');
+Route::get('/address-print-pdf/{id}', [TarafHesabController::class, 'addressPrintPDF'])->name('addressPrintPDF');
+Route::get('/factors-types-report-pdf', [FactorsTypesReportController::class, 'factorsTypesReportPDF'])->name('factorsTypesReportPDF');
+Route::get('/city-csv', [CityController::class, 'cityCSV'])->name('cityCSV');

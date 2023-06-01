@@ -50,6 +50,7 @@
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>معرفی گروه اصلی و فرعی کالا</p>
                             </a>
+
                         </li>
                         <li class="nav-item">
                             <a href={{ route('products.index') }} class="nav-link">
@@ -91,6 +92,12 @@
                             <a href={{ route('fund.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>معرفی درآمد / هزینه / صندوق</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('account-group.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>معرفی گروه حساب</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -193,6 +200,12 @@
                             <a href={{ route('sell-statistics-report.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>گزارش آماری فروش بر اساس کالا</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('customer-report.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>گزارش آماری فروش بر اساس مشتری</p>
                             </a>
                         </li>
                         <li class="nav-item">

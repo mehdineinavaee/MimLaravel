@@ -56,7 +56,6 @@
             e.preventDefault();
             var product_no_unit_id = $(this).val();
             // console.log(product_no_unit_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -70,6 +69,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_product_no_unit_id").val(product_no_unit_id);
                         $("#edit_code").val(response.product_no_unit.code);
                         $("#edit_title").val(response.product_no_unit.title);

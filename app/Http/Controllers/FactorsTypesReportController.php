@@ -9,7 +9,7 @@ use PDF;
 
 class FactorsTypesReportController extends Controller
 {
-    public function generate()
+    public function factorsTypesReportPDF()
     {
         $cities = City::get();
 

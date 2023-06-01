@@ -123,3 +123,28 @@ $(document).on("click", ".delete_btn", function (e) {
     },
   });
 });
+
+$(document).ready(function () {
+  var im = new Inputmask("(999)99999999");
+  im.mask($(".inputMaskTel"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("(999)99999999");
+  im.mask($(".inputMaskFax"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("9999-999-9999");
+  im.mask($(".inputMaskPhone"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("9999999999");
+  im.mask($(".inputMaskNationalCode"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("9999999999");
+  im.mask($(".inputMaskZipCode"));
+});

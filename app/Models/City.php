@@ -16,4 +16,9 @@ class City extends Model
         $records = DB::table('cities')->select('city_code', 'city_name')->get()->toArray();
         return $records;
     }
+
+    public function taraf_hesabs()
+    {
+        return $this->hasMany(TarafHesab::class);
+    }
 }

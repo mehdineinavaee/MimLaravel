@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('fullname')->nullable(); // نام و نام خانوادگی
             $table->string('zip_code')->nullable(); // کد پستی
             $table->string('phone'); // موبایل
-            $table->string('city')->nullable(); // شهر
+            // city_id رابطه با جدول شهرها
             $table->string('broker')->nullable(); // واسطه فروش
             $table->string('commission')->nullable(); // پور سانت
             $table->string('address')->nullable(); // آدرس

@@ -9,7 +9,7 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن دریافت از طرف حساب" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
@@ -82,52 +82,52 @@
                     $.each(response.receive_from_the_accounts, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-            <td>" +
+                <td>" +
                             (index + 1) +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.taraf_hesab_name +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.form_date +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.form_number +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.cash_amount +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.considerations1 +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.date +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.bank_account_details +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.deposit_amount +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.wage +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.issue_tracking +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.considerations2 +
                             "</td>\
-            <td>" +
+                <td>" +
                             item.paid_discount +
                             '</td>\
-            <td style="text-align: center"><button type="button" value="' +
+                <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_receive_from_the_account btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-            <button type="button" value="/receive-from-the-account/' +
+                <button type="button" value="/receive-from-the-account/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-            </tr>'
+                </tr>'
                         );
                     });
                 },

@@ -83,7 +83,6 @@
             e.preventDefault();
             var fund_id = $(this).val();
             // console.log(bank_accounts_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -97,6 +96,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_fund_id").val(fund_id);
                         $("#edit_form_type").val(response.fund.form_type);
                         $("#edit_daramad_code").val(response.fund.daramad_code);

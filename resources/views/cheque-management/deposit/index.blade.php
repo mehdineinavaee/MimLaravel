@@ -9,7 +9,7 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن چک به حساب" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
@@ -76,43 +76,43 @@
                     $.each(response.deposits, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                                    <td>" +
+                                                                        <td>" +
                             (index + 1) +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.form_number +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.form_date +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.place +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.mark_back +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.serial_number +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.total +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.due_date +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.bank_account_details +
                             "</td>\
-                                                                    <td>" +
+                                                                        <td>" +
                             item.payer +
                             '</td>\
-                                                                    <td style="text-align: center"><button type="button" value="' +
+                                                                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_deposit btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                                    <button type="button" value="/deposit/' +
+                                                                        <button type="button" value="/deposit/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                                    </tr>'
+                                                                        </tr>'
                         );
                     });
                 },

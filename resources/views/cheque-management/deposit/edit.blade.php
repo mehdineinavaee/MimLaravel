@@ -111,7 +111,6 @@
             e.preventDefault();
             var deposit_id = $(this).val();
             // console.log(deposit_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -125,6 +124,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_deposit_id").val(deposit_id);
                         $("#edit_form_number").val(response.deposit.form_number);
                         $("#edit_form_date").val(response.deposit.form_date);

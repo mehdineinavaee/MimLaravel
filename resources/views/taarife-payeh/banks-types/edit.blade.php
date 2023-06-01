@@ -56,7 +56,6 @@
             e.preventDefault();
             var banks_types_id = $(this).val();
             // console.log(banks_types_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -70,6 +69,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_banks_types_id").val(banks_types_id);
                         $("#edit_bank_code").val(response.banks_types.bank_code);
                         $("#edit_bank_name").val(response.banks_types.bank_name);

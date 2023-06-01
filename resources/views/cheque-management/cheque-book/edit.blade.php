@@ -82,7 +82,6 @@
             e.preventDefault();
             var cheque_book_id = $(this).val();
             // console.log(cheque_book_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -96,6 +95,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_cheque_book_id").val(cheque_book_id);
                         $("#edit_code").val(response.cheque_book.code);
                         $("#edit_receive_date").val(response.cheque_book.receive_date);

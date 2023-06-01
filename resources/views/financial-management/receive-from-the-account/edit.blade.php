@@ -259,7 +259,6 @@
             e.preventDefault();
             var receive_from_the_account_id = $(this).val();
             // console.log(receive_from_the_account_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -273,6 +272,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_receive_from_the_account_id").val(receive_from_the_account_id);
                         $("#edit_taraf_hesab_name").val(response.receive_from_the_account
                             .taraf_hesab_name);

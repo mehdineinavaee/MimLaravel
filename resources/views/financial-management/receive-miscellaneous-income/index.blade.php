@@ -9,7 +9,7 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن دریافت درآمد متفرقه" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
@@ -80,49 +80,49 @@
                     $.each(response.receive_miscellaneous_income, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                    <td>" +
+                                        <td>" +
                             (index + 1) +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.income_title +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.form_date +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.form_number +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.cash_amount +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.considerations1 +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.date +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.bank_account_details +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.deposit_amount +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.wage +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.issue_tracking +
                             "</td>\
-                                    <td>" +
+                                        <td>" +
                             item.considerations2 +
                             '</td>\
-                                    <td style="text-align: center"><button type="button" value="' +
+                                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_receive_miscellaneous_income btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                    <button type="button" value="/receive-miscellaneous-income/' +
+                                        <button type="button" value="/receive-miscellaneous-income/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                    </tr>'
+                                        </tr>'
                         );
                     });
                 },

@@ -4,4 +4,7 @@
     @include('common.breadcrumbs', [
         'data' => [['title' => 'معرفی گروه اصلی و فرعی کالا', 'url' => url()->current()]],
     ])
+
+
+
 @endsection

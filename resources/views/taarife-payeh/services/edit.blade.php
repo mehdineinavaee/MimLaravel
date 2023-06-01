@@ -72,7 +72,6 @@
             e.preventDefault();
             var service_id = $(this).val();
             // console.log(service_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -86,6 +85,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_service_id").val(service_id);
                         $("#edit_service_code").val(response.service.service_code);
                         $("#edit_service_name").val(response.service.service_name);

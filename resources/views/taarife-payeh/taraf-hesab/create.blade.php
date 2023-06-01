@@ -113,8 +113,8 @@
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="add_zip_code">کد پستی</label>
-                                <input type="text" id="add_zip_code" name="add_zip_code" class="form-control"
-                                    autocomplete="off" />
+                                <input type="text" id="add_zip_code" name="add_zip_code"
+                                    class="form-control leftToRight leftAlign inputMaskZipCode" autocomplete="off" />
                                 <div id="add_zip_code_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -125,7 +125,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
-                                    <input type="text" id="add_phone" name="add_phone" class="form-control"
+                                    <input type="text" id="add_phone" name="add_phone"
+                                        class="form-control leftToRight leftAlign inputMaskPhone"
                                         autocomplete="off" />
                                     <div id="add_phone_error" style="margin-right:38px;" class="invalid-feedback">
                                     </div>
@@ -138,14 +139,11 @@
                                 <select id="add_city" name="add_city" class="form-control select2"
                                     style="width: 100%;">
                                     <option value="" selected>شهر را انتخاب کنید</option>
-                                    {{-- @foreach ($publishers as $publisher) --}}
-                                    <option value="1">
-                                        تهران
-                                    </option>
-                                    <option value="2">
-                                        یزد
-                                    </option>
-                                    {{-- @endforeach --}}
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}">
+                                            {{ $city->city_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <div id="add_city_error" class="invalid-feedback"></div>
                             </div>
@@ -156,14 +154,11 @@
                                 <select id="add_broker" name="add_broker" class="form-control select2"
                                     style="width: 100%;">
                                     <option value="" selected>واسطه فروش را انتخاب کنید</option>
-                                    {{-- @foreach ($publishers as $publisher) --}}
-                                    <option value="1">
-                                        واسطه فروش 1
-                                    </option>
-                                    <option value="2">
-                                        واسطه فروش 2
-                                    </option>
-                                    {{-- @endforeach --}}
+                                    @foreach ($vaseteh_foroosh as $item)
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->fullname }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <div id="add_broker_error" class="invalid-feedback"></div>
                             </div>
@@ -221,7 +216,8 @@
                             <div class="form-group mb-3">
                                 <label for="add_national_code">کد ملی</label>
                                 <input type="text" id="add_national_code" name="add_national_code"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control leftToRight leftAlign inputMaskNationalCode"
+                                    autocomplete="off" />
                                 <div id="add_national_code_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -253,8 +249,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
-                                    <input type="text" id="add_fax" name="add_fax" class="form-control"
-                                        autocomplete="off" />
+                                    <input type="text" id="add_fax" name="add_fax"
+                                        class="form-control leftToRight leftAlign inputMaskFax" autocomplete="off" />
                                     <div id="add_fax_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -266,8 +262,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
-                                    <input type="text" id="add_tel" name="add_tel" class="form-control"
-                                        placeholder="تلفن را به همراه پیش شماره وارد کنید" autocomplete="off" />
+                                    <input type="text" id="add_tel" name="add_tel"
+                                        class="form-control leftToRight leftAlign inputMaskTel" autocomplete="off" />
                                     <div id="add_tel_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -301,7 +297,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="add_website">وب سایت</label>
                                 <input type="text" id="add_website" name="add_website" class="form-control"
@@ -319,23 +315,25 @@
                         <div class="form-group mb-3">
                             <label for="add_credit_limit">سقف اعتبار</label>
                             <input type="text" id="add_credit_limit" name="add_credit_limit" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'add_credit_limit_price');" />
                             <div id="add_credit_limit_error" class="invalid-feedback"></div>
+                            <div id="add_credit_limit_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                         <div class="border border-1 box">
                             <h5>نوع عملکرد</h5>
                             <div class="form-check row pb-2 px-3" style="padding-right:2rem !important">
                                 <div class="col-12">
-                                    <label class="form-check-label" for="opt1">
+                                    <label class="form-check-label" for="add_opt1">
                                         <input class="form-check-input" type="radio" name="group1"
-                                            id="opt1">
+                                            id="add_opt1">
                                         فقط هشداری
                                     </label>
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-check-label" for="opt2">
+                                    <label class="form-check-label" for="add_opt2">
                                         <input class="form-check-input" type="radio" name="group1"
-                                            id="opt2">
+                                            id="add_opt2">
                                         منع فروش
                                     </label>
                                 </div>
@@ -345,16 +343,16 @@
                             <h5>نحوه محاسبه اعتبار طرف حساب</h5>
                             <div class="form-check row pb-2 px-3" style="padding-right:2rem !important">
                                 <div class="col-12">
-                                    <label class="form-check-label" for="opt3">
+                                    <label class="form-check-label" for="add_opt3">
                                         <input class="form-check-input" type="radio" name="group2"
-                                            id="opt3">
+                                            id="add_opt3">
                                         مانده مشتری + چک های پاس نشده
                                     </label>
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-check-label" for="opt4">
+                                    <label class="form-check-label" for="add_opt4">
                                         <input class="form-check-input" type="radio" name="group2"
-                                            id="opt4">
+                                            id="add_opt4">
                                         مانده مشتری
                                     </label>
                                 </div>
@@ -364,7 +362,7 @@
                             <p style="display:contents;">
                                 برای محاسبه مبلغ چک های پاس نشده چک های خرج نشده ای که تاریخ سر رسید آن ها
                             </p>
-                            <input type="number" id="add_txt" name="add_txt" class="form-control"
+                            <input type="number" id="add_not_spent" name="add_not_spent" class="form-control"
                                 style="width:17%; display:inline;" autocomplete="off" />
                             <p style="display:contents;">
                                 روز قبل از تاریخ فاکتور باشند وصول شده تلقی گردد.
@@ -388,56 +386,150 @@
             $(document).on('click', '.addTarafHesab', function(e) {
                 e.preventDefault();
 
-                var add_sellerCheckBox = document.getElementById("add_sellerCheckBox").checked;
-                if (add_sellerCheckBox) {
-                    alert("Selected");
+                if (document.getElementById("add_sellerCheckBox").checked) {
+                    var add_sellerCheckBox = "فعال";
                 } else {
-                    alert("Not Selected");
+                    var add_sellerCheckBox = "غیرفعال";
                 }
 
-                // var data = {
-                //     'code': $('#add_code').val(),
-                //     'fullname': $('#add_fullname').val(),
-                //     'phone': $('#add_phone').val(),
-                // }
-                // // console.log(data);
+                if (document.getElementById("add_buyerCheckBox").checked) {
+                    var add_buyerCheckBox = "فعال";
+                } else {
+                    var add_buyerCheckBox = "غیرفعال";
+                }
 
-                // $.ajaxSetup({
-                //     headers: {
-                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                //     }
-                // });
+                if (document.getElementById("add_brokerCheckBox").checked) {
+                    var add_brokerCheckBox = "فعال";
+                } else {
+                    var add_brokerCheckBox = "غیرفعال";
+                }
 
-                // $.ajax({
-                //     type: "POST",
-                //     url: "/taraf-hesab",
-                //     data: data,
-                //     dataType: "json",
+                if (document.getElementById("add_investorCheckBox").checked) {
+                    var add_investorCheckBox = "فعال";
+                } else {
+                    var add_investorCheckBox = "غیرفعال";
+                }
 
-                //     success: function(response) {
-                //         Swal.fire(
-                //                 response.message,
-                //                 response.status,
-                //                 'success'
-                //             )
-                //             .then((result) => {
-                //                 $("#createInfo").modal("hide");
-                //                 $("#createInfo").find("input").val("");
-                //                 add_clearErrors();
-                //                 fetchTarafHesab();
-                //             });
-                //     },
+                if (document.getElementById("add_blockListCheckBox").checked) {
+                    var add_blockListCheckBox = "فعال";
+                } else {
+                    var add_blockListCheckBox = "غیرفعال";
+                }
 
-                //     error: function(errors) {
-                //         add_clearErrors();
-                //         $.each(errors.responseJSON.errors, function(key, err_values) {
-                //             // console.log(key);
-                //             // console.log(err_values);
-                //             $("#add_" + key + "_error").text(err_values[0]);
-                //             $("#add_" + key).addClass("is-invalid");
-                //         });
-                //     }
-                // });
+                if (document.getElementById("add_activeCheckBox").checked) {
+                    var add_activeCheckBox = "فعال";
+                } else {
+                    var add_activeCheckBox = "غیرفعال";
+                }
+
+                if (document.getElementById("add_movePhoneCheckBox").checked) {
+                    var add_movePhoneCheckBox = "فعال";
+                } else {
+                    var add_movePhoneCheckBox = "غیرفعال";
+                }
+
+                if ($('#add_opt1').is(':checked')) {
+                    var add_opt1 = "فعال";
+                } else {
+                    var add_opt1 = "غیرفعال";
+                }
+
+                if ($('#add_opt2').is(':checked')) {
+                    var add_opt2 = "فعال";
+                } else {
+                    var add_opt2 = "غیرفعال";
+                }
+
+                if ($('#add_opt3').is(':checked')) {
+                    var add_opt3 = "فعال";
+                } else {
+                    var add_opt3 = "غیرفعال";
+                }
+
+                if ($('#add_opt4').is(':checked')) {
+                    var add_opt4 = "فعال";
+                } else {
+                    var add_opt4 = "غیرفعال";
+                }
+
+                var data = {
+                    'chk_seller': add_sellerCheckBox,
+                    'chk_buyer': add_buyerCheckBox,
+                    'chk_broker': add_brokerCheckBox,
+                    'chk_investor': add_investorCheckBox,
+                    'chk_block_list': add_blockListCheckBox,
+                    'chk_active': add_activeCheckBox,
+                    'chk_move_phone': add_movePhoneCheckBox,
+                    'code': $('#add_code').val(),
+                    'fullname': $('#add_fullname').val(),
+                    'zip_code': $('#add_zip_code').val(),
+                    'phone': $('#add_phone').val(),
+                    'city': $('#add_city').val(),
+                    'broker': $('#add_broker').val(),
+                    'commission': $('#add_commission').val(),
+                    'address': $('#add_address').val(),
+                    'person_type': $('#add_person_type').val(),
+                    'ceo_fullname': $('#add_ceo_fullname').val(),
+                    'national_code': $('#add_national_code').val(),
+                    'birthdate': $('#add_birthdate').val(),
+                    'occupation': $('#add_occupation').val(),
+                    'fax': $('#add_fax').val(),
+                    'tel': $('#add_tel').val(),
+                    'activity_type': $('#add_activity_type').val(),
+                    'economic_code': $('#add_economic_code').val(),
+                    'email': $('#add_email').val(),
+                    'website': $('#add_website').val(),
+                    'credit_limit': $('#add_credit_limit').val(),
+                    'opt_warning': add_opt1,
+                    'opt_prohibition_sale': add_opt2,
+                    'opt_uncleared': add_opt3,
+                    'opt_customer_balance': add_opt4,
+                    'not_spent': $('#add_not_spent').val(),
+                }
+                // console.log(data);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/taraf-hesab",
+                    data: data,
+                    dataType: "json",
+
+                    success: function(response) {
+                        Swal.fire(
+                                response.message,
+                                response.status,
+                                'success'
+                            )
+                            .then(() => {
+                                if (response.reload == "true") {
+                                    window.location.reload();
+                                } else {
+                                    $("#createInfo").modal("hide");
+                                    $("#createInfo").find("input").val("");
+                                    add_clearErrors();
+                                    add_clearPrice();
+                                    add_defaultSelectedValue();
+                                    fetchTarafHesab();
+                                }
+                            });
+                    },
+
+                    error: function(errors) {
+                        add_clearErrors();
+                        $.each(errors.responseJSON.errors, function(key, err_values) {
+                            // console.log(key);
+                            // console.log(err_values);
+                            $("#add_" + key + "_error").text(err_values[0]);
+                            $("#add_" + key).addClass("is-invalid");
+                        });
+                    }
+                });
             });
         });
 
@@ -469,6 +561,9 @@
             $("#add_tab01 h6").removeClass("text-muted");
             $("fieldset").removeClass("show");
             add_clearErrors();
+            add_clearPrice();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -478,6 +573,37 @@
             $("#add_fullname").removeClass("is-invalid");
             $("#add_phone_error").text("");
             $("#add_phone").removeClass("is-invalid");
+            $("#add_city_error").text("");
+            $("#add_city").removeClass("is-invalid");
+            $("#add_fax_error").text("");
+            $("#add_fax").removeClass("is-invalid");
+            $("#add_tel_error").text("");
+            $("#add_tel").removeClass("is-invalid");
+            $("#add_email_error").text("");
+            $("#add_email").removeClass("is-invalid");
+            $("#add_website_error").text("");
+            $("#add_website").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_credit_limit_price").text("");
+        }
+
+        function add_defaultSelectedValue() {
+            $('#add_sellerCheckBox').prop('checked', false);
+            $('#add_buyerCheckBox').prop('checked', false);
+            $('#add_brokerCheckBox').prop('checked', false);
+            $('#add_investorCheckBox').prop('checked', false);
+            $('#add_blockListCheckBox').prop('checked', false);
+            $('#add_activeCheckBox').prop('checked', false);
+            $('#add_movePhoneCheckBox').prop('checked', false);
+            $('#add_opt1').prop('checked', false);
+            $('#add_opt2').prop('checked', false);
+            $('#add_opt3').prop('checked', false);
+            $('#add_opt4').prop('checked', false);
+            $(add_city).prop('selectedIndex', 0).change();
+            $(add_broker).prop('selectedIndex', 0).change();
+            $(add_person_type).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

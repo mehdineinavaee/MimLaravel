@@ -45,7 +45,6 @@
             e.preventDefault();
             var city_id = $(this).val();
             // console.log(city_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -59,6 +58,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_city_id").val(city_id);
                         $("#edit_city_code").val(response.city.city_code);
                         $("#edit_city_name").val(response.city.city_name);

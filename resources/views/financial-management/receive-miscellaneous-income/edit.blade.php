@@ -211,7 +211,6 @@
             e.preventDefault();
             var receive_miscellaneous_income_id = $(this).val();
             // console.log(receive_miscellaneous_income_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -225,6 +224,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_receive_miscellaneous_income_id").val(receive_miscellaneous_income_id);
                         $("#edit_income_title").val(response.receive_miscellaneous_income
                             .income_title);

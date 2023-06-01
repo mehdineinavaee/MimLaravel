@@ -9,10 +9,15 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن طرف حساب" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
+                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank">
+                    <i class="fa-lg fa fa-file" title="فهرست طرف های حساب" data-toggle="tooltip"></i>
+                    <br />
+                    فهرست
+                </a>
             </h3>
         </div>
         <!-- /.card-header -->
@@ -53,7 +58,7 @@
                         <th style="min-width: 130px">چک های پاس نشده</th>
                         <th style="min-width: 100px">مانده مشتری</th>
                         <th style="min-width: 140px">چک های خرج نشده</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 180px"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,6 +109,7 @@
 
     @include('taarife-payeh.taraf-hesab.create')
     @include('taarife-payeh.taraf-hesab.edit')
+    @include('taarife-payeh.taraf-hesab.show')
     @include('common.delete')
 @endsection
 
@@ -122,116 +128,134 @@
                     $.each(response.taraf_hesabs, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.chk_seller +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.chk_buyer +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.chk_broker +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.chk_investor +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.chk_block_list +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             item.chk_active +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             item.chk_move_phone +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.code +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.fullname +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.zip_code +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.phone +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.city +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.broker +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.commission +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.address +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.person_type +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.ceo_fullname +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.national_code +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.birthdate +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.occupation +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.fax +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.tel +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.activity_type +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.economic_code +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.email +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.website +
                             "</td>\
-                                                                                                                                                    <td>" +
-                            item.credit_limit +
+                                                                <td>" +
+                            new Intl.NumberFormat().format(item.credit_limit) +
+                            " ریال" +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.opt_warning +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.opt_prohibition_sale +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.opt_uncleared +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.opt_customer_balance +
                             "</td>\
-                                                                                                                                                    <td>" +
+                                                                <td>" +
                             item.not_spent +
                             '</td>\
-                                                                                                                                                                                                <td style="text-align: center"><button type="button" value="' +
+                                                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_taraf_hesab btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                                                                                                                                                                <button type="button" value="/taraf-hesab/' +
+                                                        <button type="button" value="/taraf-hesab/' +
                             item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                                                                                                                                                                </tr>'
+                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button>\
+                                                        <button type="button" value="' +
+                            item.id +
+                            '" class="turnover btn btn-primary btn-sm"><i class="fa fa-money text-light" title="گردش حساب" data-toggle="tooltip"></i></button>\
+                                                        <button type="button" value="' +
+                            item.id +
+                            '" class="address_print btn btn-primary btn-sm"><i class="fa fa-print" title="چاپ آدرس" data-toggle="tooltip"></i></button>\
+                                                                </tr>'
                         );
                     });
                 },
             });
         }
+
+        $(document).on('click', '.address_print', function(e) {
+            e.preventDefault();
+            var address_print_id = $(this).val();
+            // console.log(address_print_id);
+
+            $.ajax({
+                type: "GET",
+                url: "/address-print-pdf/" + address_print_id,
+            });
+        });
     </script>
 @endpush

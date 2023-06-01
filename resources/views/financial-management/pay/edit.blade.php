@@ -224,7 +224,6 @@
             e.preventDefault();
             var pay_id = $(this).val();
             // console.log(pay_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -238,6 +237,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_pay_id").val(pay_id);
                         $("#edit_cost_title").val(response.pay
                             .cost_title);

@@ -9,7 +9,7 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن برداشت شرکا" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
@@ -70,31 +70,31 @@
                     $.each(response.withdrawal_partner, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                            <td>" +
+                                <td>" +
                             (index + 1) +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.from_taraf_hesab +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.to_taraf_hesab +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.form_date +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.form_number +
                             "</td>\
-                            <td>" +
+                                <td>" +
                             item.cash_amount +
                             '</td>\
-                            <td style="text-align: center"><button type="button" value="' +
+                                <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_withdrawal_partner btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                            <button type="button" value="/withdrawal-partner/' +
+                                <button type="button" value="/withdrawal-partner/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                            </tr>'
+                                </tr>'
                         );
                     });
                 },

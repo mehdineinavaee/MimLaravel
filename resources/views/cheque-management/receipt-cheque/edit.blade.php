@@ -103,7 +103,6 @@
             e.preventDefault();
             var receipt_cheque_id = $(this).val();
             // console.log(receipt_cheque_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -117,6 +116,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_receipt_cheque_id").val(receipt_cheque_id);
                         $("#edit_form_date").val(response.receipt_cheque.form_date);
                         $("#edit_form_number").val(response.receipt_cheque.form_number);

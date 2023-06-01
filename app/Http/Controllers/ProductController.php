@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
+use App\Models\ProductNoUnit;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -23,7 +24,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('taarife-payeh/products.index');
+        $product_unit = ProductNoUnit::orderBy('title', 'asc')->get();
+        return view('taarife-payeh/products.index')
+            ->with('product_unit', $product_unit);
     }
 
     /**
@@ -46,8 +49,17 @@ class ProductController extends Controller
     {
         $product = new Product();
         $product->code = $request->input('code');
+        $product->main_group = $request->input('main_group');
+        $product->sub_group = $request->input('sub_group');
         $product->product_name = $request->input('product_name');
-        $product->product_unit = $request->input('product_unit');
+        $product->sell_price = str_replace(",", "", $request->input('sell_price'));
+        $product->value_added_group = $request->input('value_added_group');
+        $product->chk_active = $request->input('chk_active');
+        $product->introduce_date = $request->input('introduce_date');
+        $product->latest_buy_price = str_replace(",", "", $request->input('latest_buy_price'));
+        $product->main_barcode = $request->input('main_barcode');
+        $product->order_point = $request->input('order_point');
+        $product->product_unit()->associate($request->product_unit);
         $product->save();
         return response()->json([
             'status' => 200,
@@ -100,8 +112,17 @@ class ProductController extends Controller
         $product = Product::find($id);
         if ($product) {
             $product->code = $request->input('code');
+            $product->main_group = $request->input('main_group');
+            $product->sub_group = $request->input('sub_group');
             $product->product_name = $request->input('product_name');
-            $product->product_unit = $request->input('product_unit');
+            $product->sell_price = str_replace(",", "", $request->input('sell_price'));
+            $product->value_added_group = $request->input('value_added_group');
+            $product->chk_active = $request->input('chk_active');
+            $product->introduce_date = $request->input('introduce_date');
+            $product->latest_buy_price = str_replace(",", "", $request->input('latest_buy_price'));
+            $product->main_barcode = $request->input('main_barcode');
+            $product->order_point = $request->input('order_point');
+            $product->product_unit()->associate($request->product_unit);
             $product->update();
             return response()->json([
                 'status' => 200,

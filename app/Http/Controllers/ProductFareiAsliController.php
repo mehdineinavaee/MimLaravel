@@ -14,6 +14,9 @@ class ProductFareiAsliController extends Controller
      */
     public function index()
     {
+        // $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
+        // $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
+        // return view('taarife-payeh/product-farei-asli.index', compact('categories', 'allCategories'));
         return view('taarife-payeh/product-farei-asli.index');
     }
 

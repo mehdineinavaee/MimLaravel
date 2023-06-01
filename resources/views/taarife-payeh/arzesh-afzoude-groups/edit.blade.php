@@ -71,7 +71,6 @@
             e.preventDefault();
             var arzesh_afzoude_groups_id = $(this).val();
             // console.log(arzesh_afzoude_groups_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -85,6 +84,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_arzesh_afzoude_groups_id").val(arzesh_afzoude_groups_id);
                         $("#edit_group_name").val(response.arzesh_afzoude_group.group_name);
                         $("#edit_financial_year").val(response.arzesh_afzoude_group.financial_year);

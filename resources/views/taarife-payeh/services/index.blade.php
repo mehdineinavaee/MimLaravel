@@ -9,7 +9,7 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن خدمات" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
@@ -68,31 +68,31 @@
                     $.each(response.services, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                                <td>" +
+                                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.service_code +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.service_name +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.price +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.group +
                             "</td>\
-                                                                <td>" +
+                                                                    <td>" +
                             item.chk_active +
                             '</td>\
-                                                                <td style="text-align: center"><button type="button" value="' +
+                                                                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_service btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                                <button type="button" value="/services/' +
+                                                                    <button type="button" value="/services/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                                </tr>'
+                                                                    </tr>'
                         );
                     });
                 },

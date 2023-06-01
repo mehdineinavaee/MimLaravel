@@ -120,7 +120,6 @@
             e.preventDefault();
             var staff_id = $(this).val();
             // console.log(staff_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -134,6 +133,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_staff_id").val(staff_id);
                         $("#edit_first_name").val(response.staff.first_name);
                         $("#edit_last_name").val(response.staff.last_name);

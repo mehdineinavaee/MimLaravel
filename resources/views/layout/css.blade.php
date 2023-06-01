@@ -34,5 +34,9 @@
 <link href="{{ asset('assets/css/treeview.css') }}" rel="stylesheet">
 <!-- my css -->
 <link rel="stylesheet" href="{{ asset('assets/css/my-css.css') }}">
+<!-- shabnam css -->
+<link rel="stylesheet" href="{{ asset('assets/fonts/shabnam/font-face.css') }}">
+<!-- vazir css -->
+<link rel="stylesheet" href="{{ asset('assets/fonts/vazir/font-face.css') }}">
 
 @stack('css')

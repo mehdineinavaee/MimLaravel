@@ -56,7 +56,6 @@
             e.preventDefault();
             var warehouse_id = $(this).val();
             // console.log(warehouse_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -70,6 +69,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_warehouse_id").val(warehouse_id);
                         $("#edit_code").val(response.warehouse.code);
                         $("#edit_title").val(response.warehouse.title);

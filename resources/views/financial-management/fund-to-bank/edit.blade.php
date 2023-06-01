@@ -85,7 +85,6 @@
             e.preventDefault();
             var fund_to_bank_id = $(this).val();
             // console.log(fund_to_bank_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -99,6 +98,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_fund_to_bank_id").val(fund_to_bank_id);
                         $("#edit_bank").val(response.fund_to_bank
                             .bank);

@@ -102,7 +102,6 @@
             e.preventDefault();
             var transfer_person_id = $(this).val();
             // console.log(transfer_person_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -116,6 +115,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_transfer_person_id").val(transfer_person_id);
                         $("#edit_from_taraf_hesab").val(response.transfer_person
                             .from_taraf_hesab);

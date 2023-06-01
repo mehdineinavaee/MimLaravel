@@ -10,7 +10,7 @@ use Excel;
 
 class CityController extends Controller
 {
-    public function exportCSV()
+    public function cityCSV()
     {
         return Excel::download(new CityExport, 'citylist.xlsx');
     }

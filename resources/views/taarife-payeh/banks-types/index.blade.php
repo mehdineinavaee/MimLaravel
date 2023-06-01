@@ -9,7 +9,7 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن بانک" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
@@ -64,22 +64,22 @@
                     $.each(response.banks_types, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                            <td>" +
+                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                            <td>" +
+                                                <td>" +
                             item.bank_code +
                             "</td>\
-                                            <td>" +
+                                                <td>" +
                             item.bank_name +
                             '</td>\
-                                            <td style="text-align: center"><button type="button" value="' +
+                                                <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_banks_types btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                            <button type="button" value="/banks-types/' +
+                                                <button type="button" value="/banks-types/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                            </tr>'
+                                                </tr>'
                         );
                     });
                 },

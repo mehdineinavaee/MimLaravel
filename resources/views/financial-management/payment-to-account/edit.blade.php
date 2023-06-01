@@ -354,7 +354,6 @@
             e.preventDefault();
             var payment_to_account_id = $(this).val();
             // console.log(payment_to_account_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -368,6 +367,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_payment_to_account_id").val(payment_to_account_id);
                         $(edit_taraf_hesab_name).prop('selectedIndex', response.payment_to_account
                             .taraf_hesab_name).change();

@@ -9,4 +9,9 @@ class ProductNoUnit extends Model
 {
     use HasFactory;
     public $fillable = ['code', 'title', 'chk_active'];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

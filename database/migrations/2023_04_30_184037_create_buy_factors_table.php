@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('buy_factors', function (Blueprint $table) {
             $table->id();
+            $table->string('buy_factor_no'); // شماره
             $table->timestamps();
         });
     }

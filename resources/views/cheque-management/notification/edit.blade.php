@@ -111,7 +111,6 @@
             e.preventDefault();
             var notification_id = $(this).val();
             // console.log(notification_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -125,6 +124,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_notification_id").val(notification_id);
                         $("#edit_form_date").val(response.notification.form_date);
                         $("#edit_form_number").val(response.notification.form_number);

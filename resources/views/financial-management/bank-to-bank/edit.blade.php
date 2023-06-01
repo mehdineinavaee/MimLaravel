@@ -228,7 +228,6 @@
             e.preventDefault();
             var bank_to_bank_id = $(this).val();
             // console.log(bank_to_bank_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -242,6 +241,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_bank_to_bank_id").val(bank_to_bank_id);
                         $("#edit_from_bank").val(response.bank_to_bank
                             .from_bank);

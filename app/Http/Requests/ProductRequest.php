@@ -25,8 +25,16 @@ class ProductRequest extends FormRequest
     {
         return [
             'code' => 'required', // |numeric|digits_between:2,4
+            'main_group' => 'required',
+            'sub_group' => 'required',
             'product_name' => 'required|max:50',
-            'product_unit' => 'required|max:50',
+            'sell_price' => 'required',
+            'value_added_group' => 'required',
+            'introduce_date' => 'required',
+            'latest_buy_price' => 'required',
+            'main_barcode' => 'required',
+            'order_point' => 'required',
+            'product_unit' => 'required',
         ];
     }
 }

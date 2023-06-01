@@ -13,7 +13,7 @@ class BuyFactorRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class BuyFactorRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'buy_factor_no' => 'required',
         ];
     }
 }

@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountGroup;
 use App\Models\AccountHeading;
+use App\Models\Kol;
+use App\Models\Moein;
 use Illuminate\Http\Request;
 
 class AccountHeadingController extends Controller
 {
+    public function fetchAccountHeading()
+    {
+        $acount_headings = AccountHeading::orderBy('id', 'desc')->get();
+        return response()->json([
+            'acount_headings' => $acount_headings,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +25,13 @@ class AccountHeadingController extends Controller
      */
     public function index()
     {
-        return view('taarife-payeh/account-headings.index');
+        $account_groups = AccountGroup::all();
+        $kols = Kol::all();
+        $moeins = Moein::all();
+        return view('taarife-payeh/account-headings.index')
+            ->with('account_groups', $account_groups)
+            ->with('kols', $kols)
+            ->with('moeins', $moeins);
     }
 
     /**

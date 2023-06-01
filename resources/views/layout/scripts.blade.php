@@ -47,6 +47,8 @@
 <script src="{{ asset('plugins/datatables/dataTables.bootstrap4.js') }}"></script>
 <!--====== sweetalert2 Java Script ======-->
 <script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
+<!-- inputmask -->
+<script src="{{ asset('https://unpkg.com/inputmask@5.0.6/dist/inputmask.js') }}"></script>
 <!-- My JS -->
 <script src="{{ asset('assets/js/my-js.js') }}"></script>
 <!-- Tree View -->

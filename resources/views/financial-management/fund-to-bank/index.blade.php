@@ -9,7 +9,7 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus"></i>
+                    <i class="fa-lg fa fa-plus" title="افزودن صندوق به بانک" data-toggle="tooltip"></i>
                     <br />
                     جدید
                 </button>
@@ -68,31 +68,31 @@
                     $.each(response.fund_to_bank, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                <td>" +
+                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                <td>" +
+                                    <td>" +
                             item.bank +
                             "</td>\
-                                <td>" +
+                                    <td>" +
                             item.form_date +
                             "</td>\
-                                <td>" +
+                                    <td>" +
                             item.form_number +
                             "</td>\
-                                <td>" +
+                                    <td>" +
                             item.cash_amount +
                             "</td>\
-                                <td>" +
+                                    <td>" +
                             item.considerations +
                             '</td>\
-                                <td style="text-align: center"><button type="button" value="' +
+                                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_fund_to_bank btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                <button type="button" value="/fund-to-bank/' +
+                                    <button type="button" value="/fund-to-bank/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                </tr>'
+                                    </tr>'
                         );
                     });
                 },

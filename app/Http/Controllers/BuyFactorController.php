@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BuyFactorRequest;
 use App\Models\BuyFactor;
 use Illuminate\Http\Request;
 
 class BuyFactorController extends Controller
 {
+    public function fetchBuyFactor(request $request)
+    {
+        $buy_factors = BuyFactor::orderBy('buy_factor_no', 'asc')->get();
+        return view('buy-sell/buy-factor.data', compact('buy_factors'));
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +40,15 @@ class BuyFactorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BuyFactorRequest $request)
     {
-        //
+        $buy_factor = new BuyFactor();
+        $buy_factor->buy_factor_no = $request->input('buy_factor_no');
+        $buy_factor->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'فاکتور خرید ذخیره شد',
+        ]);
     }
 
     /**
@@ -55,9 +68,20 @@ class BuyFactorController extends Controller
      * @param  \App\Models\BuyFactor  $buyFactor
      * @return \Illuminate\Http\Response
      */
-    public function edit(BuyFactor $buyFactor)
+    public function edit($id)
     {
-        //
+        $buy_factor = BuyFactor::find($id);
+        if ($buy_factor) {
+            return response()->json([
+                'status' => 200,
+                'buy_factor' => $buy_factor,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'فاکتور خرید یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -67,9 +91,22 @@ class BuyFactorController extends Controller
      * @param  \App\Models\BuyFactor  $buyFactor
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, BuyFactor $buyFactor)
+    public function update(BuyFactorRequest $request, $id)
     {
-        //
+        $buy_factor = BuyFactor::find($id);
+        if ($buy_factor) {
+            $buy_factor->buy_factor_no = $request->input('buy_factor_no');
+            $buy_factor->update();
+            return response()->json([
+                'status' => 200,
+                'message' => 'فاکتور خرید ویرایش شد',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
+        }
     }
 
     /**
@@ -78,8 +115,13 @@ class BuyFactorController extends Controller
      * @param  \App\Models\BuyFactor  $buyFactor
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BuyFactor $buyFactor)
+    public function destroy($id)
     {
-        //
+        $buy_factor = BuyFactor::find($id);
+        $buy_factor->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'فاکتور خرید حذف شد',
+        ]);
     }
 }

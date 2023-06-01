@@ -111,7 +111,6 @@
             e.preventDefault();
             var returning_cheque_id = $(this).val();
             // console.log(returning_cheque_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -125,6 +124,8 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
+
                         $("#edit_returning_cheque_id").val(returning_cheque_id);
                         $("#edit_form_date").val(response.returning_cheque.form_date);
                         $("#edit_form_number").val(response.returning_cheque.form_number);

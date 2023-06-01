@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class SellFactor extends Model
 {
     use HasFactory;
+    protected $table = "sell_factors";
 }

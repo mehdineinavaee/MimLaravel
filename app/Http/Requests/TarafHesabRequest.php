@@ -26,7 +26,12 @@ class TarafHesabRequest extends FormRequest
         return [
             'code' => 'required', // |numeric|digits_between:2,4
             'fullname' => 'required|regex:/^[\pL\s\-]+$/u|max:50',
-            'phone' => 'required|numeric|digits:11',
+            'phone' => 'required', // |numeric|digits:11
+            'city' => 'required',
+            'fax' => 'nullable',
+            'tel' => 'nullable',
+            'email' => 'nullable|email',
+            'website' => 'nullable|url',
         ];
     }
 }

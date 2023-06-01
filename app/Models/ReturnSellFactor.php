@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ReturnSellFactor extends Model
 {
     use HasFactory;
+    protected $table = "return_sell_factors";
 }

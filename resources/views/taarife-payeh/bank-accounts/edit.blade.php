@@ -126,7 +126,6 @@
             e.preventDefault();
             var bank_accounts_id = $(this).val();
             // console.log(bank_accounts_id);
-            $("#editInfo").modal("show");
 
             $.ajax({
                 type: "GET",
@@ -140,6 +139,7 @@
                             text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
                         })
                     } else {
+                        $("#editInfo").modal("show");
                         $("#edit_bank_accounts_id").val(bank_accounts_id);
                         $("#edit_account_type").val(response.bank_accounts.account_type);
                         $("#edit_account_number").val(response.bank_accounts.account_number);
