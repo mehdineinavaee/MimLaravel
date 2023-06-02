@@ -65,7 +65,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_factor_date" name="edit_factor_date"
-                                    class="normal-example form-control" autocomplete="off" />
+                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_factor_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -277,7 +277,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchSellFactor();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

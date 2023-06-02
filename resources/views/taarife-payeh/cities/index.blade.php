@@ -17,13 +17,13 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
                         <th style="min-width: 200px">کد شهر</th>
                         <th style="min-width: 200px">نام شهر</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,7 +34,7 @@
                         <th>ردیف</th>
                         <th>کد شهر</th>
                         <th>نام شهر</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -49,12 +49,12 @@
 
 @push('js')
     <script>
-        fetchCities();
+        fetchData();
 
-        function fetchCities() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-cities",
+                url: "/cities",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -62,22 +62,22 @@
                     $.each(response.cities, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                        <td>" +
+                                                                        <td>" +
                             (index + 1) +
                             "</td>\
-                                                        <td>" +
+                                                                        <td>" +
                             item.city_code +
                             "</td>\
-                                                        <td>" +
+                                                                        <td>" +
                             item.city_name +
                             '</td>\
-                                                        <td style="text-align: center"><button type="button" value="' +
+                                                                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_city btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                        <button type="button" value="/cities/' +
+                                                                        <button type="button" value="/cities/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                        </tr>'
+                                                                        </tr>'
                         );
                     });
                 },

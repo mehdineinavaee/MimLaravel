@@ -130,7 +130,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchServices();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

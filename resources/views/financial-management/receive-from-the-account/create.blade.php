@@ -38,7 +38,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="add_form_date" name="add_form_date"
-                                class="normal-example form-control" autocomplete="off" />
+                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="add_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                 <fieldset id="add_tab021">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
+                            <table class="table-responsive table table-hover table-bordered table-striped"
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
@@ -142,7 +142,7 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="add_date" name="add_date"
-                                        class="normal-example form-control" autocomplete="off" />
+                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                     <div id="add_date_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -212,7 +212,7 @@
                 <fieldset id="add_tab051">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
+                            <table class="table-responsive table table-hover table-bordered table-striped"
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
@@ -296,7 +296,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchReceiveFromTheAccount();
+                                fetchData();
                             });
                     },
 

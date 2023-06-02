@@ -129,7 +129,7 @@
                                 $("#createKol").find("input").val("");
                                 add_kolClearErrors();
                                 add_defaultSelectedValue();
-                                fetchKol();
+                                fetchData();
                             });
                     },
 

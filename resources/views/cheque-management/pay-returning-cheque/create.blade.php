@@ -20,7 +20,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_form_date" name="add_form_date"
-                                    class="normal-example form-control" autocomplete="off" />
+                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_form_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_due_date" name="add_due_date"
-                                    class="normal-example form-control" autocomplete="off" />
+                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_due_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -145,7 +145,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchPayReturningCheque();
+                                fetchData();
                             });
                     },
 

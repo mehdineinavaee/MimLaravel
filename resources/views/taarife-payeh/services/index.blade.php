@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -26,7 +26,7 @@
                         <th style="min-width: 150px">قیمت ارائه خدمات</th>
                         <th style="min-width: 150px">گروه ارزش افزوده</th>
                         <th style="min-width: 90px">فعال</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,7 +40,7 @@
                         <th>قیمت ارائه خدمات</th>
                         <th>گروه ارزش افزوده</th>
                         <th>فعال</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -55,12 +55,12 @@
 
 @push('js')
     <script>
-        fetchServices();
+        fetchData();
 
-        function fetchServices() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-service",
+                url: "/service",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -68,31 +68,31 @@
                     $.each(response.services, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                                                    <td>" +
+                                                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                                                    <td>" +
+                                                                                    <td>" +
                             item.service_code +
                             "</td>\
-                                                                    <td>" +
+                                                                                    <td>" +
                             item.service_name +
                             "</td>\
-                                                                    <td>" +
+                                                                                    <td>" +
                             item.price +
                             "</td>\
-                                                                    <td>" +
+                                                                                    <td>" +
                             item.group +
                             "</td>\
-                                                                    <td>" +
+                                                                                    <td>" +
                             item.chk_active +
                             '</td>\
-                                                                    <td style="text-align: center"><button type="button" value="' +
+                                                                                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_service btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                                    <button type="button" value="/services/' +
+                                                                                    <button type="button" value="/services/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                                    </tr>'
+                                                                                    </tr>'
                         );
                     });
                 },

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
-    public function fetchWarehouse()
+    public function fetchData()
     {
         $warehouses = Warehouse::orderBy('id', 'desc')->get();
         return response()->json([

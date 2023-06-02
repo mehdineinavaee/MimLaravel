@@ -37,7 +37,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="edit_form_date" name="edit_form_date"
-                                class="normal-example form-control" autocomplete="off" />
+                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="edit_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                 <fieldset id="edit_tab021">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
+                            <table class="table-responsive table table-hover table-bordered table-striped"
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
@@ -136,7 +136,7 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="edit_date" name="edit_date"
-                                        class="normal-example form-control" autocomplete="off" />
+                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                     <div id="edit_date_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchBankToFund();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

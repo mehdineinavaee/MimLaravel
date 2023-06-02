@@ -100,7 +100,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchAccountGroup();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

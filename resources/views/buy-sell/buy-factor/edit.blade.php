@@ -91,7 +91,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchBuyFactor();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

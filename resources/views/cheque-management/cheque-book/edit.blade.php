@@ -29,7 +29,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_receive_date" name="edit_receive_date"
-                                    class="normal-example form-control" autocomplete="off" />
+                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_receive_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchChequeBook();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

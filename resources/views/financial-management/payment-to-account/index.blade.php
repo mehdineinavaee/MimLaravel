@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -34,7 +34,7 @@
                         <th style="min-width: 90px">شماره پیگیری</th>
                         <th style="min-width: 90px">ملاحظات</th>
                         <th style="min-width: 90px">تخفیف پرداختی</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody id="data">
@@ -56,7 +56,7 @@
                         <th>شماره پیگیری</th>
                         <th>ملاحظات</th>
                         <th>تخفیف پرداختی</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -71,12 +71,12 @@
 
 @push('js')
     <script>
-        fetchPaymentToAccount();
+        fetchData();
 
-        function fetchPaymentToAccount() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-payment-to-account",
+                url: "/payment-to-account",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -84,58 +84,58 @@
                     $.each(response.payment_to_accounts, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                        <td>" +
+                                        <td>" +
                             (index + 1) +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.taraf_hesab_name +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.form_date +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.form_number +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             new Intl.NumberFormat().format(item.cash_amount) +
                             " ریال" +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.considerations1 +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.payment_for +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.date +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.bank_account_details +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             new Intl.NumberFormat().format(item.deposit_amount) +
                             " ریال" +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             new Intl.NumberFormat().format(item.wage) +
                             " ریال" +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.issue_tracking +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.considerations2 +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.paid_discount +
                             '</td>\
-                        <td style="text-align: center"><button type="button" value="' +
+                                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_payment_to_account btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                        <button type="button" value="/payment-to-account/' +
+                                        <button type="button" value="/payment-to-account/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                        </tr>'
+                                        </tr>'
                         );
                     });
                 },

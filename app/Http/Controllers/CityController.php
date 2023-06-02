@@ -15,7 +15,7 @@ class CityController extends Controller
         return Excel::download(new CityExport, 'citylist.xlsx');
     }
 
-    public function fetchCities()
+    public function fetchData()
     {
         $cities = City::orderBy('city_name', 'asc')->get();
         return response()->json([

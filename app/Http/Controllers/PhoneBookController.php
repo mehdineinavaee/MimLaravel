@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class PhoneBookController extends Controller
 {
-    public function fetchPhoneBook()
+    public function fetchData()
     {
         $phone_book = PhoneBook::orderBy('contact', 'asc')->get();
         return response()->json([

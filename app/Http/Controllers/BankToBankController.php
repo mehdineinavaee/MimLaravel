@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class BankToBankController extends Controller
 {
-    public function fetchBankToBank()
+    public function fetchData()
     {
         $bank_to_bank = BankToBank::orderBy('id', 'desc')->get();
         return response()->json([

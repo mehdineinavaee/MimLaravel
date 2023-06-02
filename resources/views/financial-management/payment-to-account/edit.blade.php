@@ -38,7 +38,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="edit_form_date" name="edit_form_date"
-                                class="normal-example form-control" autocomplete="off" />
+                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="edit_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -137,7 +137,8 @@
                                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                             </div>
                                             <input type="text" id="edit_tab2_issue_date"
-                                                name="edit_tab2_issue_date" class="normal-example form-control"
+                                                name="edit_tab2_issue_date"
+                                                class="leftToRight leftAlign inputMaskDate form-control"
                                                 autocomplete="off" />
                                             <div id="edit_tab2_issue_date_error" class="invalid-feedback"></div>
                                         </div>
@@ -151,7 +152,8 @@
                                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                             </div>
                                             <input type="text" id="edit_tab2_due_date" name="edit_tab2_due_date"
-                                                class="normal-example form-control" autocomplete="off" />
+                                                class="leftToRight leftAlign inputMaskDate form-control"
+                                                autocomplete="off" />
                                             <div id="edit_tab2_due_date_error" class="invalid-feedback"></div>
                                         </div>
                                     </div>
@@ -189,7 +191,7 @@
                 <fieldset class="show" id="edit_tab031">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
+                            <table class="table-responsive table table-hover table-bordered table-striped"
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
@@ -232,7 +234,7 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="edit_date" name="edit_date"
-                                        class="normal-example form-control" autocomplete="off" />
+                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                     <div id="edit_date_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -307,7 +309,7 @@
                 <fieldset id="edit_tab061">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <table id="example1" class="table-responsive table table-bordered table-striped"
+                            <table class="table-responsive table table-hover table-bordered table-striped"
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
@@ -454,7 +456,7 @@
                             edit_clearErrors();
                             edit_clearPrice();
                             edit_defaultSelectedValue();
-                            fetchPaymentToAccount();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

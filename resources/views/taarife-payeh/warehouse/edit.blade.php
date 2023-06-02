@@ -109,7 +109,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchWarehouse();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

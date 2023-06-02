@@ -293,6 +293,12 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
+                            <a href={{ route('riali-report.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>گزارش موجودی ریالی به تفکیک انبار</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href={{ route('products-barcode.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>چاپ بارکد کالاها</p>

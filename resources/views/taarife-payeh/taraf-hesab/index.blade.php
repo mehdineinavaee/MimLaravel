@@ -22,46 +22,46 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th>فروشنده</th>
-                        <th>خریدار</th>
-                        <th style="min-width: 90px">واسطه فروش</th>
-                        <th style="min-width: 90px">سرمایه گذار</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 90px">فروشنده</th>
+                        <th style="min-width: 90px">خریدار</th>
+                        <th style="min-width: 120px">واسطه فروش</th>
+                        <th style="min-width: 120px">سرمایه گذار</th>
                         <th style="min-width: 90px">بد حساب</th>
                         <th style="min-width: 60px">فعال</th>
-                        <th style="min-width: 150px">انتقال به دفترچه تلفن</th>
-                        <th style="min-width: 50px">کد</th>
-                        <th style="min-width: 120px">نام و نام خانوادگی</th>
+                        <th style="min-width: 170px">انتقال به دفترچه تلفن</th>
+                        <th style="min-width: 120px">کد</th>
+                        <th style="min-width: 250px">نام و نام خانوادگی</th>
                         <th style="min-width: 90px">کد پستی</th>
-                        <th>موبایل</th>
-                        <th style="min-width: 90px">شهر</th>
+                        <th style="min-width: 140px">موبایل</th>
+                        <th style="min-width: 120px">شهر</th>
                         <th style="min-width: 120px">واسطه فروش</th>
                         <th style="min-width: 100px">پور سانت</th>
                         <th style="min-width: 400px">آدرس</th>
-                        <th style="min-width: 240px">نوع شخص</th>
-                        <th style="min-width: 120px">مدیر عامل</th>
-                        <th>کد ملی</th>
-                        <th style="min-width: 80px">تاریخ تولد</th>
-                        <th style="min-width: 120px">شغل</th>
-                        <th>فاکس</th>
-                        <th>تلفن</th>
-                        <th style="min-width: 80px">نوع فعالیت</th>
-                        <th style="min-width: 80px">کد اقتصادی</th>
-                        <th style="min-width: 130px">ایمیل</th>
-                        <th style="min-width: 130px">وب سایت</th>
-                        <th style="min-width: 120px">سقف اعتبار</th>
-                        <th style="min-width: 100px">فقط هشداری</th>
-                        <th style="min-width: 90px">منع فروش</th>
-                        <th style="min-width: 130px">چک های پاس نشده</th>
-                        <th style="min-width: 100px">مانده مشتری</th>
-                        <th style="min-width: 140px">چک های خرج نشده</th>
-                        <th style="min-width: 180px"></th>
+                        <th style="min-width: 280px">نوع شخص</th>
+                        <th style="min-width: 250px">مدیر عامل</th>
+                        <th style="min-width: 100px">کد ملی</th>
+                        <th style="min-width: 100px">تاریخ تولد</th>
+                        <th style="min-width: 400px">شغل</th>
+                        <th style="min-width: 100px">فاکس</th>
+                        <th style="min-width: 100px">تلفن</th>
+                        <th style="min-width: 120px">نوع فعالیت</th>
+                        <th style="min-width: 120px">کد اقتصادی</th>
+                        <th style="min-width: 300px">ایمیل</th>
+                        <th style="min-width: 300px">وب سایت</th>
+                        <th style="min-width: 200px">سقف اعتبار</th>
+                        <th style="min-width: 120px">فقط هشداری</th>
+                        <th style="min-width: 100px">منع فروش</th>
+                        <th style="min-width: 160px">چک های پاس نشده</th>
+                        <th style="min-width: 110px">مانده مشتری</th>
+                        <th style="min-width: 160px">چک های خرج نشده</th>
+                        <th style="min-width: 180px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -99,10 +99,12 @@
                         <th>چک های پاس نشده</th>
                         <th>مانده مشتری</th>
                         <th>چک های خرج نشده</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -115,134 +117,17 @@
 
 @push('js')
     <script>
-        fetchTarafHesab();
+        fetchData();
 
-        function fetchTarafHesab() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-taraf-hesab",
+                url: "/taraf-hesab",
                 dataType: "json",
                 success: function(response) {
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.taraf_hesabs, function(index, item) {
-                        $("tbody").append(
-                            "<tr>\
-                                                                <td>" +
-                            (index + 1) +
-                            "</td>\
-                                                                <td>" +
-                            item.chk_seller +
-                            "</td>\
-                                                                <td>" +
-                            item.chk_buyer +
-                            "</td>\
-                                                                <td>" +
-                            item.chk_broker +
-                            "</td>\
-                                                                <td>" +
-                            item.chk_investor +
-                            "</td>\
-                                                                <td>" +
-                            item.chk_block_list +
-                            "</td>\
-                                                                <td>" +
-                            item.chk_active +
-                            "</td>\
-                                                                <td>" +
-                            item.chk_move_phone +
-                            "</td>\
-                                                                <td>" +
-                            item.code +
-                            "</td>\
-                                                                <td>" +
-                            item.fullname +
-                            "</td>\
-                                                                <td>" +
-                            item.zip_code +
-                            "</td>\
-                                                                <td>" +
-                            item.phone +
-                            "</td>\
-                                                                <td>" +
-                            item.city +
-                            "</td>\
-                                                                <td>" +
-                            item.broker +
-                            "</td>\
-                                                                <td>" +
-                            item.commission +
-                            "</td>\
-                                                                <td>" +
-                            item.address +
-                            "</td>\
-                                                                <td>" +
-                            item.person_type +
-                            "</td>\
-                                                                <td>" +
-                            item.ceo_fullname +
-                            "</td>\
-                                                                <td>" +
-                            item.national_code +
-                            "</td>\
-                                                                <td>" +
-                            item.birthdate +
-                            "</td>\
-                                                                <td>" +
-                            item.occupation +
-                            "</td>\
-                                                                <td>" +
-                            item.fax +
-                            "</td>\
-                                                                <td>" +
-                            item.tel +
-                            "</td>\
-                                                                <td>" +
-                            item.activity_type +
-                            "</td>\
-                                                                <td>" +
-                            item.economic_code +
-                            "</td>\
-                                                                <td>" +
-                            item.email +
-                            "</td>\
-                                                                <td>" +
-                            item.website +
-                            "</td>\
-                                                                <td>" +
-                            new Intl.NumberFormat().format(item.credit_limit) +
-                            " ریال" +
-                            "</td>\
-                                                                <td>" +
-                            item.opt_warning +
-                            "</td>\
-                                                                <td>" +
-                            item.opt_prohibition_sale +
-                            "</td>\
-                                                                <td>" +
-                            item.opt_uncleared +
-                            "</td>\
-                                                                <td>" +
-                            item.opt_customer_balance +
-                            "</td>\
-                                                                <td>" +
-                            item.not_spent +
-                            '</td>\
-                                                        <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_taraf_hesab btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                        <button type="button" value="/taraf-hesab/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button>\
-                                                        <button type="button" value="' +
-                            item.id +
-                            '" class="turnover btn btn-primary btn-sm"><i class="fa fa-money text-light" title="گردش حساب" data-toggle="tooltip"></i></button>\
-                                                        <button type="button" value="' +
-                            item.id +
-                            '" class="address_print btn btn-primary btn-sm"><i class="fa fa-print" title="چاپ آدرس" data-toggle="tooltip"></i></button>\
-                                                                </tr>'
-                        );
-                    });
                 },
             });
         }

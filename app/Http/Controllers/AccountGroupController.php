@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class AccountGroupController extends Controller
 {
-    public function fetchAccountGroup()
+    public function fetchData()
     {
         $account_groups = AccountGroup::orderBy('name', 'asc')->get();
         return response()->json([

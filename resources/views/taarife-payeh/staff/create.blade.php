@@ -30,18 +30,18 @@
                     </div>
                     <div class="border border-1 box col-lg-12 col-md-12 col-sm-12">
                         <label>جنسیت</label>
-                        <div class="col-6 col-md-6 col-sm-12" style="margin-right:2rem !important; !important">
+                        <div class="col-6 col-md-6 col-sm-12" style="margin-right:2rem !important;">
                             <div class="form-group">
-                                <label for="opt1">
-                                    <input class="form-check-input" type="radio" name="group1" id="opt1">
+                                <label for="add_opt1">
+                                    <input class="form-check-input" type="radio" name="group1" id="add_opt1">
                                     مرد
                                 </label>
                             </div>
                         </div>
-                        <div class="col-6 col-md-6 col-sm-12" style="margin-right:2rem !important; !important">
+                        <div class="col-6 col-md-6 col-sm-12" style="margin-right:2rem !important;">
                             <div class="form-group">
-                                <label for="opt2">
-                                    <input class="form-check-input" type="radio" name="group1" id="opt2">
+                                <label for="add_opt2">
+                                    <input class="form-check-input" type="radio" name="group1" id="add_opt2">
                                     زن
                                 </label>
                             </div>
@@ -80,8 +80,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
-                                <input type="text" id="add_birthdate" name="add_birthdate" class="form-control"
-                                    autocomplete="off" />
+                                <input type="text" id="add_birthdate" name="add_birthdate"
+                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_birthdate_error" style="margin-right:38px;" class="invalid-feedback">
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                         <div class="form-group mb-3">
                             <label for="add_national_code">شماره شناسنامه</label>
                             <input type="text" id="add_national_code" name="add_national_code"
-                                class="form-control" autocomplete="off" />
+                                class="leftToRight leftAlign inputMaskNationalCode form-control" autocomplete="off" />
                             <div id="add_national_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -119,10 +119,36 @@
             $(document).on('click', '.addStaff', function(e) {
                 e.preventDefault();
 
+                if (document.getElementById("add_activeCheckBox").checked) {
+                    var add_activeCheckBox = "فعال";
+                } else {
+                    var add_activeCheckBox = "غیرفعال";
+                }
+
+                if (document.getElementById("add_messengerCheckBox").checked) {
+                    var add_messengerCheckBox = "فعال";
+                } else {
+                    var add_messengerCheckBox = "غیرفعال";
+                }
+
+                if ($('#add_opt1').is(':checked')) {
+                    var add_opt_sex = "مرد";
+                } else if ($('#add_opt2').is(':checked')) {
+                    var add_opt_sex = "زن";
+                } else {
+                    var add_opt_sex = "غیرفعال";
+                }
+
                 var data = {
+                    'chk_active': add_activeCheckBox,
+                    'chk_messenger': add_messengerCheckBox,
+                    'opt_sex': add_opt_sex,
                     'first_name': $('#add_first_name').val(),
                     'last_name': $('#add_last_name').val(),
                     'father': $('#add_father').val(),
+                    'birthdate': $('#add_birthdate').val(),
+                    'national_code': $('#add_national_code').val(),
+                    'occupation': $('#add_occupation').val(),
                 }
                 // console.log(data);
 
@@ -139,6 +165,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -148,7 +176,8 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchStaff();
+                                add_defaultSelectedValue();
+                                fetchData();
                             });
                     },
 
@@ -176,6 +205,8 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -185,6 +216,19 @@
             $("#add_last_name").removeClass("is-invalid");
             $("#add_father_error").text("");
             $("#add_father").removeClass("is-invalid");
+            $("#add_birthdate_error").text("");
+            $("#add_birthdate").removeClass("is-invalid");
+            $("#add_national_code_error").text("");
+            $("#add_national_code").removeClass("is-invalid");
+            $("#add_occupation_error").text("");
+            $("#add_occupation").removeClass("is-invalid");
+        }
+
+        function add_defaultSelectedValue() {
+            $('#add_activeCheckBox').prop('checked', false);
+            $('#add_messengerCheckBox').prop('checked', false);
+            $('#add_opt1').prop('checked', false);
+            $('#add_opt2').prop('checked', false);
         }
     </script>
 @endpush

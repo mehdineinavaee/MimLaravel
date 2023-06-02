@@ -17,14 +17,14 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
                         <th style="min-width: 90px">کد انبار</th>
                         <th style="min-width: 250px">نام انبار</th>
                         <th style="min-width: 90px">فعال</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,7 +36,7 @@
                         <th>کد انبار</th>
                         <th>نام انبار</th>
                         <th>فعال</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -51,12 +51,12 @@
 
 @push('js')
     <script>
-        fetchWarehouse();
+        fetchData();
 
-        function fetchWarehouse() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-warehouse",
+                url: "/warehouse",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -64,25 +64,25 @@
                     $.each(response.warehouses, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                            <td>" +
+                                            <td>" +
                             (index + 1) +
                             "</td>\
-                            <td>" +
+                                            <td>" +
                             item.code +
                             "</td>\
-                            <td>" +
+                                            <td>" +
                             item.title +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.chk_active +
                             '</td>\
-                            <td style="text-align: center"><button type="button" value="' +
+                                            <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_warehouse btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                            <button type="button" value="/warehouse/' +
+                                            <button type="button" value="/warehouse/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                            </tr>'
+                                            </tr>'
                         );
                     });
                 },

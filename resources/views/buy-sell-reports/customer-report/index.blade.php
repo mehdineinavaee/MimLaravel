@@ -71,7 +71,7 @@
                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                         </div>
                                         <input type="text" id="index_from_date" name="index_from_date"
-                                            class="normal-example form-control" autocomplete="off" />
+                                            class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                         <div id="index_from_date_error" class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -84,7 +84,7 @@
                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                         </div>
                                         <input type="text" id="index_to_date" name="index_to_date"
-                                            class="normal-example form-control" autocomplete="off" />
+                                            class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                         <div id="index_to_date_error" class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -187,7 +187,8 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table class="table-responsive table table-bordered table-striped" style="text-align: center; width: 100%">
+            <table class="table-responsive table table-hover table-bordered table-striped"
+                style="text-align: center; width: 100%">
                 <thead>
                     <tr>
                         <th colspan="3">مشخصات طرف حساب</th>
@@ -231,7 +232,8 @@
                 </tfoot>
             </table>
             <br />
-            <table class="table-responsive table table-bordered table-striped" style="text-align: center; width: 100%">
+            <table class="table-responsive table table-hover table-bordered table-striped"
+                style="text-align: center; width: 100%">
                 <thead>
                     <tr style="background-color: #f8f9fa">
                         <th colspan="9">
@@ -281,7 +283,8 @@
                 </tfoot>
             </table>
             <br />
-            <table class="table-responsive table table-bordered table-striped" style="text-align: center; width: 100%">
+            <table class="table-responsive table table-hover table-bordered table-striped"
+                style="text-align: center; width: 100%">
                 <thead>
                     <tr style="background-color: #f8f9fa">
                         <th colspan="9">
@@ -321,12 +324,12 @@
 
 @push('js')
     <script>
-        fetchCustomerReport();
+        fetchData();
 
-        function fetchCustomerReport() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-customer-report",
+                url: "/customer-report",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -334,35 +337,35 @@
                     $.each(response.customer_report, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                                                                                                                                                                                                        <td>" +
+                                                                                                                                                                                                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                                                                                                                                                                                                        <td>" +
+                                                                                                                                                                                                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             "</td>\
-                                                                                                                                                                                                                                                                <td>" +
+                                                                                                                                                                                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                                                                                                                                                                                                    </tr>'
+                                                                                                                                                                                                                                                                                </tr>'
                         );
                     });
                 },

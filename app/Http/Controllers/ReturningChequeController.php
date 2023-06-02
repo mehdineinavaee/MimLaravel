@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ReturningChequeController extends Controller
 {
-    public function fetchReturningCheque()
+    public function fetchData()
     {
         $returning_cheque = ReturningCheque::orderBy('id', 'desc')->get();
         return response()->json([

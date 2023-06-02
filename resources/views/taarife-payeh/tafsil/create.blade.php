@@ -123,7 +123,7 @@
                                 $("#createTafsil").find("input").val("");
                                 add_tafsilClearErrors();
                                 add_defaultSelectedValue();
-                                fetchTafsil();
+                                fetchData();
                             });
                     },
 

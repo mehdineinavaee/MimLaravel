@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class TafsilController extends Controller
 {
-    public function fetchTafsil()
+    public function fetchData()
     {
         $tafsils = Tafsil::orderBy('id', 'desc')->get();
         return response()->json([

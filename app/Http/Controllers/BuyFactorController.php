@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class BuyFactorController extends Controller
 {
-    public function fetchBuyFactor(request $request)
+    public function fetchData()
     {
         $buy_factors = BuyFactor::orderBy('buy_factor_no', 'asc')->get();
         return view('buy-sell/buy-factor.data', compact('buy_factors'));

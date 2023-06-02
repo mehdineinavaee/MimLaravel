@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ProductNoUnitController extends Controller
 {
-    public function fetchProductNoUnit()
+    public function fetchData()
     {
         $product_no_units = ProductNoUnit::orderBy('id', 'desc')->get();
         return response()->json([

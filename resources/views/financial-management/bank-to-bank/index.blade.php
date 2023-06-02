@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -33,7 +33,7 @@
                         <th style="min-width: 90px">کارمزد</th>
                         <th style="min-width: 90px">شماره پیگیری</th>
                         <th style="min-width: 90px">ملاحظات</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,7 +54,7 @@
                         <th>کارمزد</th>
                         <th>شماره پیگیری</th>
                         <th>ملاحظات</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -69,12 +69,12 @@
 
 @push('js')
     <script>
-        fetchBankToBank();
+        fetchData();
 
-        function fetchBankToBank() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-bank-to-bank",
+                url: "/bank-to-bank",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -82,52 +82,52 @@
                     $.each(response.bank_to_bank, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                            <td>" +
+                                                            <td>" +
                             (index + 1) +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.from_bank +
                             "</td>\
-                                        <td>" +
+                                                        <td>" +
                             item.to_bank +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.form_date +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.form_number +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.cash_amount +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.considerations1 +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.date +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.bank_account_details +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.deposit_amount +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.wage +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.issue_tracking +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             item.considerations2 +
                             '</td>\
-                                            <td style="text-align: center"><button type="button" value="' +
+                                                            <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_bank_to_bank btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                            <button type="button" value="/bank-to-bank/' +
+                                                            <button type="button" value="/bank-to-bank/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                            </tr>'
+                                                            </tr>'
                         );
                     });
                 },

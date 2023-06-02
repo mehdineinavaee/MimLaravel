@@ -179,7 +179,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchPhoneBook();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

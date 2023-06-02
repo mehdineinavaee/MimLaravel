@@ -22,14 +22,14 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>شماره</th>
                         <th>تاریخ</th>
                         <th>خریدار</th>
                         <th>جمع نهایی</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +41,7 @@
                         <th>تاریخ</th>
                         <th>خریدار</th>
                         <th>جمع نهایی</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -56,12 +56,12 @@
 
 @push('js')
     <script>
-        fetchReturnSellFactor();
+        fetchData();
 
-        function fetchReturnSellFactor() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-return-sell-factor",
+                url: "/return-sell-factor",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -69,26 +69,26 @@
                     $.each(response.return_sell_factors, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-    <td>" +
+                    <td>" +
                             item.sell_factor_no +
                             "</td>\
-    <td>" +
+                    <td>" +
                             item.date +
                             "</td>\
-    <td>" +
+                    <td>" +
                             item.buyer +
                             "</td>\
-    <td>" +
+                    <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-    <td style="text-align: center"><button type="button" value="' +
+                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_return_sell_factor btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-    <button type="button" value="/return-sell-factor/' +
+                    <button type="button" value="/return-sell-factor/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button>\
-    </tr>'
+                    </tr>'
                         );
                     });
                 },

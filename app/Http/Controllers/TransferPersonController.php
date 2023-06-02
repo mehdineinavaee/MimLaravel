@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class TransferPersonController extends Controller
 {
-    public function fetchTransferPerson()
+    public function fetchData()
     {
         $transfer_person = TransferPerson::orderBy('id', 'desc')->get();
         return response()->json([

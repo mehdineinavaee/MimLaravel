@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ReceiveMiscellaneousIncomeController extends Controller
 {
-    public function fetchReceiveMiscellaneousIncome()
+    public function fetchData()
     {
         $receive_miscellaneous_income = ReceiveMiscellaneousIncome::orderBy('id', 'desc')->get();
         return response()->json([

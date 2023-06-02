@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -26,7 +26,7 @@
                         <th style="min-width: 200px">نام درآمد</th>
                         <th style="min-width: 90px">سیستمی</th>
                         <th style="min-width: 90px">فعال</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,7 +40,7 @@
                         <th>نام درآمد</th>
                         <th>سیستمی</th>
                         <th>فعال</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -55,12 +55,12 @@
 
 @push('js')
     <script>
-        fetchFund();
+        fetchData();
 
-        function fetchFund() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-fund",
+                url: "/fund",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -68,31 +68,31 @@
                     $.each(response.funds, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                        <td>" +
+                                        <td>" +
                             (index + 1) +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.form_type +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.daramad_code +
                             "</td>\
-                        <td>" +
+                                        <td>" +
                             item.daramad_name +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             "system" +
                             "</td>\
-                                            <td>" +
+                                                            <td>" +
                             "active" +
                             '</td>\
-                        <td style="text-align: center"><button type="button" value="' +
+                                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_fund btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                        <button type="button" value="/fund/' +
+                                        <button type="button" value="/fund/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                        </tr>'
+                                        </tr>'
                         );
                     });
                 },

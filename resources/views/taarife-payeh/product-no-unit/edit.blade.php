@@ -108,7 +108,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchProductNoUnit();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

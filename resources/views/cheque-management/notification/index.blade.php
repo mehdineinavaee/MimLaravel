@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -30,7 +30,7 @@
                         <th style="min-width: 150px">مشخصات حساب بانکی</th>
                         <th style="min-width: 90px">پرداخت کننده</th>
                         <th style="min-width: 90px">ملاحظات</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,7 +48,7 @@
                         <th>مشخصات حساب بانکی</th>
                         <th>پرداخت کننده</th>
                         <th>ملاحظات</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -63,12 +63,12 @@
 
 @push('js')
     <script>
-        fetchNotification();
+        fetchData();
 
-        function fetchNotification() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-notification",
+                url: "/notification",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -76,43 +76,43 @@
                     $.each(response.notification, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-        <td>" +
+                        <td>" +
                             (index + 1) +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.form_date +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.form_number +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.mark_back +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.serial_number +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.total +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.due_date +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.bank_account_details +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.payer +
                             "</td>\
-        <td>" +
+                        <td>" +
                             item.considerations +
                             '</td>\
-        <td style="text-align: center"><button type="button" value="' +
+                        <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_notification btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-        <button type="button" value="/notification/' +
+                        <button type="button" value="/notification/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-        </tr>'
+                        </tr>'
                         );
                     });
                 },

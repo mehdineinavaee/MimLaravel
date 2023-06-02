@@ -28,6 +28,7 @@ class TarafHesabRequest extends FormRequest
             'fullname' => 'required|regex:/^[\pL\s\-]+$/u|max:50',
             'phone' => 'required', // |numeric|digits:11
             'city' => 'required',
+            // 'birthdate' => 'nullable|date',
             'fax' => 'nullable',
             'tel' => 'nullable',
             'email' => 'nullable|email',

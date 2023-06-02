@@ -98,7 +98,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchCities();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

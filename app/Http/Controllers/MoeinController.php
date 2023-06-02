@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class MoeinController extends Controller
 {
-    public function fetchMoein()
+    public function fetchData()
     {
         $moeins = Moein::orderBy('id', 'desc')->get();
         return response()->json([

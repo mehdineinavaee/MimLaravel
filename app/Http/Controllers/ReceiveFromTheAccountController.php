@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ReceiveFromTheAccountController extends Controller
 {
-    public function fetchReceiveFromTheAccount()
+    public function fetchData()
     {
         $receive_from_the_accounts = ReceiveFromTheAccount::orderBy('id', 'desc')->get();
         return response()->json([

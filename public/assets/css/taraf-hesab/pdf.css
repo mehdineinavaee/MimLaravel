@@ -9,3 +9,8 @@
 .padding {
     padding: 15px;
 }
+
+.ltr {
+    direction: ltr;
+    text-align: right;
+}

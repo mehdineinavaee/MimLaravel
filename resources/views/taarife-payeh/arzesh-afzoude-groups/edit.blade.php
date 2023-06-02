@@ -126,7 +126,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchArzeshAfzoudeGroups();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

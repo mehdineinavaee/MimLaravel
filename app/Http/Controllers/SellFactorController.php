@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class SellFactorController extends Controller
 {
-    public function fetchSellFactor()
+    public function fetchData()
     {
         $sell_factors = SellFactor::orderBy('id', 'desc')->get();
         return response()->json([

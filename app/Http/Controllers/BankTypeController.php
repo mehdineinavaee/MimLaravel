@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class BankTypeController extends Controller
 {
-    public function fetchBanksTypes()
+    public function fetchData()
     {
         $banks_types = BankType::orderBy('id', 'desc')->get();
         return response()->json([

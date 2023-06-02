@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class KolController extends Controller
 {
-    public function fetchKol()
+    public function fetchData()
     {
         $kols = Kol::orderBy('id', 'desc')->get();
         return response()->json([

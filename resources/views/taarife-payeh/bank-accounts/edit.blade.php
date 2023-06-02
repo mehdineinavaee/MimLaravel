@@ -191,7 +191,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchBankAccounts();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

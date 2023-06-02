@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class FundController extends Controller
 {
-    public function fetchFund()
+    public function fetchData()
     {
         $funds = Fund::orderBy('id', 'desc')->get();
         return response()->json([

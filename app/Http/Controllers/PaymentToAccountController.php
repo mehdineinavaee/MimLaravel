@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class PaymentToAccountController extends Controller
 {
-    public function fetchPaymentToAccount()
+    public function fetchData()
     {
         $payment_to_accounts = PaymentToAccount::orderBy('id', 'desc')->get();
         return response()->json([

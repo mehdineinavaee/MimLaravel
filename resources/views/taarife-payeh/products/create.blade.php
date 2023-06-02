@@ -96,7 +96,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_introduce_date" name="add_introduce_date"
-                                    class="form-control normal-example" autocomplete="off" />
+                                    class="form-control leftToRight leftAlign inputMaskDate" autocomplete="off" />
                                 <div id="add_introduce_date_error" style="margin-right:38px;"
                                     class="invalid-feedback">
                                 </div>
@@ -193,7 +193,7 @@
                                 add_clearErrors();
                                 add_clearPrice();
                                 add_defaultSelectedValue();
-                                fetchProducts();
+                                fetchData();
                             });
                     },
 

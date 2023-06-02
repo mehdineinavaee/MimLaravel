@@ -14,7 +14,8 @@
             <div class="modal-body" style="min-height: 330px">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
-                        <table id="addChequeBookListTable" class="table-responsive table table-bordered table-striped"
+                        <table id="addChequeBookListTable"
+                            class="table-responsive table table-hover table-bordered table-striped"
                             style="text-align: center;">
                             <thead>
                                 <tr>

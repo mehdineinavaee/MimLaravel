@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -31,7 +31,7 @@
                         <th style="min-width: 150px">ایمیل</th>
                         <th style="min-width: 150px">وب سایت</th>
                         <th style="min-width: 250px">آدرس</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,7 +50,7 @@
                         <th>ایمیل</th>
                         <th>وب سایت</th>
                         <th>آدرس</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -65,12 +65,12 @@
 
 @push('js')
     <script>
-        fetchPhoneBook();
+        fetchData();
 
-        function fetchPhoneBook() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-phone-book",
+                url: "/phone-book",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -78,46 +78,46 @@
                     $.each(response.phone_book, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                    <td>" +
+                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.contact +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.main_contact +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.occupation +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.mobile +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.fax +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.tel +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.activity_type +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.email +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.website +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.address +
                             '</td>\
-                                    <td style="text-align: center"><button type="button" value="' +
+                                                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_phone_book btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                    <button type="button" value="/phone-book/' +
+                                                    <button type="button" value="/phone-book/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                    </tr>'
+                                                    </tr>'
                         );
                     });
                 },

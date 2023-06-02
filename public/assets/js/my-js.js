@@ -98,6 +98,8 @@ $(document).on("click", ".delete_btn", function (e) {
     type: "DELETE",
     url: url,
     success: function (response) {
+      $("#myData").html(response.output);
+      $("#pagination").html(response.pagination);
       // console.log(response);
       Swal.fire({
         icon: "success",
@@ -147,4 +149,9 @@ $(document).ready(function () {
 $(document).ready(function () {
   var im = new Inputmask("9999999999");
   im.mask($(".inputMaskZipCode"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("9999/99/99");
+  im.mask($(".inputMaskDate"));
 });

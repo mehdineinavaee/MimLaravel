@@ -81,7 +81,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchBanksTypes();
+                                fetchData();
                             });
                     },
 

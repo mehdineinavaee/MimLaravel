@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class AccountHeadingController extends Controller
 {
-    public function fetchAccountHeading()
+    public function fetchData()
     {
         $acount_headings = AccountHeading::orderBy('id', 'desc')->get();
         return response()->json([

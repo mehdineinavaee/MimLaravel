@@ -126,7 +126,7 @@
                                 $("#createMoein").find("input").val("");
                                 add_moeinClearErrors();
                                 add_defaultSelectedValue();
-                                fetchMoein();
+                                fetchData();
                             });
                     },
 

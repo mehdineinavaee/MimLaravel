@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class TarafHesabGroupController extends Controller
 {
+    // public function fetchData()
+    // {
+    //     $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
+    //     $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
+    //     return view('taarife-payeh/taraf-hesab-group.index', compact('categories', 'allCategories'));
+    // }
+
     /**
      * Display a listing of the resource.
      *
@@ -38,20 +45,46 @@ class TarafHesabGroupController extends Controller
      */
     public function store(TarafHesabGroupRequest $request)
     {
-        $input = $request->all();
-        $input['parent_id'] = empty($input['parent_id']) ? 0 : $input['parent_id'];
+        // $input = $request->all();
+        // $input['parent_id'] = empty($input['parent_id']) ? 0 : $input['parent_id'];
 
-        if ($input['parent_id'] == 0) {
+        // if ($input['parent_id'] == 0) {
+        //     $checkingExsist = TarafHesabGroup::where('title', '=', $request->title)->first();
+        //     if ($checkingExsist === null) {
+        //         TarafHesabGroup::create($input);
+        //         return back();
+        //     } else {
+        //         dd("EXIST");
+        //     }
+        // } else {
+        //     TarafHesabGroup::create($input);
+        //     return back();
+        // }
+
+        $taraf_hesab_group = new TarafHesabGroup();
+        $taraf_hesab_group->title = $request->input('title');
+        $taraf_hesab_group->parent_id = empty($request->input('parent_id')) ? 0 : $request->input('parent_id');
+
+        if ($taraf_hesab_group->parent_id == 0) {
             $checkingExsist = TarafHesabGroup::where('title', '=', $request->title)->first();
             if ($checkingExsist === null) {
-                TarafHesabGroup::create($input);
-                return back();
+                $taraf_hesab_group->save();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'داده جدید ذخیره شد',
+                ]);
             } else {
-                dd("EXIST");
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'داده مورد نظر موجود است',
+                ]);
             }
         } else {
-            TarafHesabGroup::create($input);
-            return back();
+            $taraf_hesab_group->save();
+            return response()->json([
+                'status' => 200,
+                'message' => 'داده جدید ذخیره شد',
+            ]);
         }
     }
 

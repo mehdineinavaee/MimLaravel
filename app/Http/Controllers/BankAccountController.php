@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class BankAccountController extends Controller
 {
-    public function fetchBankAccounts()
+    public function fetchData()
     {
         $bank_accounts = BankAccount::orderBy('id', 'desc')->get();
         return response()->json([

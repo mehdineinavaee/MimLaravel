@@ -4,4 +4,5 @@
     @include('common.breadcrumbs', [
         'data' => [['title' => 'فاکتور ضایعات', 'url' => url()->current()]],
     ])
+
 @endsection

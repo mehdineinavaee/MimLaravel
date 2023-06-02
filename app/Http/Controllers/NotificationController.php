@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    public function fetchNotification()
+    public function fetchData()
     {
         $notification = Notification::orderBy('id', 'desc')->get();
         return response()->json([

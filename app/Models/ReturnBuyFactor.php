@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ReturnBuyFactor extends Model
 {
     use HasFactory;
+    protected $table = "return_buy_factors";
 }

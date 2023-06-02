@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -27,7 +27,7 @@
                         <th style="min-width: 65px">تعداد برگه</th>
                         <th style="min-width: 90px">از سریال</th>
                         <th style="min-width: 90px">تا سریال</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +42,7 @@
                         <th>تعداد برگه</th>
                         <th>از سریال</th>
                         <th>تا سریال</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -57,12 +57,12 @@
 
 @push('js')
     <script>
-        fetchChequeBook();
+        fetchData();
 
-        function fetchChequeBook() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-cheque-book",
+                url: "/cheque-book",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -70,34 +70,34 @@
                     $.each(response.cheque_book, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                    <td>" +
+                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.code +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.receive_date +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.bank_account_details +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.quantity +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.cheque_from +
                             "</td>\
-                                    <td>" +
+                                                    <td>" +
                             item.cheque_to +
                             '</td>\
-                                    <td style="text-align: center"><button type="button" value="' +
+                                                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_cheque_book btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                    <button type="button" value="/cheque-book/' +
+                                                    <button type="button" value="/cheque-book/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                    </tr>'
+                                                    </tr>'
                         );
                     });
                 },

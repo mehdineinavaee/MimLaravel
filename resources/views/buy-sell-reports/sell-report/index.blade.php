@@ -106,7 +106,8 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table class="table-responsive table table-bordered table-striped" style="text-align: center; width: 100%">
+            <table class="table-responsive table table-hover table-bordered table-striped"
+                style="text-align: center; width: 100%">
                 <thead>
                     <tr>
                         <th>زمان</th>
@@ -152,12 +153,12 @@
 
 @push('js')
     <script>
-        fetchSellReport();
+        fetchData();
 
-        function fetchSellReport() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-sell-report",
+                url: "/sell-report",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -165,35 +166,35 @@
                     $.each(response.sell_report, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                            <td>" +
+                                                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                                                            <td>" +
+                                                                                    <td>" +
                             item.product_code +
                             "</td>\
-                                                                            <td>" +
+                                                                                    <td>" +
                             item.product_name +
                             "</td>\
-                                                                            <td>" +
+                                                                                    <td>" +
                             item.amount +
                             "</td>\
-                                                                            <td>" +
+                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                <td>" +
+                                                                                        <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                <td>" +
+                                                                                        <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                            </tr>'
+                                                                                    </tr>'
                         );
                     });
                 },

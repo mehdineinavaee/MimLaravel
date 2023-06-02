@@ -17,7 +17,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -27,7 +27,7 @@
                         <th style="min-width: 200px">شماره فرم</th>
                         <th style="min-width: 90px">مبلغ نقدی</th>
                         <th style="min-width: 90px">شرح سند</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +42,7 @@
                         <th>شماره فرم</th>
                         <th>مبلغ نقدی</th>
                         <th>شرح سند</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -50,19 +50,19 @@
         <!-- /.card-body -->
     </div>
 
-    @include('financial-management.withdrawal-partner.create')
-    @include('financial-management.withdrawal-partner.edit')
+    {{-- @include('financial-management.withdrawal-partner.create')
+    @include('financial-management.withdrawal-partner.edit') --}}
     @include('common.delete')
 @endsection
 
 @push('js')
     <script>
-        fetchWithdrawalPartner();
+        fetchData();
 
-        function fetchWithdrawalPartner() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-withdrawal-partner",
+                url: "/withdrawal-partner",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
@@ -70,31 +70,31 @@
                     $.each(response.withdrawal_partner, function(index, item) {
                         $("tbody").append(
                             "<tr>\
-                                <td>" +
+                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                <td>" +
+                                                    <td>" +
                             item.from_taraf_hesab +
                             "</td>\
-                                <td>" +
+                                                    <td>" +
                             item.to_taraf_hesab +
                             "</td>\
-                                <td>" +
+                                                    <td>" +
                             item.form_date +
                             "</td>\
-                                <td>" +
+                                                    <td>" +
                             item.form_number +
                             "</td>\
-                                <td>" +
+                                                    <td>" +
                             item.cash_amount +
                             '</td>\
-                                <td style="text-align: center"><button type="button" value="' +
+                                                    <td style="text-align: center"><button type="button" value="' +
                             item.id +
                             '" class="edit_withdrawal_partner btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                <button type="button" value="/withdrawal-partner/' +
+                                                    <button type="button" value="/withdrawal-partner/' +
                             item.id +
                             '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                </tr>'
+                                                    </tr>'
                         );
                     });
                 },

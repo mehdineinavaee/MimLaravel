@@ -33,16 +33,16 @@
                         <label>جنسیت</label>
                         <div class="col-6 col-md-6 col-sm-12" style="margin-right:2rem !important; !important">
                             <div class="form-group">
-                                <label for="opt1">
-                                    <input class="form-check-input" type="radio" name="group1" id="opt1">
+                                <label for="edit_opt1">
+                                    <input class="form-check-input" type="radio" name="group1" id="edit_opt1">
                                     مرد
                                 </label>
                             </div>
                         </div>
                         <div class="col-6 col-md-6 col-sm-12" style="margin-right:2rem !important; !important">
                             <div class="form-group">
-                                <label for="opt2">
-                                    <input class="form-check-input" type="radio" name="group1" id="opt2">
+                                <label for="edit_opt2">
+                                    <input class="form-check-input" type="radio" name="group1" id="edit_opt2">
                                     زن
                                 </label>
                             </div>
@@ -81,8 +81,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
-                                <input type="text" id="edit_birthdate" name="edit_birthdate" class="form-control"
-                                    autocomplete="off" />
+                                <input type="text" id="edit_birthdate" name="edit_birthdate"
+                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_birthdate_error" style="margin-right:38px;" class="invalid-feedback">
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                         <div class="form-group mb-3">
                             <label for="edit_national_code">شماره شناسنامه</label>
                             <input type="text" id="edit_national_code" name="edit_national_code"
-                                class="form-control" autocomplete="off" />
+                                class="leftToRight leftAlign inputMaskNationalCode form-control" autocomplete="off" />
                             <div id="edit_national_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -135,10 +135,33 @@
                     } else {
                         $("#editInfo").modal("show");
 
+                        if (response.staff.chk_active == "فعال") {
+                            $('#edit_activeCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_activeCheckBox').prop('checked', false);
+                        }
+
+                        if (response.staff.chk_messenger == "فعال") {
+                            $('#edit_messengerCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_messengerCheckBox').prop('checked', false);
+                        }
+
+                        if (response.staff.opt_sex == "مرد") {
+                            $('#edit_opt1').prop('checked', true);
+                        }
+
+                        if (response.staff.opt_sex == "زن") {
+                            $('#edit_opt2').prop('checked', true);
+                        }
+
                         $("#edit_staff_id").val(staff_id);
                         $("#edit_first_name").val(response.staff.first_name);
                         $("#edit_last_name").val(response.staff.last_name);
                         $("#edit_father").val(response.staff.father);
+                        $("#edit_birthdate").val(response.staff.birthdate);
+                        $("#edit_national_code").val(response.staff.national_code);
+                        $("#edit_occupation").val(response.staff.occupation);
                     }
                 },
             });
@@ -147,10 +170,37 @@
         $(document).on("click", ".updateStaff", function(e) {
             e.preventDefault();
             var staff_id = $("#edit_staff_id").val();
+
+            if (document.getElementById("edit_activeCheckBox").checked) {
+                var edit_activeCheckBox = "فعال";
+            } else {
+                var edit_activeCheckBox = "غیرفعال";
+            }
+
+            if (document.getElementById("edit_messengerCheckBox").checked) {
+                var edit_messengerCheckBox = "فعال";
+            } else {
+                var edit_messengerCheckBox = "غیرفعال";
+            }
+
+            if ($('#edit_opt1').is(':checked')) {
+                var edit_opt_sex = "مرد";
+            } else if ($('#edit_opt2').is(':checked')) {
+                var edit_opt_sex = "زن";
+            } else {
+                var edit_opt_sex = "غیرفعال";
+            }
+
             var data = {
+                chk_active: edit_activeCheckBox,
+                chk_messenger: edit_messengerCheckBox,
+                opt_sex: edit_opt_sex,
                 first_name: $("#edit_first_name").val(),
                 last_name: $("#edit_last_name").val(),
                 father: $("#edit_father").val(),
+                birthdate: $('#edit_birthdate').val(),
+                national_code: $('#edit_national_code').val(),
+                occupation: $('#edit_occupation').val(),
             };
 
             $.ajaxSetup({
@@ -166,6 +216,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -175,7 +227,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchStaff();
+                            edit_defaultSelectedValue();
+                            fetchData();
                         });
                 },
                 error: function(errors) {
@@ -201,6 +254,8 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -210,6 +265,19 @@
             $("#edit_last_name").removeClass("is-invalid");
             $("#edit_father_error").text("");
             $("#edit_father").removeClass("is-invalid");
+            $("#edit_birthdate_error").text("");
+            $("#edit_birthdate").removeClass("is-invalid");
+            $("#edit_national_code_error").text("");
+            $("#edit_national_code").removeClass("is-invalid");
+            $("#edit_occupation_error").text("");
+            $("#edit_occupation").removeClass("is-invalid");
+        }
+
+        function edit_defaultSelectedValue() {
+            $('#edit_activeCheckBox').prop('checked', false);
+            $('#edit_messengerCheckBox').prop('checked', false);
+            $('#edit_opt1').prop('checked', false);
+            $('#edit_opt2').prop('checked', false);
         }
     </script>
 @endpush

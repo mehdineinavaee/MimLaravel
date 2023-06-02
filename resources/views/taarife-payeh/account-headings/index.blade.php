@@ -27,7 +27,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="example1" class="table-responsive table table-bordered table-striped" style="text-align: center;">
+            <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
                         <th>ردیف</th>
@@ -39,7 +39,7 @@
                         <th style="min-width: 90px">تفصیل شناور</th>
                         <th style="min-width: 90px">سیستمی</th>
                         <th style="min-width: 90px">فعال</th>
-                        <th style="min-width: 80px"></th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +56,7 @@
                         <th>تفصیل شناور</th>
                         <th>سیستمی</th>
                         <th>فعال</th>
-                        <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -75,12 +75,12 @@
 
 @push('js')
     <script>
-        fetchAccountHeadings();
+        fetchData();
 
-        function fetchAccountHeadings() {
+        function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/fetch-account-heading",
+                url: "/account-heading",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);

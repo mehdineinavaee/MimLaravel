@@ -97,7 +97,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_introduce_date" name="edit_introduce_date"
-                                    class="form-control normal-example" autocomplete="off" />
+                                    class="form-control leftToRight leftAlign inputMaskDate" autocomplete="off" />
                                 <div id="edit_introduce_date_error" style="margin-right:38px;"
                                     class="invalid-feedback">
                                 </div>
@@ -238,7 +238,7 @@
                             edit_clearErrors();
                             edit_clearPrice();
                             edit_defaultSelectedValue();
-                            fetchProducts();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

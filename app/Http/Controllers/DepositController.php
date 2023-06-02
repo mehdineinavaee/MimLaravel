@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class DepositController extends Controller
 {
-    public function fetchDeposit()
+    public function fetchData()
     {
         $deposits = Deposit::orderBy('id', 'desc')->get();
         return response()->json([

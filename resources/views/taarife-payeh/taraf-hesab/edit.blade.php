@@ -231,7 +231,7 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="edit_birthdate" name="edit_birthdate"
-                                        class="normal-example form-control" autocomplete="off" />
+                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                     <div id="edit_birthdate_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -403,6 +403,7 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
+
                         if (response.taraf_hesab.chk_seller == "فعال") {
                             $('#edit_sellerCheckBox').prop('checked', true);
                         } else {
@@ -621,6 +622,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -635,7 +638,7 @@
                                 edit_clearErrors();
                                 edit_clearPrice();
                                 edit_defaultSelectedValue();
-                                fetchTarafHesab();
+                                fetchData();
                             }
                         });
                 },

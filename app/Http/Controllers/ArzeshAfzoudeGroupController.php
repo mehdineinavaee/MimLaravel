@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ArzeshAfzoudeGroupController extends Controller
 {
-    public function fetchArzeshAfzoudeGroups()
+    public function fetchData()
     {
         $arzesh_afzoude_groups = ArzeshAfzoudeGroup::orderBy('id', 'desc')->get();
         return response()->json([

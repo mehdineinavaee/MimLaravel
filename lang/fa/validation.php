@@ -232,5 +232,6 @@ return [
         'kol_account_name' => 'نام حساب کل',
         'shenavar_tafsil' => 'تفصیل های شناور',
         'moein_account_name' => 'نام حساب معین',
+        'return_buy_factor_no' => 'شماره'
     ],
 ];

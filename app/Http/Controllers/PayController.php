@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class PayController extends Controller
 {
-    public function fetchPay()
+    public function fetchData()
     {
         $pay = Pay::orderBy('id', 'desc')->get();
         return response()->json([

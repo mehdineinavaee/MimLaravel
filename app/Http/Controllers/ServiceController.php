@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function fetchService()
+    public function fetchData()
     {
         $services = Service::orderBy('id', 'desc')->get();
         return response()->json([

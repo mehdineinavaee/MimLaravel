@@ -83,7 +83,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchProductNoUnit();
+                                fetchData();
                             });
                     },
 

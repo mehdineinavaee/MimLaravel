@@ -110,7 +110,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchBanksTypes();
+                            fetchData();
                         });
                 },
                 error: function(errors) {

@@ -229,7 +229,7 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="add_birthdate" name="add_birthdate"
-                                        class="normal-example form-control" autocomplete="off" />
+                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
                                     <div id="add_birthdate_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -501,6 +501,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -515,7 +517,7 @@
                                     add_clearErrors();
                                     add_clearPrice();
                                     add_defaultSelectedValue();
-                                    fetchTarafHesab();
+                                    fetchData();
                                 }
                             });
                     },

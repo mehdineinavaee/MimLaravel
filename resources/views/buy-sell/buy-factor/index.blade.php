@@ -29,13 +29,13 @@
 
 @push('js')
     <script>
-        fetchBuyFactor();
+        fetchData();
 
-        function fetchBuyFactor() {
+        function fetchData() {
             const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 
             $.ajax({
-                url: "/fetch-buy-factor",
+                url: "/buy-factor",
                 type: "get",
                 data: {
                     CSRF_TOKEN

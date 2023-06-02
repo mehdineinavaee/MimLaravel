@@ -84,7 +84,22 @@
             </tr>
             <tr class="background-color">
                 <td class="padding">نوع شخص</td>
-                <td class="padding">{{ $item->person_type }}</td>
+                @switch ($item->person_type)
+                    @case('1')
+                        <td class="padding">حقیقی</td>
+                    @break
+
+                    @case('2')
+                        <td class="padding">حقوقی غیر دولتی</td>
+                    @break
+
+                    @case('3')
+                        <td class="padding">حقوقی دولتی وزارت خانه ها و سازمان ها</td>
+                    @break
+
+                    @default
+                        <td class="padding">-</td>
+                @endswitch
             </tr>
             <tr>
                 <td class="padding">مدیر عامل</td>
@@ -96,7 +111,7 @@
             </tr>
             <tr>
                 <td class="padding">تاریخ تولد</td>
-                <td class="padding">{{ $item->birtddate }}</td>
+                <td class="padding">{{ $item->birthdate }}</td>
             </tr>
             <tr class="background-color">
                 <td class="padding">شغل</td>
@@ -104,11 +119,11 @@
             </tr>
             <tr>
                 <td class="padding">فاکس</td>
-                <td class="padding">{{ $item->fax }}</td>
+                <td class="padding ltr">{{ $item->fax }}</td>
             </tr>
             <tr class="background-color">
                 <td class="padding">تلفن</td>
-                <td class="padding">{{ $item->tel }}</td>
+                <td class="padding ltr">{{ $item->tel }}</td>
             </tr>
             <tr>
                 <td class="padding">نوع فعالیت</td>
