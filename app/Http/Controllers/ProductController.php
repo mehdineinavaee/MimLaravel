@@ -11,10 +11,53 @@ class ProductController extends Controller
 {
     public function fetchData()
     {
-        $products = Product::orderBy('id', 'desc')->get();
-        return response()->json([
-            'products' => $products,
-        ]);
+        $output = '';
+        $data = Product::orderBy('product_name', 'asc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+
+                if ($item->sell_price != null) {
+                    $sell_price = number_format($item->sell_price);
+                } else {
+                    $sell_price = '-';
+                }
+
+                if ($item->latest_buy_price != null) {
+                    $latest_buy_price = number_format($item->latest_buy_price);
+                } else {
+                    $latest_buy_price = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->chk_active . '</td>
+                        <td>' . $item->code . '</td>
+                        <td>' . $item->main_group . '</td>
+                        <td>' . $item->sub_group . '</td>
+                        <td>' . $item->product_name . '</td>
+                        <td>' . $item->product_unit_id . '</td>
+                        <td>' . $sell_price . ' ریال</td>
+                        <td>' . $item->value_added_group . '</td>
+                        <td>' . $item->introduce_date . '</td>
+                        <td>' . $latest_buy_price . ' ریال</td>
+                        <td>' . $item->main_barcode . '</td>
+                        <td>' . $item->order_point . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_product btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/products/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return [$output, $data];
+        }
     }
 
     /**
@@ -22,8 +65,15 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            list($valueA, $valueB) = self::fetchData();
+            return response()->json([
+                'output' => $valueA,
+                'pagination' => (string)$valueB->links(),
+            ]);
+        }
         $product_unit = ProductNoUnit::orderBy('title', 'asc')->get();
         return view('taarife-payeh/products.index')
             ->with('product_unit', $product_unit);

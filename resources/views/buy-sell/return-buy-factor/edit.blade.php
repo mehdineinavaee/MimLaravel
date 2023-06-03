@@ -122,8 +122,8 @@
         })
 
         function edit_clearErrors() {
-            $("#edit_buy_factor_no_error").text("");
-            $("#edit_buy_factor_no").removeClass("is-invalid");
+            $("#edit_return_buy_factor_no_error").text("");
+            $("#edit_return_buy_factor_no").removeClass("is-invalid");
         }
     </script>
 @endpush

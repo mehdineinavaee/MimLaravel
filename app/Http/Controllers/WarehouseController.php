@@ -10,10 +10,31 @@ class WarehouseController extends Controller
 {
     public function fetchData()
     {
-        $warehouses = Warehouse::orderBy('id', 'desc')->get();
-        return response()->json([
-            'warehouses' => $warehouses,
-        ]);
+        $output = '';
+        $data = Warehouse::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->code . '</td>
+                        <td>' . $item->title . '</td>
+                        <td>' . $item->chk_active . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_warehouse btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/warehouse/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return [$output, $data];
+        }
     }
 
     /**
@@ -21,8 +42,15 @@ class WarehouseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            list($data, $pagination) = self::fetchData();
+            return response()->json([
+                'output' => $data,
+                'pagination' => (string)$pagination->links(),
+            ]);
+        }
         return view('taarife-payeh/warehouse.index');
     }
 
@@ -44,14 +72,21 @@ class WarehouseController extends Controller
      */
     public function store(WarehouseRequest $request)
     {
-        $warehouse = new Warehouse();
-        $warehouse->code = $request->input('code');
-        $warehouse->title = $request->input('title');
-        $warehouse->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'انبار جدید ذخیره شد',
-        ]);
+        if ($request->ajax()) {
+            $warehouse = new Warehouse();
+            $warehouse->chk_active = $request->chk_active;
+            $warehouse->code = $request->input('code');
+            $warehouse->title = $request->input('title');
+            $warehouse->save();
+            list($data, $pagination) = self::fetchData();
+            return response()->json([
+                'output' => $data,
+                'pagination' => (string)$pagination->links(),
+                'status' => 200,
+                'message' => 'انبار جدید ذخیره شد',
+            ]);
+        }
+        return view('buy-sell/return-buy-factor.index');
     }
 
     /**
@@ -96,20 +131,26 @@ class WarehouseController extends Controller
      */
     public function update(WarehouseRequest $request, $id)
     {
-        $warehouse = Warehouse::find($id);
-        if ($warehouse) {
-            $warehouse->code = $request->input('code');
-            $warehouse->title = $request->input('title');
-            $warehouse->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'انبار ویرایش شد',
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+        if ($request->ajax()) {
+            $warehouse = Warehouse::find($id);
+            if ($warehouse) {
+                $warehouse->chk_active = $request->chk_active;
+                $warehouse->code = $request->input('code');
+                $warehouse->title = $request->input('title');
+                $warehouse->update();
+                list($data, $pagination) = self::fetchData();
+                return response()->json([
+                    'output' => $data,
+                    'pagination' => (string)$pagination->links(),
+                    'status' => 200,
+                    'message' => 'انبار ویرایش شد',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         }
     }
 
@@ -123,7 +164,10 @@ class WarehouseController extends Controller
     {
         $warehouse = Warehouse::find($id);
         $warehouse->delete();
+        list($data, $pagination) = self::fetchData();
         return response()->json([
+            'output' => $data,
+            'pagination' => (string)$pagination->links(),
             'status' => 200,
             'message' => 'انبار حذف شد',
         ]);

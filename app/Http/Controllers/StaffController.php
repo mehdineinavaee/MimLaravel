@@ -51,10 +51,10 @@ class StaffController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            list($valueA, $valueB) = self::fetchData();
+            list($data, $pagination) = self::fetchData();
             return response()->json([
-                'output' => $valueA,
-                'pagination' => (string)$valueB->links(),
+                'output' => $data,
+                'pagination' => (string)$pagination->links(),
             ]);
         }
         return view('taarife-payeh/staff.index');
@@ -89,10 +89,10 @@ class StaffController extends Controller
         $staff->national_code = $request->input('national_code');
         $staff->occupation = $request->input('occupation');
         $staff->save();
-        list($valueA, $valueB) = self::fetchData();
+        list($data, $pagination) = self::fetchData();
         return response()->json([
-            'output' => $valueA,
-            'pagination' => (string)$valueB->links(),
+            'output' => $data,
+            'pagination' => (string)$pagination->links(),
             'status' => 200,
             'message' => 'پرسنل جدید ذخیره شد',
         ]);
@@ -152,10 +152,10 @@ class StaffController extends Controller
             $staff->national_code = $request->input('national_code');
             $staff->occupation = $request->input('occupation');
             $staff->update();
-            list($valueA, $valueB) = self::fetchData();
+            list($data, $pagination) = self::fetchData();
             return response()->json([
-                'output' => $valueA,
-                'pagination' => (string)$valueB->links(),
+                'output' => $data,
+                'pagination' => (string)$pagination->links(),
                 'status' => 200,
                 'message' => 'پرسنل ویرایش شد',
             ]);
@@ -177,10 +177,10 @@ class StaffController extends Controller
     {
         $staff = Staff::find($id);
         $staff->delete();
-        list($valueA, $valueB) = self::fetchData();
+        list($data, $pagination) = self::fetchData();
         return response()->json([
-            'output' => $valueA,
-            'pagination' => (string)$valueB->links(),
+            'output' => $data,
+            'pagination' => (string)$pagination->links(),
             'status' => 200,
             'message' => 'پرسنل حذف شد',
         ]);

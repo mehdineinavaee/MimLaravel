@@ -57,7 +57,7 @@
                 success: function(response) {
                     $('#myData').html(response.output);
                     $('#pagination').html(response.pagination);
-                },
+                }
             });
         }
     </script>

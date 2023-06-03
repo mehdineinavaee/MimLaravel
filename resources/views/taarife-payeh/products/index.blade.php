@@ -20,23 +20,23 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 250px">فعال</th>
-                        <th style="min-width: 90px">کد کالا</th>
-                        <th style="min-width: 90px">گروه اصلی</th>
-                        <th style="min-width: 90px">گروه فرعی</th>
-                        <th style="min-width: 80px">نام کالا</th>
-                        <th style="min-width: 90px">واحد کالا</th>
-                        <th style="min-width: 250px">فی فروش</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 100px">فعال</th>
+                        <th style="min-width: 100px">کد کالا</th>
+                        <th style="min-width: 100px">گروه اصلی</th>
+                        <th style="min-width: 100px">گروه فرعی</th>
+                        <th style="min-width: 400px">نام کالا</th>
+                        <th style="min-width: 200px">واحد کالا</th>
+                        <th style="min-width: 200px">فی فروش</th>
                         <th style="min-width: 250px">گروه ارزش افزوده</th>
-                        <th style="min-width: 250px">تاریخ معرفی</th>
-                        <th style="min-width: 250px">آخرین قیمت خرید</th>
+                        <th style="min-width: 130px">تاریخ معرفی</th>
+                        <th style="min-width: 200px">آخرین قیمت خرید</th>
                         <th style="min-width: 250px">بارکد اصلی</th>
                         <th style="min-width: 250px">نقطه سفارش</th>
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -58,6 +58,8 @@
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -78,60 +80,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.products, function(index, item) {
-                        $("tbody").append(
-                            "<tr>\
-                    <td>" +
-                            (index + 1) +
-                            "</td>\
-                    <td>" +
-                            item.chk_active +
-                            "</td>\
-                    <td>" +
-                            item.code +
-                            "</td>\
-                    <td>" +
-                            item.main_group +
-                            "</td>\
-                    <td>" +
-                            item.sub_group +
-                            "</td>\
-                    <td>" +
-                            item.product_name +
-                            "</td>\
-                    <td>" +
-                            item.product_unit_id +
-                            "</td>\
-                    <td>" +
-                            new Intl.NumberFormat().format(item.sell_price) +
-                            " ریال" +
-                            "</td>\
-                    <td>" +
-                            item.value_added_group +
-                            "</td>\
-                    <td>" +
-                            item.introduce_date +
-                            "</td>\
-                    <td>" +
-                            new Intl.NumberFormat().format(item.latest_buy_price) +
-                            " ریال" +
-                            "</td>\
-                    <td>" +
-                            item.main_barcode +
-                            "</td>\
-                    <td>" +
-                            item.order_point +
-                            '</td>\
-                    <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_product btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                    <button type="button" value="/products/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                    </tr>'
-                        );
-                    });
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                 },
             });
         }

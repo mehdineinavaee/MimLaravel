@@ -55,7 +55,14 @@
             $(document).on('click', '.addWarehouse', function(e) {
                 e.preventDefault();
 
+                if (document.getElementById("add_activeCheckBox").checked) {
+                    var add_activeCheckBox = "فعال";
+                } else {
+                    var add_activeCheckBox = "غیرفعال";
+                }
+
                 var data = {
+                    'chk_active': add_activeCheckBox,
                     'code': $('#add_code').val(),
                     'title': $('#add_title').val(),
                 }
@@ -74,6 +81,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -83,6 +92,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
+                                add_defaultSelectedValue();
                                 fetchData();
                             });
                     },
@@ -111,6 +121,7 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_defaultSelectedValue();
         })
 
         function add_clearErrors() {
@@ -118,6 +129,10 @@
             $("#add_code").removeClass("is-invalid");
             $("#add_title_error").text("");
             $("#add_title").removeClass("is-invalid");
+        }
+
+        function add_defaultSelectedValue() {
+            $('#add_activeCheckBox').prop('checked', false);
         }
     </script>
 @endpush

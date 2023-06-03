@@ -8,13 +8,13 @@ use Illuminate\Http\Request;
 
 class ReturnBuyFactorController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
         $output = '';
         $data = ReturnBuyFactor::orderBy('id', 'desc')->paginate(10);
 
         if ($data) {
-            foreach ($data as $item) {
+            foreach ($data as $index => $item) {
                 $output .=
                     '
                     <tr>
@@ -30,7 +30,12 @@ class ReturnBuyFactorController extends Controller
                     </tr>
                     ';
             }
-            return [$output, $data];
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
         }
     }
 
@@ -42,11 +47,7 @@ class ReturnBuyFactorController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            list($valueA, $valueB) = self::fetchData();
-            return response()->json([
-                'output' => $valueA,
-                'pagination' => (string)$valueB->links(),
-            ]);
+            return self::fetchData(200, '');
         }
         return view('buy-sell/return-buy-factor.index');
     }
@@ -73,13 +74,7 @@ class ReturnBuyFactorController extends Controller
             $return_buy_factor = new ReturnBuyFactor();
             $return_buy_factor->return_buy_factor_no = $request->input('return_buy_factor_no');
             $return_buy_factor->save();
-            list($valueA, $valueB) = self::fetchData();
-            return response()->json([
-                'output' => $valueA,
-                'pagination' => (string)$valueB->links(),
-                'status' => 200,
-                'message' => 'فاکتور برگشت از خرید ذخیره شد',
-            ]);
+            return self::fetchData(200, 'فاکتور برگشت از خرید ذخیره شد');
         }
         return view('buy-sell/return-buy-factor.index');
     }
@@ -131,13 +126,7 @@ class ReturnBuyFactorController extends Controller
             if ($return_buy_factor) {
                 $return_buy_factor->return_buy_factor_no = $request->input('return_buy_factor_no');
                 $return_buy_factor->update();
-                list($valueA, $valueB) = self::fetchData();
-                return response()->json([
-                    'output' => $valueA,
-                    'pagination' => (string)$valueB->links(),
-                    'status' => 200,
-                    'message' => 'فاکتور برگشت از خرید ویرایش شد',
-                ]);
+                return self::fetchData(200, 'فاکتور برگشت از خرید ویرایش شد');
             } else {
                 return response()->json([
                     'status' => 404,
@@ -158,12 +147,6 @@ class ReturnBuyFactorController extends Controller
     {
         $return_buy_factor = ReturnBuyFactor::find($id);
         $return_buy_factor->delete();
-        list($valueA, $valueB) = self::fetchData();
-        return response()->json([
-            'output' => $valueA,
-            'pagination' => (string)$valueB->links(),
-            'status' => 200,
-            'message' => 'فاکتور برگشت از خرید حذف شد',
-        ]);
+        return self::fetchData(200, 'فاکتور برگشت از خرید حذف شد');
     }
 }

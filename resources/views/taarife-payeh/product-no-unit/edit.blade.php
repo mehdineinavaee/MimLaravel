@@ -70,6 +70,13 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
+
+                        if (response.product_no_unit.chk_active == "فعال") {
+                            $('#edit_activeCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_activeCheckBox').prop('checked', false);
+                        }
+
                         $("#edit_product_no_unit_id").val(product_no_unit_id);
                         $("#edit_code").val(response.product_no_unit.code);
                         $("#edit_title").val(response.product_no_unit.title);
@@ -81,7 +88,15 @@
         $(document).on("click", ".updateProductNoUnit", function(e) {
             e.preventDefault();
             var product_no_unit_id = $("#edit_product_no_unit_id").val();
+
+            if (document.getElementById("edit_activeCheckBox").checked) {
+                var edit_activeCheckBox = "فعال";
+            } else {
+                var edit_activeCheckBox = "غیرفعال";
+            }
+
             var data = {
+                chk_active: edit_activeCheckBox,
                 code: $("#edit_code").val(),
                 title: $("#edit_title").val(),
             };
@@ -99,6 +114,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -108,6 +125,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
+                            edit_defaultSelectedValue();
                             fetchData();
                         });
                 },
@@ -134,6 +152,8 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -141,6 +161,10 @@
             $("#edit_code").removeClass("is-invalid");
             $("#edit_title_error").text("");
             $("#edit_title").removeClass("is-invalid");
+        }
+
+        function edit_defaultSelectedValue() {
+            $('#edit_activeCheckBox').prop('checked', false);
         }
     </script>
 @endpush

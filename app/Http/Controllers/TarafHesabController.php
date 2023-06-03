@@ -137,10 +137,10 @@ class TarafHesabController extends Controller
         $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
         $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
         if ($request->ajax()) {
-            list($valueA, $valueB) = self::fetchData();
+            list($data, $pagination) = self::fetchData();
             return response()->json([
-                'output' => $valueA,
-                'pagination' => (string)$valueB->links(),
+                'output' => $data,
+                'pagination' => (string)$pagination->links(),
             ]);
         }
         return view('taarife-payeh/taraf-hesab.index', compact('categories', 'allCategories'))
@@ -220,13 +220,13 @@ class TarafHesabController extends Controller
                 $phone_book->address = $request->input('address');
                 $phone_book->save();
             }
-            list($valueA, $valueB) = self::fetchData();
+            list($data, $pagination) = self::fetchData();
             return response()->json([
                 'reload' => $reload,
                 'status' => 200,
                 'message' => 'طرف حساب جدید ذخیره شد',
-                'output' => $valueA,
-                'pagination' => (string)$valueB->links(),
+                'output' => $data,
+                'pagination' => (string)$pagination->links(),
             ]);
         }
     }
@@ -339,13 +339,13 @@ class TarafHesabController extends Controller
                     $phone_book->address = $request->input('address');
                     $phone_book->save();
                 }
-                list($valueA, $valueB) = self::fetchData();
+                list($data, $pagination) = self::fetchData();
                 return response()->json([
                     'reload' => $reload,
                     'status' => 200,
                     'message' => 'طرف حساب ویرایش شد',
-                    'output' => $valueA,
-                    'pagination' => (string)$valueB->links(),
+                    'output' => $data,
+                    'pagination' => (string)$pagination->links(),
                 ]);
             } else {
                 return response()->json([
@@ -366,12 +366,12 @@ class TarafHesabController extends Controller
     {
         $taraf_hesab = TarafHesab::find($id);
         $taraf_hesab->delete();
-        list($valueA, $valueB) = self::fetchData();
+        list($data, $pagination) = self::fetchData();
         return response()->json([
             'status' => 200,
             'message' => 'طرف حساب حذف شد',
-            'output' => $valueA,
-            'pagination' => (string)$valueB->links(),
+            'output' => $data,
+            'pagination' => (string)$pagination->links(),
         ]);
     }
 }
