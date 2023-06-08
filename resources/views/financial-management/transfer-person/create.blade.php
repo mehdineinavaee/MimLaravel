@@ -19,14 +19,11 @@
                             <select id="add_from_taraf_hesab" name="add_from_taraf_hesab" class="form-control select2"
                                 style="width: 100%;">
                                 <option value="" selected>طرف حساب را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    طرف حساب 1
-                                </option>
-                                <option value="2">
-                                    طرف حساب 2
-                                </option>
-                                {{-- @endforeach --}}
+                                @foreach ($taraf_hesabs as $taraf_hesab)
+                                    <option value={{ $taraf_hesab->id }}>
+                                        {{ $taraf_hesab->fullname }}
+                                    </option>
+                                @endforeach
                             </select>
                             <div id="add_from_taraf_hesab_error" class="invalid-feedback"></div>
                         </div>
@@ -37,14 +34,11 @@
                             <select id="add_to_taraf_hesab" name="add_to_taraf_hesab" class="form-control select2"
                                 style="width: 100%;">
                                 <option value="" selected>طرف حساب را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    طرف حساب 1
-                                </option>
-                                <option value="2">
-                                    طرف حساب 2
-                                </option>
-                                {{-- @endforeach --}}
+                                @foreach ($taraf_hesabs as $taraf_hesab)
+                                    <option value={{ $taraf_hesab->id }}>
+                                        {{ $taraf_hesab->fullname }}
+                                    </option>
+                                @endforeach
                             </select>
                             <div id="add_to_taraf_hesab_error" class="invalid-feedback"></div>
                         </div>
@@ -57,7 +51,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_form_date" name="add_form_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_form_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -74,16 +68,18 @@
                         <div class="form-group mb-3">
                             <label for="add_cash_amount">مبلغ نقدی</label>
                             <input type="text" id="add_cash_amount" name="add_cash_amount" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'add_cash_amount_price');" />
                             <div id="add_cash_amount_error" class="invalid-feedback"></div>
+                            <div id="add_cash_amount_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
-                            <label for="add_considerations">شرح سند</label>
-                            <input type="text" id="add_considerations" name="add_considerations" class="form-control"
+                            <label for="add_document">شرح سند</label>
+                            <input type="text" id="add_document" name="add_document" class="form-control"
                                 autocomplete="off" />
-                            <div id="add_considerations_error" class="invalid-feedback"></div>
+                            <div id="add_document_error" class="invalid-feedback"></div>
                         </div>
                     </div>
                 </div>
@@ -109,7 +105,7 @@
                     'form_date': $('#add_form_date').val(),
                     'form_number': $('#add_form_number').val(),
                     'cash_amount': $('#add_cash_amount').val(),
-                    'considerations': $('#add_considerations').val(),
+                    'document': $('#add_document').val(),
                 }
                 // console.log(data);
 
@@ -126,6 +122,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -135,7 +133,8 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_clearPrice();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -163,6 +162,9 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_clearPrice();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -176,8 +178,17 @@
             $("#add_form_number").removeClass("is-invalid");
             $("#add_cash_amount_error").text("");
             $("#add_cash_amount").removeClass("is-invalid");
-            $("#add_considerations_error").text("");
-            $("#add_considerations").removeClass("is-invalid");
+            $("#add_document_error").text("");
+            $("#add_document").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_cash_amount_price").text("");
+        }
+
+        function add_defaultSelectedValue() {
+            $(add_from_taraf_hesab).prop('selectedIndex', 0).change();
+            $(add_to_taraf_hesab).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

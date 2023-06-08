@@ -18,14 +18,11 @@
                         <select id="add_from_bank" name="add_from_bank" class="form-control select2"
                             style="width: 100%;">
                             <option value="" selected>بانک را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                بانک 1
-                            </option>
-                            <option value="2">
-                                بانک 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($banks_types as $banks_type)
+                                <option value={{ $banks_type->id }}>
+                                    {{ $banks_type->bank_name }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="add_from_bank_error" class="invalid-feedback"></div>
                     </div>
@@ -35,14 +32,11 @@
                         <label for="add_to_bank">به بانک</label>
                         <select id="add_to_bank" name="add_to_bank" class="form-control select2" style="width: 100%;">
                             <option value="" selected>بانک را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                بانک 1
-                            </option>
-                            <option value="2">
-                                بانک 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($banks_types as $banks_type)
+                                <option value={{ $banks_type->id }}>
+                                    {{ $banks_type->bank_name }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="add_to_bank_error" class="invalid-feedback"></div>
                     </div>
@@ -55,7 +49,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="add_form_date" name="add_form_date"
-                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="add_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -91,8 +85,11 @@
                             <div class="form-group mb-3">
                                 <label for="add_cash_amount">مبلغ نقدی</label>
                                 <input type="text" id="add_cash_amount" name="add_cash_amount" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'add_cash_amount_price');" />
                                 <div id="add_cash_amount_error" class="invalid-feedback"></div>
+                                <div id="add_cash_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -112,7 +109,7 @@
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
-                                        <th>ردیف</th>
+                                        <th style="min-width: 100px">ردیف</th>
                                         <th style="min-width: 200px">مبلغ چک</th>
                                         <th style="min-width: 200px">تاریخ صدور</th>
                                         <th style="min-width: 200px">تاریخ سر رسید</th>
@@ -147,7 +144,8 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="add_date" name="add_date"
-                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                        class="leftToRight rightAlign inputMaskDate form-control"
+                                        autocomplete="off" />
                                     <div id="add_date_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -158,14 +156,11 @@
                                 <select id="add_bank_account_details" name="add_bank_account_details"
                                     class="form-control select2" style="width: 100%;">
                                     <option value="" selected>حساب بانکی را انتخاب کنید</option>
-                                    {{-- @foreach ($publishers as $publisher) --}}
-                                    <option value="1">
-                                        حساب 1
-                                    </option>
-                                    <option value="2">
-                                        حساب 2
-                                    </option>
-                                    {{-- @endforeach --}}
+                                    @foreach ($bank_accounts as $bank_account)
+                                        <option value={{ $bank_account->id }}>
+                                            {{ $bank_account->account_number }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <div id="add_bank_account_details_error" class="invalid-feedback"></div>
                             </div>
@@ -174,16 +169,21 @@
                             <div class="form-group mb-3">
                                 <label for="add_deposit_amount">مبلغ واریزی</label>
                                 <input type="text" id="add_deposit_amount" name="add_deposit_amount"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control" autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'add_deposit_amount_price');" />
                                 <div id="add_deposit_amount_error" class="invalid-feedback"></div>
+                                <div id="add_deposit_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="add_wage">کارمزد</label>
                                 <input type="text" id="add_wage" name="add_wage" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off" onkeyup="separateNum(this.value,this,'add_wage_price');" />
                                 <div id="add_wage_error" class="invalid-feedback"></div>
+                                <div id="add_wage_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -250,6 +250,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -259,7 +261,8 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_clearPrice();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -303,6 +306,9 @@
             $("#add_tab01 h6").removeClass("text-muted");
             $("fieldset").removeClass("show");
             add_clearErrors();
+            add_clearPrice();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -330,6 +336,18 @@
             $("#add_issue_tracking").removeClass("is-invalid");
             $("#add_considerations2_error").text("");
             $("#add_considerations2").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_cash_amount_price").text("");
+            $("#add_deposit_amount_price").text("");
+            $("#add_wage_price").text("");
+        }
+
+        function add_defaultSelectedValue() {
+            $(add_from_bank).prop('selectedIndex', 0).change();
+            $(add_to_bank).prop('selectedIndex', 0).change();
+            $(add_bank_account_details).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

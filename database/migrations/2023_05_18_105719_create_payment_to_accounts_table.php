@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('payment_to_accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('taraf_hesab_name')->nullable(); // نام طرف حساب
             $table->string('form_date')->nullable(); // تاریخ فرم
             $table->string('form_number')->nullable(); // شماره فرم
             $table->string('cash_amount')->nullable(); // مبلغ نقدی
@@ -28,7 +27,6 @@ return new class extends Migration
             $table->string('tab2_bank_account_details')->nullable(); // مشخصات حساب بانکی
             $table->string('tab2_consideration')->nullable(); // ملاحظات
             $table->string('date')->nullable(); // تاریخ
-            $table->string('bank_account_details')->nullable(); // مشخصات حساب بانکی
             $table->string('deposit_amount')->nullable(); // مبلغ واریزی
             $table->string('wage')->nullable(); // کارمزد
             $table->string('issue_tracking')->nullable(); // شماره پیگیری

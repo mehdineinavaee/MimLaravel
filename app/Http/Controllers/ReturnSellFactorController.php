@@ -9,12 +9,61 @@ use Illuminate\Http\Request;
 
 class ReturnSellFactorController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $return_sell_factors = ReturnSellFactor::orderBy('id', 'desc')->get();
-        return response()->json([
-            'return_sell_factors' => $return_sell_factors,
-        ]);
+        $output = '';
+        $data = ReturnSellFactor::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                // switch ($item->customer_type) {
+                //     case ('1'):
+                //         $customer_type = 'مشتری دائم';
+                //         break;
+                //     case ('2'):
+                //         $customer_type = 'مشتری رهگذر';
+                //         break;
+                //     default:
+                //         $customer_type = '-';
+                // }
+
+                // if ($item->sell_price != null) {
+                //     $sell_price = number_format($item->sell_price);
+                // } else {
+                //     $sell_price = '-';
+                // }
+
+                if ($item->total != null) {
+                    $total = number_format($item->total);
+                } else {
+                    $total = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $item->sell_factor_no . '</td>
+                        <td>' . $item->date . '</td>
+                        <td>' . $item->buyer . '</td>
+                        <td>' . $total . ' ریال</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_return_sell_factor btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/return-sell-factor/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -22,8 +71,11 @@ class ReturnSellFactorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         $taraf_hesabs = TarafHesab::where('chk_buyer', '=', "فعال")->orderBy('fullname', 'asc')->get();
         $vasete_foroosh = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
         return view('buy-sell/return-sell-factor.index')
@@ -63,10 +115,7 @@ class ReturnSellFactorController extends Controller
         $return_sell_factor->settlement_deadline = $request->input('settlement_deadline');
         $return_sell_factor->settlement_date = $request->input('settlement_date');
         $return_sell_factor->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'فاکتور برگشت از فروش ذخیره شد',
-        ]);
+        return self::fetchData(200, 'فاکتور برگشت از فروش ذخیره شد');
     }
 
     /**
@@ -126,10 +175,7 @@ class ReturnSellFactorController extends Controller
             $return_sell_factor->settlement_deadline = $request->input('settlement_deadline');
             $return_sell_factor->settlement_date = $request->input('settlement_date');
             $return_sell_factor->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'فاکتور برگشت از فروش ویرایش شد',
-            ]);
+            return self::fetchData(200, 'فاکتور برگشت از فروش ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -148,9 +194,6 @@ class ReturnSellFactorController extends Controller
     {
         $return_sell_factor = ReturnSellFactor::find($id);
         $return_sell_factor->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'فاکتور برگشت از فروش حذف شد',
-        ]);
+        return self::fetchData(200, 'فاکتور برگشت از فروش حذف شد');
     }
 }

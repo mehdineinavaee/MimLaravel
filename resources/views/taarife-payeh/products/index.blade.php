@@ -76,7 +76,7 @@
         function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/product",
+                url: "/products",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);

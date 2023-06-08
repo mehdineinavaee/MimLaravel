@@ -78,7 +78,21 @@
             $(document).on('click', '.addFund', function(e) {
                 e.preventDefault();
 
+                if (document.getElementById("add_systemCheckBox").checked) {
+                    var add_systemCheckBox = "فعال";
+                } else {
+                    var add_systemCheckBox = "غیرفعال";
+                }
+
+                if (document.getElementById("add_activeCheckBox").checked) {
+                    var add_activeCheckBox = "فعال";
+                } else {
+                    var add_activeCheckBox = "غیرفعال";
+                }
+
                 var data = {
+                    'chk_system': add_systemCheckBox,
+                    'chk_active': add_activeCheckBox,
                     'form_type': $('#add_form_type').val(),
                     'daramad_code': $('#add_daramad_code').val(),
                     'daramad_name': $('#add_daramad_name').val(),
@@ -98,6 +112,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -107,7 +123,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -135,6 +151,8 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -144,6 +162,12 @@
             $("#add_daramad_code").removeClass("is-invalid");
             $("#add_daramad_name_error").text("");
             $("#add_daramad_name").removeClass("is-invalid");
+        }
+
+        function add_defaultSelectedValue() {
+            $('#add_systemCheckBox').prop('checked', false);
+            $('#add_activeCheckBox').prop('checked', false);
+            $(add_form_type).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

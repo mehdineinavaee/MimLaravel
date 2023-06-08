@@ -115,7 +115,7 @@
                             <div class="form-group mb-3">
                                 <label for="edit_zip_code">کد پستی</label>
                                 <input type="text" id="edit_zip_code" name="edit_zip_code"
-                                    class="form-control leftToRight leftAlign inputMaskZipCode" autocomplete="off" />
+                                    class="form-control leftToRight rightAlign inputMaskZipCode" autocomplete="off" />
                                 <div id="edit_zip_code_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
                                     <input type="text" id="edit_phone" name="edit_phone"
-                                        class="form-control leftToRight leftAlign inputMaskPhone"
+                                        class="form-control leftToRight rightAlign inputMaskPhone"
                                         autocomplete="off" />
                                     <div id="edit_phone_error" style="margin-right:38px;" class="invalid-feedback">
                                     </div>
@@ -218,7 +218,7 @@
                             <div class="form-group mb-3">
                                 <label for="edit_national_code">کد ملی</label>
                                 <input type="text" id="edit_national_code" name="edit_national_code"
-                                    class="form-control leftToRight leftAlign inputMaskNationalCode"
+                                    class="form-control leftToRight rightAlign inputMaskNationalCode"
                                     autocomplete="off" />
                                 <div id="edit_national_code_error" class="invalid-feedback"></div>
                             </div>
@@ -231,7 +231,8 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="edit_birthdate" name="edit_birthdate"
-                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                        class="leftToRight rightAlign inputMaskDate form-control"
+                                        autocomplete="off" />
                                     <div id="edit_birthdate_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -252,7 +253,7 @@
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
                                     <input type="text" id="edit_fax" name="edit_fax"
-                                        class="form-control leftToRight leftAlign inputMaskFax" autocomplete="off" />
+                                        class="form-control leftToRight rightAlign inputMaskFax" autocomplete="off" />
                                     <div id="edit_fax_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -265,7 +266,7 @@
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
                                     <input type="text" id="edit_tel" name="edit_tel"
-                                        class="form-control leftToRight leftAlign inputMaskTel" autocomplete="off" />
+                                        class="form-control leftToRight rightAlign inputMaskTel" autocomplete="off" />
                                     <div id="edit_tel_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -479,7 +480,7 @@
                         $('#edit_fullname').val(response.taraf_hesab.fullname);
                         $('#edit_zip_code').val(response.taraf_hesab.zip_code);
                         $('#edit_phone').val(response.taraf_hesab.phone);
-                        $(edit_city).prop('selectedIndex', response.taraf_hesab.city_id).change();
+                        $('#edit_city').val(response.taraf_hesab.city_id).change();
                         $(edit_broker).prop('selectedIndex', response.taraf_hesab.broker).change();
                         $('#edit_commission').val(response.taraf_hesab.commission);
                         $('#edit_address').val(response.taraf_hesab.address);
@@ -630,16 +631,11 @@
                             'success'
                         )
                         .then(() => {
-                            if (response.reload == "true") {
-                                window.location.reload();
-                            } else {
-                                $("#editInfo").modal("hide");
-                                $("#editInfo").find("input").val("");
-                                edit_clearErrors();
-                                edit_clearPrice();
-                                edit_defaultSelectedValue();
-                                fetchData();
-                            }
+                            $("#editInfo").modal("hide");
+                            $("#editInfo").find("input").val("");
+                            edit_clearErrors();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -682,7 +678,7 @@
             $("#edit_tab01 h6").removeClass("text-muted");
             $("fieldset").removeClass("show");
             edit_clearErrors();
-            // edit_clearPrice();
+            edit_clearPrice();
             // edit_defaultSelectedValue();
             // $("#editInfo").find("input").val(""); // Clear Input Values
         })

@@ -8,7 +8,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-font-awesome"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             تعاریف پایه
                             <i class="right fa fa-angle-left"></i>
@@ -111,7 +111,7 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-cc-paypal"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             خرید و فروش
                             <i class="right fa fa-angle-left"></i>
@@ -171,7 +171,7 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-file-text"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             گزارشات خرید و فروش
                             <i class="right fa fa-angle-left"></i>
@@ -231,7 +231,7 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-usd"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             گزارش سود ناخالص فروش کالا
                             <i class="right fa fa-angle-left"></i>
@@ -261,7 +261,7 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-dashboard"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             انبار
                             <i class="right fa fa-angle-left"></i>
@@ -285,7 +285,7 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-file-text"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             گزارشات کالا و انبار
                             <i class="right fa fa-angle-left"></i>
@@ -333,84 +333,13 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-dashboard"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             مدیریت مالی
                             <i class="right fa fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa fa-check"></i>
-                                <p>
-                                    دریافت / پرداخت
-                                    <i class="right fa fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href={{ route('receive-from-the-account.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>دریافت از طرف حساب</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('payment-to-account.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>پرداخت به طرف حساب</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('pay.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>پرداخت هزینه</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('fund-to-bank.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>از صندوق به بانک</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('bank-to-fund.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>از بانک به صندوق</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('bank-to-bank.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>از بانک به بانک</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('receive-miscellaneous-income.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>دریافت درآمد متفرقه</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('withdrawal-partner.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>برداشت شرکا</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('investment.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>پرداخت شرکا (سرمایه گذاری)</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('transfer-person.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>انتقال بین اشخاص</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
                         <li class="nav-item">
                             <a href={{ route('accounting-documents.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
@@ -422,7 +351,79 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-pied-piper"></i>
+                        <i class="nav-icon fa fa-check"></i>
+                        <p>
+                            دریافت / پرداخت
+                            <i class="right fa fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href={{ route('receive-from-the-account.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>دریافت از طرف حساب</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('payment-to-account.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>پرداخت به طرف حساب</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('pay.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>پرداخت هزینه</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('fund-to-bank.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>از صندوق به بانک</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('bank-to-fund.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>از بانک به صندوق</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('bank-to-bank.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>از بانک به بانک</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('receive-miscellaneous-income.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>دریافت درآمد متفرقه</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('withdrawal-partner.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>برداشت شرکا</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('investment.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>پرداخت شرکا (سرمایه گذاری)</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('transfer-person.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>انتقال بین اشخاص</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             اول دوره
                             <i class="right fa fa-angle-left"></i>
@@ -470,101 +471,13 @@
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-dashboard"></i>
+                        <i class="nav-icon fa fa-check"></i>
                         <p>
                             مدیریت چک
                             <i class="right fa fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="fa fa-check" aria-hidden="true"></i>
-                                <p>
-                                    عملیات چک های دریافتی
-                                    <i class="right fa fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href={{ route('deposit.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>خواباندن چک به حساب</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('notification.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>اعلام وصول چک های خوابانده شده</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('manual.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>اعلام وصول دستی</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('returning-cheque.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>برگشت چک</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('announcement.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>اعلام وصول چک های برگشتی</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('spent-cheque.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>پس گرفتن چک خرج شده</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('cheque-return.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>عودت چک</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="fa fa-check" aria-hidden="true"></i>
-                                <p>
-                                    عملیات چک های پرداختی
-                                    <i class="right fa fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href={{ route('receipt-cheque.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>اعلام وصول چک</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('pay-returning-cheque.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>برگشت چک</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('cashing-cheque.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>پس گرفتن چک</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href={{ route('cancel-cheque.index') }} class="nav-link">
-                                        <i class="fa fa-circle nav-icon"></i>
-                                        <p>ابطال چک</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
                         <li class="nav-item">
                             <a href={{ route('cheque-book.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
@@ -599,6 +512,96 @@
                             <a href={{ route('circulation-pay-cheque-report.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>گزارش گردش چک پرداختی</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-check"></i>
+                        <p>
+                            عملیات چک های دریافتی
+                            <i class="right fa fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href={{ route('deposit.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>خواباندن چک به حساب</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('notification.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>اعلام وصول چک های خوابانده شده</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('manual.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>اعلام وصول دستی</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('returning-cheque.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>برگشت چک</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('announcement.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>اعلام وصول چک های برگشتی</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('spent-cheque.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>پس گرفتن چک خرج شده</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('cheque-return.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>عودت چک</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-check"></i>
+                        <p>
+                            عملیات چک های پرداختی
+                            <i class="right fa fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href={{ route('receipt-cheque.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>اعلام وصول چک</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('pay-returning-cheque.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>برگشت چک</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('cashing-cheque.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>پس گرفتن چک</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href={{ route('cancel-cheque.index') }} class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                <p>ابطال چک</p>
                             </a>
                         </li>
                     </ul>

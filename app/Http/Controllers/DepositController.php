@@ -3,17 +3,56 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DepositRequest;
+use App\Models\BankAccount;
 use App\Models\Deposit;
 use Illuminate\Http\Request;
 
 class DepositController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $deposits = Deposit::orderBy('id', 'desc')->get();
-        return response()->json([
-            'deposits' => $deposits,
-        ]);
+        $output = '';
+        $data = Deposit::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                if ($item->total != null) {
+                    $total = number_format($item->total);
+                } else {
+                    $total = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->form_number . '</td>
+                        <td>' . $item->form_date . '</td>
+                        <td>' . $item->place . '</td>
+                        <td>' . $item->mark_back . '</td>
+                        <td>' . $item->serial_number . '</td>
+                        <td>' . $total . ' ریال</td>
+                        <td>' . $item->due_date . '</td>
+                        <td>' . $item->bank_account->account_number . '</td>
+                        <td>' . $item->payer . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_deposit btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/deposit/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,9 +60,14 @@ class DepositController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('cheque-management/deposit.index');
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
+        $bank_accounts = BankAccount::all();
+        return view('cheque-management/deposit.index')
+            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -50,15 +94,12 @@ class DepositController extends Controller
         $deposit->place = $request->input('place');
         $deposit->mark_back = $request->input('mark_back');
         $deposit->serial_number = $request->input('serial_number');
-        $deposit->total = $request->input('total');
+        $deposit->total = str_replace(",", "", $request->input('total'));
         $deposit->due_date = $request->input('due_date');
-        $deposit->bank_account_details = $request->input('bank_account_details');
         $deposit->payer = $request->input('payer');
+        $deposit->bank_account()->associate($request->bank_account_details);
         $deposit->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'خواباندن چک به حساب ذخیره شد',
-        ]);
+        return self::fetchData(200, 'خواباندن چک به حساب ذخیره شد');
     }
 
     /**
@@ -110,15 +151,12 @@ class DepositController extends Controller
             $deposit->place = $request->input('place');
             $deposit->mark_back = $request->input('mark_back');
             $deposit->serial_number = $request->input('serial_number');
-            $deposit->total = $request->input('total');
+            $deposit->total = str_replace(",", "", $request->input('total'));
             $deposit->due_date = $request->input('due_date');
-            $deposit->bank_account_details = $request->input('bank_account_details');
             $deposit->payer = $request->input('payer');
+            $deposit->bank_account()->associate($request->bank_account_details);
             $deposit->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'خواباندن چک به حساب ویرایش شد',
-            ]);
+            return self::fetchData(200, 'خواباندن چک به حساب ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -137,9 +175,6 @@ class DepositController extends Controller
     {
         $deposit = Deposit::find($id);
         $deposit->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'خواباندن چک به حساب حذف شد',
-        ]);
+        return self::fetchData(200, 'خواباندن چک به حساب حذف شد');
     }
 }

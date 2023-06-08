@@ -44,8 +44,10 @@
                         <div class="form-group mb-3">
                             <label for="edit_price">قیمت ارائه خدمات</label>
                             <input type="text" id="edit_price" name="edit_price" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'edit_price_price');" />
                             <div id="edit_price_error" class="invalid-feedback"></div>
+                            <div id="edit_price_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -87,10 +89,17 @@
                     } else {
                         $("#editInfo").modal("show");
 
+                        if (response.service.chk_active == "فعال") {
+                            $('#edit_activeCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_activeCheckBox').prop('checked', false);
+                        }
+
                         $("#edit_service_id").val(service_id);
                         $("#edit_service_code").val(response.service.service_code);
                         $("#edit_service_name").val(response.service.service_name);
-                        $("#edit_price").val(response.service.price);
+                        $('#edit_price').val(new Intl.NumberFormat().format(response.service
+                            .price));
                         $("#edit_group").val(response.service.group);
                     }
                 },
@@ -100,8 +109,15 @@
         $(document).on("click", ".updateService", function(e) {
             e.preventDefault();
             var service_id = $("#edit_service_id").val();
+
+            if (document.getElementById("edit_activeCheckBox").checked) {
+                var edit_activeCheckBox = "فعال";
+            } else {
+                var edit_activeCheckBox = "غیرفعال";
+            }
+
             var data = {
-                service_id: $("#edit_service_id").val(),
+                chk_active: edit_activeCheckBox,
                 service_code: $("#edit_service_code").val(),
                 service_name: $("#edit_service_name").val(),
                 price: $("#edit_price").val(),
@@ -121,6 +137,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -130,7 +148,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -156,6 +175,9 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            edit_clearPrice();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -167,6 +189,14 @@
             $("#edit_price").removeClass("is-invalid");
             $("#edit_group_error").text("");
             $("#edit_group").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_price_price").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $('#edit_activeCheckBox').prop('checked', false);
         }
     </script>
 @endpush

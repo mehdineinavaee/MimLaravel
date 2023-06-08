@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('serial_number'); // شماره سریال چک
             $table->string('total'); // مبلغ چک
             $table->string('due_date'); // سر رسید
-            $table->string('bank_account_details'); // مشخصات حساب بانکی
             $table->string('payer'); // پرداخت کننده
             $table->string('considerations'); // ملاحظات
             $table->timestamps();

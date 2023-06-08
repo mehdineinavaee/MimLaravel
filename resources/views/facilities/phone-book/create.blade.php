@@ -42,7 +42,7 @@
                         <div class="form-group mb-3">
                             <label for="add_mobile">موبایل</label>
                             <input type="text" id="add_mobile" name="add_mobile"
-                                class="form-control leftToRight leftAlign inputMaskPhone" autocomplete="off" />
+                                class="form-control leftToRight rightAlign inputMaskPhone" autocomplete="off" />
                             <div id="add_mobile_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                         <div class="form-group mb-3">
                             <label for="add_fax">فاکس</label>
                             <input type="text" id="add_fax" name="add_fax"
-                                class="form-control leftToRight leftAlign inputMaskFax" autocomplete="off" />
+                                class="form-control leftToRight rightAlign inputMaskFax" autocomplete="off" />
                             <div id="add_fax_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         <div class="form-group mb-3">
                             <label for="add_tel">تلفن</label>
                             <input type="text" id="add_tel" name="add_tel"
-                                class="form-control leftToRight leftAlign inputMaskTel" autocomplete="off" />
+                                class="form-control leftToRight rightAlign inputMaskTel" autocomplete="off" />
                             <div id="add_tel_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -137,6 +137,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -146,7 +148,6 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
                             });
                     },
 
@@ -174,6 +175,7 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {

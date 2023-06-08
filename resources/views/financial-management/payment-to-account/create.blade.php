@@ -19,14 +19,11 @@
                             style="width: 100%;">
                             <option value="" selected>طرف حساب را انتخاب کنید
                             </option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                طرف حساب 1
-                            </option>
-                            <option value="2">
-                                طرف حساب 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($taraf_hesabs as $taraf_hesab)
+                                <option value={{ $taraf_hesab->id }}>
+                                    {{ $taraf_hesab->fullname }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="add_taraf_hesab_name_error" class="invalid-feedback"></div>
                     </div>
@@ -39,7 +36,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="add_form_date" name="add_form_date"
-                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="add_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -137,7 +134,7 @@
                                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                             </div>
                                             <input type="text" id="add_tab2_issue_date" name="add_tab2_issue_date"
-                                                class="leftToRight leftAlign inputMaskDate form-control"
+                                                class="leftToRight rightAlign inputMaskDate form-control"
                                                 autocomplete="off" />
                                             <div id="add_tab2_issue_date_error" class="invalid-feedback"></div>
                                         </div>
@@ -151,7 +148,7 @@
                                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                             </div>
                                             <input type="text" id="add_tab2_due_date" name="add_tab2_due_date"
-                                                class="leftToRight leftAlign inputMaskDate form-control"
+                                                class="leftToRight rightAlign inputMaskDate form-control"
                                                 autocomplete="off" />
                                             <div id="add_tab2_due_date_error" class="invalid-feedback"></div>
                                         </div>
@@ -195,7 +192,7 @@
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
-                                        <th>ردیف</th>
+                                        <th style="min-width: 100px">ردیف</th>
                                         <th style="min-width: 200px">پشت نمره</th>
                                         <th style="min-width: 200px">شماره سریال چک</th>
                                         <th style="min-width: 200px">مبلغ چک</th>
@@ -234,7 +231,8 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="add_date" name="add_date"
-                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                        class="leftToRight rightAlign inputMaskDate form-control"
+                                        autocomplete="off" />
                                     <div id="add_date_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -246,14 +244,11 @@
                                     class="form-control select2" style="width: 100%;">
                                     <option value="" selected>حساب بانکی را
                                         انتخاب کنید</option>
-                                    {{-- @foreach ($publishers as $publisher) --}}
-                                    <option value="1">
-                                        حساب 1
-                                    </option>
-                                    <option value="2">
-                                        حساب 2
-                                    </option>
-                                    {{-- @endforeach --}}
+                                    @foreach ($bank_accounts as $bank_account)
+                                        <option value={{ $bank_account->id }}>
+                                            {{ $bank_account->account_number }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <div id="add_bank_account_details_error" class="invalid-feedback"></div>
                             </div>
@@ -302,8 +297,11 @@
                         <div class="form-group mb-3">
                             <label for="add_paid_discount">تخفیف پرداختی</label>
                             <input type="text" id="add_paid_discount" name="add_paid_discount"
-                                class="form-control" autocomplete="off" />
+                                class="form-control" autocomplete="off"
+                                onkeyup="separateNum(this.value,this,'add_paid_discount_price');" />
                             <div id="add_paid_discount_error" class="invalid-feedback"></div>
+                            <div id="add_paid_discount_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                 </fieldset>
@@ -315,7 +313,7 @@
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
-                                        <th>ردیف</th>
+                                        <th style="min-width: 100px">ردیف</th>
                                         <th style="min-width: 200px">نوع فاکتور</th>
                                         <th style="min-width: 200px">شماره فاکتور</th>
                                         <th style="min-width: 200px">مبلغ فاکتور</th>
@@ -394,6 +392,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -405,7 +405,6 @@
                                 add_clearErrors();
                                 add_clearPrice();
                                 add_defaultSelectedValue();
-                                fetchData();
                             });
                     },
 
@@ -456,6 +455,7 @@
             add_clearErrors();
             add_clearPrice();
             add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {

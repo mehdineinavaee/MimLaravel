@@ -114,7 +114,7 @@
                             <div class="form-group mb-3">
                                 <label for="add_zip_code">کد پستی</label>
                                 <input type="text" id="add_zip_code" name="add_zip_code"
-                                    class="form-control leftToRight leftAlign inputMaskZipCode" autocomplete="off" />
+                                    class="form-control leftToRight rightAlign inputMaskZipCode" autocomplete="off" />
                                 <div id="add_zip_code_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -126,7 +126,7 @@
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
                                     <input type="text" id="add_phone" name="add_phone"
-                                        class="form-control leftToRight leftAlign inputMaskPhone"
+                                        class="form-control leftToRight rightAlign inputMaskPhone"
                                         autocomplete="off" />
                                     <div id="add_phone_error" style="margin-right:38px;" class="invalid-feedback">
                                     </div>
@@ -216,7 +216,7 @@
                             <div class="form-group mb-3">
                                 <label for="add_national_code">کد ملی</label>
                                 <input type="text" id="add_national_code" name="add_national_code"
-                                    class="form-control leftToRight leftAlign inputMaskNationalCode"
+                                    class="form-control leftToRight rightAlign inputMaskNationalCode"
                                     autocomplete="off" />
                                 <div id="add_national_code_error" class="invalid-feedback"></div>
                             </div>
@@ -229,7 +229,8 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="add_birthdate" name="add_birthdate"
-                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                        class="leftToRight rightAlign inputMaskDate form-control"
+                                        autocomplete="off" />
                                     <div id="add_birthdate_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -250,7 +251,7 @@
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
                                     <input type="text" id="add_fax" name="add_fax"
-                                        class="form-control leftToRight leftAlign inputMaskFax" autocomplete="off" />
+                                        class="form-control leftToRight rightAlign inputMaskFax" autocomplete="off" />
                                     <div id="add_fax_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -263,7 +264,7 @@
                                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                     </div>
                                     <input type="text" id="add_tel" name="add_tel"
-                                        class="form-control leftToRight leftAlign inputMaskTel" autocomplete="off" />
+                                        class="form-control leftToRight rightAlign inputMaskTel" autocomplete="off" />
                                     <div id="add_tel_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -509,16 +510,11 @@
                                 'success'
                             )
                             .then(() => {
-                                if (response.reload == "true") {
-                                    window.location.reload();
-                                } else {
-                                    $("#createInfo").modal("hide");
-                                    $("#createInfo").find("input").val("");
-                                    add_clearErrors();
-                                    add_clearPrice();
-                                    add_defaultSelectedValue();
-                                    fetchData();
-                                }
+                                $("#createInfo").modal("hide");
+                                $("#createInfo").find("input").val("");
+                                add_clearErrors();
+                                add_clearPrice();
+                                add_defaultSelectedValue();
                             });
                     },
 

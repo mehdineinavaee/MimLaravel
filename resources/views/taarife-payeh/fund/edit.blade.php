@@ -98,8 +98,20 @@
                     } else {
                         $("#editInfo").modal("show");
 
+                        if (response.fund.chk_system == "فعال") {
+                            $('#edit_systemCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_systemCheckBox').prop('checked', false);
+                        }
+
+                        if (response.fund.chk_active == "فعال") {
+                            $('#edit_activeCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_activeCheckBox').prop('checked', false);
+                        }
+
                         $("#edit_fund_id").val(fund_id);
-                        $("#edit_form_type").val(response.fund.form_type);
+                        $('#edit_form_type').val(response.fund.form_type).change();
                         $("#edit_daramad_code").val(response.fund.daramad_code);
                         $("#edit_daramad_name").val(response.fund.daramad_name);
                     }
@@ -110,8 +122,22 @@
         $(document).on("click", ".updateFund", function(e) {
             e.preventDefault();
             var fund_id = $("#edit_fund_id").val();
+
+            if (document.getElementById("edit_systemCheckBox").checked) {
+                var edit_systemCheckBox = "فعال";
+            } else {
+                var edit_systemCheckBox = "غیرفعال";
+            }
+
+            if (document.getElementById("edit_activeCheckBox").checked) {
+                var edit_activeCheckBox = "فعال";
+            } else {
+                var edit_activeCheckBox = "غیرفعال";
+            }
+
             var data = {
-                fund_id: $("#edit_fund_id").val(),
+                chk_system: edit_systemCheckBox,
+                chk_active: edit_activeCheckBox,
                 form_type: $("#edit_form_type").val(),
                 daramad_code: $("#edit_daramad_code").val(),
                 daramad_name: $("#edit_daramad_name").val(),
@@ -130,6 +156,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -139,7 +167,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -165,6 +193,8 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -174,6 +204,12 @@
             $("#edit_daramad_code").removeClass("is-invalid");
             $("#edit_daramad_name_error").text("");
             $("#edit_daramad_name").removeClass("is-invalid");
+        }
+
+        function edit_defaultSelectedValue() {
+            $('#edit_systemCheckBox').prop('checked', false);
+            $('#edit_activeCheckBox').prop('checked', false);
+            $(edit_form_type).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

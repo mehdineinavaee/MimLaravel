@@ -20,21 +20,21 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 90px">نام مخاطب</th>
-                        <th style="min-width: 90px">مخاطب اصلی</th>
-                        <th style="min-width: 90px">شغل</th>
-                        <th style="min-width: 80px">موبایل</th>
-                        <th style="min-width: 90px">فاکس</th>
-                        <th style="min-width: 150px">تلفن ها</th>
-                        <th style="min-width: 90px">نوع فعالیت</th>
-                        <th style="min-width: 150px">ایمیل</th>
-                        <th style="min-width: 150px">وب سایت</th>
-                        <th style="min-width: 250px">آدرس</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 200px">نام مخاطب</th>
+                        <th style="min-width: 200px">مخاطب اصلی</th>
+                        <th style="min-width: 200px">شغل</th>
+                        <th style="min-width: 200px">موبایل</th>
+                        <th style="min-width: 200px">فاکس</th>
+                        <th style="min-width: 200px">تلفن</th>
+                        <th style="min-width: 200px">نوع فعالیت</th>
+                        <th style="min-width: 300px">ایمیل</th>
+                        <th style="min-width: 300px">وب سایت</th>
+                        <th style="min-width: 300px">آدرس</th>
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -45,7 +45,7 @@
                         <th>شغل</th>
                         <th>موبایل</th>
                         <th>فاکس</th>
-                        <th>تلفن ها</th>
+                        <th>تلفن</th>
                         <th>نوع فعالیت</th>
                         <th>ایمیل</th>
                         <th>وب سایت</th>
@@ -54,6 +54,8 @@
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -74,52 +76,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.phone_book, function(index, item) {
-                        $("tbody").append(
-                            "<tr>\
-                                                    <td>" +
-                            (index + 1) +
-                            "</td>\
-                                                    <td>" +
-                            item.contact +
-                            "</td>\
-                                                    <td>" +
-                            item.main_contact +
-                            "</td>\
-                                                    <td>" +
-                            item.occupation +
-                            "</td>\
-                                                    <td>" +
-                            item.mobile +
-                            "</td>\
-                                                    <td>" +
-                            item.fax +
-                            "</td>\
-                                                    <td>" +
-                            item.tel +
-                            "</td>\
-                                                    <td>" +
-                            item.activity_type +
-                            "</td>\
-                                                    <td>" +
-                            item.email +
-                            "</td>\
-                                                    <td>" +
-                            item.website +
-                            "</td>\
-                                                    <td>" +
-                            item.address +
-                            '</td>\
-                                                    <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_phone_book btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                    <button type="button" value="/phone-book/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                    </tr>'
-                        );
-                    });
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                 },
             });
         }

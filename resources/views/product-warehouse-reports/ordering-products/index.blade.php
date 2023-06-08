@@ -112,15 +112,15 @@
                         <th colspan="6">مقدار</th>
                     </tr>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 90px">کد کالا</th>
-                        <th style="min-width: 90px">نام کالا</th>
-                        <th style="min-width: 90px">اول دوره</th>
-                        <th style="min-width: 90px">وارده</th>
-                        <th style="min-width: 90px">صادره</th>
-                        <th style="min-width: 90px">موجودی</th>
-                        <th style="min-width: 90px">نقطه سفارش</th>
-                        <th style="min-width: 90px">درخواستی</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 100px">کد کالا</th>
+                        <th style="min-width: 100px">نام کالا</th>
+                        <th style="min-width: 100px">اول دوره</th>
+                        <th style="min-width: 100px">وارده</th>
+                        <th style="min-width: 100px">صادره</th>
+                        <th style="min-width: 100px">موجودی</th>
+                        <th style="min-width: 100px">نقطه سفارش</th>
+                        <th style="min-width: 100px">درخواستی</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -164,31 +164,31 @@
                     $.each(response.ordering_product, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                                <td>" +
+                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                                <td>" +
+                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                            </tr>'
+                                                                                                </tr>'
                         );
                     });
                 },

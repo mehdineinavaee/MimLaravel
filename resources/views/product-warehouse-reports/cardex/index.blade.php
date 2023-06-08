@@ -66,7 +66,7 @@
                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                         </div>
                                         <input type="text" id="index_from_date" name="index_from_date"
-                                            class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                            class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                         <div id="index_from_date_error" class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                         </div>
                                         <input type="text" id="index_to_date" name="index_to_date"
-                                            class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                            class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                         <div id="index_to_date_error" class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -139,16 +139,16 @@
                     </tr>
                     <tr>
                         <th><input class="form-check-input" type="checkbox" value="" id="index_CheckBox"></th>
-                        <th>ردیف</th>
-                        <th style="min-width: 90px">تاریخ</th>
-                        <th style="min-width: 90px">نوع سند</th>
-                        <th style="min-width: 90px">شماره</th>
-                        <th style="min-width: 90px">وارده</th>
-                        <th style="min-width: 90px">صادره</th>
-                        <th style="min-width: 90px">موجودی</th>
-                        <th style="min-width: 90px">بهای واحد</th>
-                        <th style="min-width: 90px">مبلغ کل</th>
-                        <th style="min-width: 90px">رویداد مالی</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 100px">تاریخ</th>
+                        <th style="min-width: 100px">نوع سند</th>
+                        <th style="min-width: 100px">شماره</th>
+                        <th style="min-width: 100px">وارده</th>
+                        <th style="min-width: 100px">صادره</th>
+                        <th style="min-width: 100px">موجودی</th>
+                        <th style="min-width: 100px">بهای واحد</th>
+                        <th style="min-width: 100px">مبلغ کل</th>
+                        <th style="min-width: 100px">رویداد مالی</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -190,31 +190,31 @@
                     $.each(response.cardex, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                    <td>" +
+                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                    <td>" +
+                                                                <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                    </tr>'
+                                                                </tr>'
                         );
                     });
                 },

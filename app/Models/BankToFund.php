@@ -9,5 +9,15 @@ class BankToFund extends Model
 {
     use HasFactory;
     // public $table = "bank_to_funds";
-    public $fillable = ['bank', 'form_date', 'form_number', 'cash_amount', 'considerations1', 'date', 'bank_account_details', 'deposit_amount', 'wage', 'issue_tracking', 'considerations2'];
+    public $fillable = ['form_date', 'form_number', 'cash_amount', 'considerations1', 'date', 'deposit_amount', 'wage', 'issue_tracking', 'considerations2'];
+
+    public function bank_type()
+    {
+        return $this->belongsTo(BankType::class);
+    }
+
+    public function bank_account()
+    {
+        return $this->belongsTo(BankAccount::class);
+    }
 }

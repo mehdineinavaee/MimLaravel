@@ -30,7 +30,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="turnover_form_date" name="turnover_form_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="turnover_form_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="turnover_to_date" name="turnover_to_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="turnover_to_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>

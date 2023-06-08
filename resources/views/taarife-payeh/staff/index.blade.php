@@ -20,14 +20,14 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th>فعال</th>
-                        <th>پیک</th>
-                        <th>جنسیت</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 100px">فعال</th>
+                        <th style="min-width: 100px">پیک</th>
+                        <th style="min-width: 100px">جنسیت</th>
                         <th style="min-width: 170px">نام</th>
                         <th style="min-width: 250px">نام خانوادگی</th>
                         <th style="min-width: 170px">نام پدر</th>
-                        <th style="min-width: 80px">تاریخ تولد</th>
+                        <th style="min-width: 100px">تاریخ تولد</th>
                         <th style="min-width: 100px">شناسنامه</th>
                         <th style="min-width: 400px">شغل</th>
                         <th style="min-width: 100px">اقدامات</th>

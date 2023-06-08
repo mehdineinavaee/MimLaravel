@@ -126,7 +126,6 @@
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
                             edit_defaultSelectedValue();
-                            fetchData();
                         });
                 },
                 error: function(errors) {

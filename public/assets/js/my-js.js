@@ -56,37 +56,6 @@ $(document).on("click", ".delete_btn", function (e) {
 
   var url = $("#url").val();
   // console.log(url);
-  const split = url.split("/");
-  const firstLetter = split[1].charAt(0);
-  const firstLetterCap = firstLetter.toUpperCase();
-  const remainingLetters = split[1].slice(1);
-  const capitalizedWord = firstLetterCap + remainingLetters;
-  // console.log(capitalizedWord);
-  const existDash = capitalizedWord.includes("-") ? "Yes" : "No";
-  if (existDash == "Yes") {
-    var fetch = "";
-    var count = (capitalizedWord.match(/\-/g) || []).length;
-    // console.log(count);
-    for (var i = 0; i <= count; i++) {
-      const afterDashWord = capitalizedWord.split("-")[i];
-      // console.log(afterDashWord);
-      const firstLetter2 = afterDashWord[0].charAt(0);
-      // console.log(firstLetter2);
-      const firstLetterCap2 = firstLetter2.toUpperCase();
-      // console.log(firstLetterCap2);
-      const remainingLetters2 = afterDashWord.slice(1);
-      // console.log(remainingLetters2);
-      const capitalizedWord2 = firstLetterCap2 + remainingLetters2;
-      // console.log(capitalizedWord2);
-      fetch = fetch + capitalizedWord2;
-      // console.log("fetch=", fetch);
-    }
-    fetch = "fetch" + fetch;
-    // console.log(fetch);
-  } else {
-    var fetch = "fetch" + capitalizedWord;
-    // console.log(fetch);
-  }
 
   $.ajaxSetup({
     headers: {
@@ -106,9 +75,6 @@ $(document).on("click", ".delete_btn", function (e) {
         title: response.message,
         confirmButtonText: "OK",
         // text: response.status,
-      }).then(() => {
-        let functionObj = window[fetch];
-        functionObj();
       });
       $("#DeleteModal").modal("hide");
       $(".delete_btn").text("موافقم");
@@ -154,4 +120,19 @@ $(document).ready(function () {
 $(document).ready(function () {
   var im = new Inputmask("9999/99/99");
   im.mask($(".inputMaskDate"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("099-9999-9999-99");
+  im.mask($(".inputMaskAccountNumber"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("IR99-9999-9999-9999-9999-9999-99");
+  im.mask($(".inputMaskShabaNumber"));
+});
+
+$(document).ready(function () {
+  var im = new Inputmask("9999-9999-9999-9999");
+  im.mask($(".inputMaskCartNumber"));
 });

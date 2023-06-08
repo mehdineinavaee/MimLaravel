@@ -26,16 +26,16 @@
                 <thead>
                     <tr>
                         <th style="min-width: 100px">ردیف</th>
-                        <th style="min-width: 90px">فروشنده</th>
-                        <th style="min-width: 90px">خریدار</th>
+                        <th style="min-width: 100px">فروشنده</th>
+                        <th style="min-width: 100px">خریدار</th>
                         <th style="min-width: 120px">واسطه فروش</th>
                         <th style="min-width: 120px">سرمایه گذار</th>
-                        <th style="min-width: 90px">بد حساب</th>
-                        <th style="min-width: 60px">فعال</th>
+                        <th style="min-width: 100px">بد حساب</th>
+                        <th style="min-width: 100px">فعال</th>
                         <th style="min-width: 170px">انتقال به دفترچه تلفن</th>
                         <th style="min-width: 120px">کد</th>
                         <th style="min-width: 250px">نام و نام خانوادگی</th>
-                        <th style="min-width: 90px">کد پستی</th>
+                        <th style="min-width: 100px">کد پستی</th>
                         <th style="min-width: 140px">موبایل</th>
                         <th style="min-width: 120px">شهر</th>
                         <th style="min-width: 120px">واسطه فروش</th>
@@ -125,9 +125,9 @@
                 url: "/taraf-hesab",
                 dataType: "json",
                 success: function(response) {
+                    // console.log(response);
                     $('#myData').html(response.output);
                     $('#pagination').html(response.pagination);
-                    // console.log(response);
                 },
             });
         }

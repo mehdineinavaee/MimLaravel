@@ -25,7 +25,7 @@
                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                         </div>
                                         <input type="text" id="index_to_date" name="index_to_date"
-                                            class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                            class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                         <div id="index_to_date_error" class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -94,14 +94,14 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 90px">کد کالا</th>
-                        <th style="min-width: 90px">نام کالا</th>
-                        <th style="min-width: 90px">نام انبار</th>
-                        <th style="min-width: 90px">موجودی انبار</th>
-                        <th style="min-width: 90px">مبلغ میانگین خرید</th>
-                        <th style="min-width: 90px">مبلغ آخرین خرید</th>
-                        <th style="min-width: 90px">مبلغ کل</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 100px">کد کالا</th>
+                        <th style="min-width: 100px">نام کالا</th>
+                        <th style="min-width: 100px">نام انبار</th>
+                        <th style="min-width: 100px">موجودی انبار</th>
+                        <th style="min-width: 100px">مبلغ میانگین خرید</th>
+                        <th style="min-width: 100px">مبلغ آخرین خرید</th>
+                        <th style="min-width: 100px">مبلغ کل</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -140,31 +140,31 @@
                     $.each(response.riali_report, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                        <td>" +
+                                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                        </tr>'
+                                                                                </tr>'
                         );
                     });
                 },

@@ -30,7 +30,6 @@ class NotificationRequest extends FormRequest
             'serial_number' => 'required',
             'total' => 'required',
             'due_date' => 'required',
-            'bank_account_details' => 'required',
             'payer' => 'required',
             'considerations' => 'required',
         ];

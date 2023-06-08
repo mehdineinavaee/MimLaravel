@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('code')->nullable(); // کد
             $table->string('receive_date'); // تاریخ دریافت
-            $table->string('bank_account_details'); // مشخصات حساب بانکی
             $table->string('quantity'); // تعداد برگه
             $table->string('cheque_from'); // از شماره
             $table->string('cheque_to'); // تا شماره

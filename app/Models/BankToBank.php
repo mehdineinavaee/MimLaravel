@@ -8,5 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class BankToBank extends Model
 {
     use HasFactory;
-    public $fillable = ['from_bank', 'to_bank', 'form_date', 'form_number', 'cash_amount', 'considerations1', 'date', 'bank_account_details', 'deposit_amount', 'wage', 'issue_tracking', 'considerations2'];
+    public $fillable = ['form_date', 'form_number', 'cash_amount', 'considerations1', 'date', 'deposit_amount', 'wage', 'issue_tracking', 'considerations2'];
+
+    public function from_bank()
+    {
+        return $this->belongsTo(BankType::class);
+    }
+
+    public function to_bank()
+    {
+        return $this->belongsTo(BankType::class);
+    }
+
+    public function bank_account()
+    {
+        return $this->belongsTo(BankAccount::class);
+    }
 }

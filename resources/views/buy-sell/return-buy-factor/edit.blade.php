@@ -65,6 +65,7 @@
         $(document).on("click", ".updateReturnBuyFactor", function(e) {
             e.preventDefault();
             var return_buy_factor_id = $("#edit_return_buy_factor_id").val();
+
             var data = {
                 return_buy_factor_no: $('#edit_return_buy_factor_no').val(),
             };
@@ -93,7 +94,6 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
                         });
                 },
                 error: function(errors) {
@@ -119,6 +119,7 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {

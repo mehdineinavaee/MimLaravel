@@ -28,7 +28,7 @@
                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                         </div>
                                         <input type="text" id="index_from_date" name="index_from_date"
-                                            class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                            class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                         <div id="index_from_date_error" class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -41,7 +41,7 @@
                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                         </div>
                                         <input type="text" id="index_to_date" name="index_to_date"
-                                            class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                            class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                         <div id="index_to_date_error" class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -123,12 +123,12 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 90px">کد طرف حساب</th>
-                        <th style="min-width: 90px">نام طرف حساب</th>
-                        <th style="min-width: 90px">مبلغ فاکتور</th>
-                        <th style="min-width: 90px">کل سود</th>
-                        <th style="min-width: 90px">درصد سهم سود</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 100px">کد طرف حساب</th>
+                        <th style="min-width: 100px">نام طرف حساب</th>
+                        <th style="min-width: 100px">مبلغ فاکتور</th>
+                        <th style="min-width: 100px">کل سود</th>
+                        <th style="min-width: 100px">درصد سهم سود</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -165,31 +165,31 @@
                     $.each(response.taraf_hesab_benefit, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                        <td>" +
+                                                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                        </tr>'
+                                                                                                </tr>'
                         );
                     });
                 },

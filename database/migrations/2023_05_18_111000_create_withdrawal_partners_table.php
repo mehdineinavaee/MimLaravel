@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('withdrawal_partners', function (Blueprint $table) {
             $table->id();
+            $table->string('form_date')->nullable(); // تاریخ فرم
+            $table->string('form_number')->nullable(); // شماره فرم
+            $table->string('cash_amount')->nullable(); // مبلغ نقدی
+            $table->string('document')->nullable(); // شرح سند
             $table->timestamps();
         });
     }

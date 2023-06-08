@@ -28,7 +28,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_receive_date" name="add_receive_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_receive_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -36,8 +36,15 @@
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_bank_account_details">مشخصات حساب بانکی</label>
-                            <input type="text" id="add_bank_account_details" name="add_bank_account_details"
-                                class="form-control" autocomplete="off" />
+                            <select id="add_bank_account_details" name="add_bank_account_details"
+                                class="form-control select2" style="width: 100%;">
+                                <option value="" selected>حساب بانکی را انتخاب کنید</option>
+                                @foreach ($bank_accounts as $bank_account)
+                                    <option value={{ $bank_account->id }}>
+                                        {{ $bank_account->account_number }}
+                                    </option>
+                                @endforeach
+                            </select>
                             <div id="add_bank_account_details_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -104,6 +111,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -113,7 +122,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -141,6 +150,8 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -156,6 +167,10 @@
             $("#add_cheque_from").removeClass("is-invalid");
             $("#add_cheque_to_error").text("");
             $("#add_cheque_to").removeClass("is-invalid");
+        }
+
+        function add_defaultSelectedValue() {
+            $(add_bank_account_details).prop('selectedIndex', 0).change();
         }
 
         $("#add_cheque_from").on("input", function() {

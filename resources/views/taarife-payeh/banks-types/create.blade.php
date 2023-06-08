@@ -53,7 +53,14 @@
             $(document).on('click', '.addBanksTypes', function(e) {
                 e.preventDefault();
 
+                if (document.getElementById("add_activeCheckBox").checked) {
+                    var add_activeCheckBox = "فعال";
+                } else {
+                    var add_activeCheckBox = "غیرفعال";
+                }
+
                 var data = {
+                    'chk_active': add_activeCheckBox,
                     'bank_code': $('#add_bank_code').val(),
                     'bank_name': $('#add_bank_name').val(),
                 }
@@ -72,6 +79,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -81,7 +90,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -109,6 +118,8 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -116,6 +127,10 @@
             $("#add_bank_code").removeClass("is-invalid");
             $("#add_bank_name_error").text("");
             $("#add_bank_name").removeClass("is-invalid");
+        }
+
+        function add_defaultSelectedValue() {
+            $('#add_activeCheckBox').prop('checked', false);
         }
     </script>
 @endpush

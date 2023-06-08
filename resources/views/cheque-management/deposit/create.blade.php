@@ -28,7 +28,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_form_date" name="add_form_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_form_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -61,8 +61,10 @@
                         <div class="form-group mb-3">
                             <label for="add_total">مبلغ چک</label>
                             <input type="text" id="add_total" name="add_total" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'add_total_price');" />
                             <div id="add_total_error" class="invalid-feedback"></div>
+                            <div id="add_total_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -73,7 +75,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_due_date" name="add_due_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_due_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -81,12 +83,19 @@
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_bank_account_details">مشخصات حساب بانکی</label>
-                            <input type="text" id="add_bank_account_details" name="add_bank_account_details"
-                                class="form-control" autocomplete="off" />
+                            <select id="add_bank_account_details" name="add_bank_account_details"
+                                class="form-control select2" style="width: 100%;">
+                                <option value="" selected>حساب بانکی را انتخاب کنید</option>
+                                @foreach ($bank_accounts as $bank_account)
+                                    <option value={{ $bank_account->id }}>
+                                        {{ $bank_account->account_number }}
+                                    </option>
+                                @endforeach
+                            </select>
                             <div id="add_bank_account_details_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_payer">پرداخت کننده</label>
                             <input type="text" id="add_payer" name="add_payer" class="form-control"
@@ -136,6 +145,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -145,7 +156,8 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_clearPrice();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -173,6 +185,9 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_clearPrice();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -194,6 +209,14 @@
             $("#add_bank_account_details").removeClass("is-invalid");
             $("#add_payer_error").text("");
             $("#add_payer").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_total_price").text("");
+        }
+
+        function add_defaultSelectedValue() {
+            $(add_bank_account_details).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

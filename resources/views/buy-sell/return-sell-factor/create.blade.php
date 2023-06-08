@@ -60,7 +60,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_factor_date" name="add_factor_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_factor_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -217,6 +217,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -226,7 +228,8 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_clearPrice();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -254,6 +257,9 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_clearPrice();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -283,6 +289,18 @@
             $("#add_settlement_deadline").removeClass("is-invalid");
             $("#add_settlement_date_error").text("");
             $("#add_settlement_date").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_total").text("");
+        }
+
+        function add_defaultSelectedValue() {
+            $(add_customer_type).prop('selectedIndex', 0).change();
+            $(add_buyer).prop('selectedIndex', 0).change();
+            $(add_broker).prop('selectedIndex', 0).change();
+            $(add_product_name).prop('selectedIndex', 0).change();
+            $(add_werehouse_name).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

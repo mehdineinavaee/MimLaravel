@@ -43,7 +43,7 @@
                         <div class="form-group mb-3">
                             <label for="edit_mobile">موبایل</label>
                             <input type="text" id="edit_mobile" name="edit_mobile"
-                                class="form-control leftToRight leftAlign inputMaskPhone" autocomplete="off" />
+                                class="form-control leftToRight rightAlign inputMaskPhone" autocomplete="off" />
                             <div id="edit_mobile_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                         <div class="form-group mb-3">
                             <label for="edit_fax">فاکس</label>
                             <input type="text" id="edit_fax" name="edit_fax"
-                                class="form-control leftToRight leftAlign inputMaskFax" autocomplete="off" />
+                                class="form-control leftToRight rightAlign inputMaskFax" autocomplete="off" />
                             <div id="edit_fax_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                         <div class="form-group mb-3">
                             <label for="edit_tel">تلفن</label>
                             <input type="text" id="edit_tel" name="edit_tel"
-                                class="form-control leftToRight leftAlign inputMaskTel" autocomplete="off" />
+                                class="form-control leftToRight rightAlign inputMaskTel" autocomplete="off" />
                             <div id="edit_tel_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -144,6 +144,7 @@
         $(document).on("click", ".updatePhoneBook", function(e) {
             e.preventDefault();
             var phone_book_id = $("#edit_phone_book_id").val();
+
             var data = {
                 contact: $('#edit_contact').val(),
                 main_contact: $('#edit_main_contact').val(),
@@ -170,6 +171,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -179,7 +182,6 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
                         });
                 },
                 error: function(errors) {
@@ -205,6 +207,7 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {

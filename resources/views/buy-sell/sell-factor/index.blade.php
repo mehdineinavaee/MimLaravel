@@ -20,14 +20,14 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>شماره</th>
+                        <th style="min-width: 100px">شماره</th>
                         <th style="min-width: 200px">تاریخ</th>
                         <th style="min-width: 200px">خریدار</th>
                         <th style="min-width: 100px">جمع نهایی</th>
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody id="data">
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -40,6 +40,8 @@
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -60,32 +62,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("#data").html("");
-                    $.each(response.sell - factors, function(index, item) {
-                        $("#data").append(
-                            "<tr>\
-                                                    <td>" +
-                            item.factor_no +
-                            "</td>\
-                                                    <td>" +
-                            item.factor_date +
-                            "</td>\
-                                                    <td>" +
-                            item.buyer +
-                            "</td>\
-                                                    <td>" +
-                            new Intl.NumberFormat().format(item.total) +
-                            " ریال" +
-                            '</td>\
-                                                    <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_sell_factor btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                    <button type="button" value="/payment-to-account/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                    </tr>'
-                        );
-                    });
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                 },
             });
         }

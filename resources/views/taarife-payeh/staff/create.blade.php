@@ -81,7 +81,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_birthdate" name="add_birthdate"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="add_birthdate_error" style="margin-right:38px;" class="invalid-feedback">
                                 </div>
                             </div>
@@ -91,7 +91,8 @@
                         <div class="form-group mb-3">
                             <label for="add_national_code">شماره شناسنامه</label>
                             <input type="text" id="add_national_code" name="add_national_code"
-                                class="leftToRight leftAlign inputMaskNationalCode form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskNationalCode form-control"
+                                autocomplete="off" />
                             <div id="add_national_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -177,7 +178,6 @@
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
                                 add_defaultSelectedValue();
-                                fetchData();
                             });
                     },
 

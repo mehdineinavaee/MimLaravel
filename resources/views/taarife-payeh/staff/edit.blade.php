@@ -82,7 +82,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_birthdate" name="edit_birthdate"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_birthdate_error" style="margin-right:38px;" class="invalid-feedback">
                                 </div>
                             </div>
@@ -92,7 +92,8 @@
                         <div class="form-group mb-3">
                             <label for="edit_national_code">شماره شناسنامه</label>
                             <input type="text" id="edit_national_code" name="edit_national_code"
-                                class="leftToRight leftAlign inputMaskNationalCode form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskNationalCode form-control"
+                                autocomplete="off" />
                             <div id="edit_national_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -228,7 +229,6 @@
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
                             edit_defaultSelectedValue();
-                            fetchData();
                         });
                 },
                 error: function(errors) {

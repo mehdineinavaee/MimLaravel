@@ -8,12 +8,57 @@ use Illuminate\Http\Request;
 
 class ArzeshAfzoudeGroupController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $arzesh_afzoude_groups = ArzeshAfzoudeGroup::orderBy('id', 'desc')->get();
-        return response()->json([
-            'arzesh_afzoude_groups' => $arzesh_afzoude_groups,
-        ]);
+        $output = '';
+        $data = ArzeshAfzoudeGroup::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                if ($item->avarez != null) {
+                    $avarez = number_format($item->avarez);
+                } else {
+                    $avarez = '-';
+                }
+
+                if ($item->maliyat != null) {
+                    $maliyat = number_format($item->maliyat);
+                } else {
+                    $maliyat = '-';
+                }
+
+                if ($item->saghfe_moamelat != null) {
+                    $saghfe_moamelat = number_format($item->saghfe_moamelat);
+                } else {
+                    $saghfe_moamelat = '-';
+                }
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->group_name . '</td>
+                        <td>' . $item->financial_year . '</td>
+                        <td>' . $avarez . ' ریال</td>
+                        <td>' . $maliyat . ' ریال</td>
+                        <td>' . $saghfe_moamelat . ' ریال</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_arzesh_afzoude_groups btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/arzesh-afzoude-groups/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,8 +66,11 @@ class ArzeshAfzoudeGroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         return view('taarife-payeh/arzesh-afzoude-groups.index');
     }
 
@@ -47,12 +95,11 @@ class ArzeshAfzoudeGroupController extends Controller
         $arzesh_afzoude_group = new ArzeshAfzoudeGroup();
         $arzesh_afzoude_group->group_name = $request->input('group_name');
         $arzesh_afzoude_group->financial_year = $request->input('financial_year');
-        $arzesh_afzoude_group->avarez = $request->input('avarez');
+        $arzesh_afzoude_group->avarez = str_replace(",", "", $request->input('avarez'));
+        $arzesh_afzoude_group->maliyat = str_replace(",", "", $request->input('maliyat'));
+        $arzesh_afzoude_group->saghfe_moamelat = str_replace(",", "", $request->input('saghfe_moamelat'));
         $arzesh_afzoude_group->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'گروه ارزش افزوده جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'گروه ارزش افزوده جدید ذخیره شد');
     }
 
     /**
@@ -101,12 +148,11 @@ class ArzeshAfzoudeGroupController extends Controller
         if ($arzesh_afzoude_group) {
             $arzesh_afzoude_group->group_name = $request->input('group_name');
             $arzesh_afzoude_group->financial_year = $request->input('financial_year');
-            $arzesh_afzoude_group->avarez = $request->input('avarez');
+            $arzesh_afzoude_group->avarez = str_replace(",", "", $request->input('avarez'));
+            $arzesh_afzoude_group->maliyat = str_replace(",", "", $request->input('maliyat'));
+            $arzesh_afzoude_group->saghfe_moamelat = str_replace(",", "", $request->input('saghfe_moamelat'));
             $arzesh_afzoude_group->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'گروه ارزش افزوده ویرایش شد',
-            ]);
+            return self::fetchData(200, 'گروه ارزش افزوده ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -125,9 +171,6 @@ class ArzeshAfzoudeGroupController extends Controller
     {
         $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
         $arzesh_afzoude_group->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'گروه ارزش افزوده حذف شد',
-        ]);
+        return self::fetchData(200, 'گروه ارزش افزوده حذف شد');
     }
 }

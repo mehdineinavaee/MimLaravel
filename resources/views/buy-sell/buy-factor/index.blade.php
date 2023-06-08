@@ -16,7 +16,7 @@
             </h3>
         </div>
         <!-- /.card-header -->
-        <div class="card-body" id="data">
+        <div class="card-body">
 
         </div>
         <!-- /.card-body -->
@@ -42,7 +42,7 @@
                 },
                 success: function(response) {
                     // console.log(response);
-                    $("#data").html(response);
+
                 }
             })
         }

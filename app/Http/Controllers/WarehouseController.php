@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
         $output = '';
         $data = Warehouse::orderBy('id', 'desc')->paginate(10);
@@ -33,7 +33,12 @@ class WarehouseController extends Controller
                     </tr>
                     ';
             }
-            return [$output, $data];
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
         }
     }
 
@@ -45,11 +50,7 @@ class WarehouseController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            list($data, $pagination) = self::fetchData();
-            return response()->json([
-                'output' => $data,
-                'pagination' => (string)$pagination->links(),
-            ]);
+            return self::fetchData(200, '');
         }
         return view('taarife-payeh/warehouse.index');
     }
@@ -72,21 +73,12 @@ class WarehouseController extends Controller
      */
     public function store(WarehouseRequest $request)
     {
-        if ($request->ajax()) {
-            $warehouse = new Warehouse();
-            $warehouse->chk_active = $request->chk_active;
-            $warehouse->code = $request->input('code');
-            $warehouse->title = $request->input('title');
-            $warehouse->save();
-            list($data, $pagination) = self::fetchData();
-            return response()->json([
-                'output' => $data,
-                'pagination' => (string)$pagination->links(),
-                'status' => 200,
-                'message' => 'انبار جدید ذخیره شد',
-            ]);
-        }
-        return view('buy-sell/return-buy-factor.index');
+        $warehouse = new Warehouse();
+        $warehouse->chk_active = $request->chk_active;
+        $warehouse->code = $request->input('code');
+        $warehouse->title = $request->input('title');
+        $warehouse->save();
+        return self::fetchData(200, 'انبار جدید ذخیره شد');
     }
 
     /**
@@ -131,26 +123,18 @@ class WarehouseController extends Controller
      */
     public function update(WarehouseRequest $request, $id)
     {
-        if ($request->ajax()) {
-            $warehouse = Warehouse::find($id);
-            if ($warehouse) {
-                $warehouse->chk_active = $request->chk_active;
-                $warehouse->code = $request->input('code');
-                $warehouse->title = $request->input('title');
-                $warehouse->update();
-                list($data, $pagination) = self::fetchData();
-                return response()->json([
-                    'output' => $data,
-                    'pagination' => (string)$pagination->links(),
-                    'status' => 200,
-                    'message' => 'انبار ویرایش شد',
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'اطلاعاتی یافت نشد',
-                ]);
-            }
+        $warehouse = Warehouse::find($id);
+        if ($warehouse) {
+            $warehouse->chk_active = $request->chk_active;
+            $warehouse->code = $request->input('code');
+            $warehouse->title = $request->input('title');
+            $warehouse->update();
+            return self::fetchData(200, 'انبار ویرایش شد');
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
         }
     }
 
@@ -164,12 +148,6 @@ class WarehouseController extends Controller
     {
         $warehouse = Warehouse::find($id);
         $warehouse->delete();
-        list($data, $pagination) = self::fetchData();
-        return response()->json([
-            'output' => $data,
-            'pagination' => (string)$pagination->links(),
-            'status' => 200,
-            'message' => 'انبار حذف شد',
-        ]);
+        return self::fetchData(200, 'انبار حذف شد');
     }
 }

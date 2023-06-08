@@ -19,14 +19,11 @@
                         <select id="edit_from_taraf_hesab" name="edit_from_taraf_hesab" class="form-control select2"
                             style="width: 100%;">
                             <option value="" selected>طرف حساب را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                طرف حساب 1
-                            </option>
-                            <option value="2">
-                                طرف حساب 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($taraf_hesabs as $taraf_hesab)
+                                <option value={{ $taraf_hesab->id }}>
+                                    {{ $taraf_hesab->fullname }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="edit_from_taraf_hesab_error" class="invalid-feedback"></div>
                     </div>
@@ -37,14 +34,11 @@
                         <select id="edit_to_taraf_hesab" name="edit_to_taraf_hesab" class="form-control select2"
                             style="width: 100%;">
                             <option value="" selected>طرف حساب را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                طرف حساب 1
-                            </option>
-                            <option value="2">
-                                طرف حساب 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($taraf_hesabs as $taraf_hesab)
+                                <option value={{ $taraf_hesab->id }}>
+                                    {{ $taraf_hesab->fullname }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="edit_to_taraf_hesab_error" class="invalid-feedback"></div>
                     </div>
@@ -57,7 +51,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="edit_form_date" name="edit_form_date"
-                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="edit_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -74,16 +68,18 @@
                     <div class="form-group mb-3">
                         <label for="edit_cash_amount">مبلغ نقدی</label>
                         <input type="text" id="edit_cash_amount" name="edit_cash_amount" class="form-control"
-                            autocomplete="off" />
+                            autocomplete="off" onkeyup="separateNum(this.value,this,'edit_cash_amount_price');" />
                         <div id="edit_cash_amount_error" class="invalid-feedback"></div>
+                        <div id="edit_cash_amount_price" style="text-align: justify; color:green">
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12">
                     <div class="form-group mb-3">
-                        <label for="edit_considerations">شرح سند</label>
-                        <input type="text" id="edit_considerations" name="edit_considerations" class="form-control"
+                        <label for="edit_document">شرح سند</label>
+                        <input type="text" id="edit_document" name="edit_document" class="form-control"
                             autocomplete="off" />
-                        <div id="edit_considerations_error" class="invalid-feedback"></div>
+                        <div id="edit_document_error" class="invalid-feedback"></div>
                     </div>
                 </div>
             </div>
@@ -117,15 +113,18 @@
                     } else {
                         $("#editInfo").modal("show");
                         $("#edit_transfer_person_id").val(transfer_person_id);
-                        $("#edit_from_taraf_hesab").val(response.transfer_person
-                            .from_taraf_hesab);
-                        $("#edit_to_taraf_hesab").val(response.transfer_person
-                            .to_taraf_hesab);
+
+                        $('#edit_from_taraf_hesab').val(response.transfer_person
+                            .from_taraf_hesab_id).change();
+                        $('#edit_to_taraf_hesab').val(response.transfer_person
+                            .to_taraf_hesab_id).change();
                         $("#edit_form_date").val(response.transfer_person.form_date);
                         $("#edit_form_number").val(response.transfer_person.form_number);
-                        $("#edit_cash_amount").val(response.transfer_person.cash_amount);
-                        $("#edit_considerations").val(response.transfer_person
-                            .considerations);
+                        $('#edit_cash_amount').val(new Intl.NumberFormat().format(response
+                            .transfer_person
+                            .cash_amount));
+                        $("#edit_document").val(response.transfer_person
+                            .document);
                     }
                 },
             });
@@ -134,13 +133,14 @@
         $(document).on("click", ".updateTransferPerson", function(e) {
             e.preventDefault();
             var transfer_person_id = $("#edit_transfer_person_id").val();
+
             var data = {
                 from_taraf_hesab: $("#edit_from_taraf_hesab").val(),
                 to_taraf_hesab: $("#edit_to_taraf_hesab").val(),
                 form_date: $("#edit_form_date").val(),
                 form_number: $("#edit_form_number").val(),
                 cash_amount: $("#edit_cash_amount").val(),
-                considerations: $("#edit_considerations").val(),
+                document: $("#edit_document").val(),
             };
 
             $.ajaxSetup({
@@ -156,6 +156,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -165,7 +167,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -191,6 +194,9 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            edit_clearPrice();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -204,8 +210,17 @@
             $("#edit_form_number").removeClass("is-invalid");
             $("#edit_cash_amount_error").text("");
             $("#edit_cash_amount").removeClass("is-invalid");
-            $("#edit_considerations_error").text("");
-            $("#edit_considerations").removeClass("is-invalid");
+            $("#edit_document_error").text("");
+            $("#edit_document").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_cash_amount_price").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_from_taraf_hesab).prop('selectedIndex', 0).change();
+            $(edit_to_taraf_hesab).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

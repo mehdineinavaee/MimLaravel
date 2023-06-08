@@ -35,7 +35,8 @@
                             <div class="form-group mb-3">
                                 <label for="edit_account_number">شماره حساب</label>
                                 <input type="text" id="edit_account_number" name="edit_account_number"
-                                    class="form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskAccountNumber form-control"
+                                    autocomplete="off" />
                                 <div id="edit_account_number_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -45,7 +46,8 @@
                             <div class="form-group mb-3">
                                 <label for="edit_shaba_number">شماره شبا</label>
                                 <input type="text" id="edit_shaba_number" name="edit_shaba_number"
-                                    class="form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskShabaNumber form-control"
+                                    autocomplete="off" />
                                 <div id="edit_shaba_number_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -54,7 +56,8 @@
                         <div class="form-group mb-3">
                             <div class="form-group mb-3">
                                 <label for="edit_cart_number">شماره کارت</label>
-                                <input type="text" id="edit_cart_number" name="edit_cart_number" class="form-control"
+                                <input type="text" id="edit_cart_number" name="edit_cart_number"
+                                    class="leftToRight rightAlign inputMaskCartNumber form-control"
                                     autocomplete="off" />
                                 <div id="edit_cart_number_error" class="invalid-feedback"></div>
                             </div>
@@ -62,22 +65,17 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
-                            <div class="form-group mb-3">
-                                <label for="edit_bank_name">نام بانک</label>
-                                <select id="edit_bank_name" name="edit_bank_name" class="form-control select2"
-                                    style="width: 100%;">
-                                    <option value="" selected>نام بانک را انتخاب کنید</option>
-                                    {{-- @foreach ($publishers as $publisher) --}}
-                                    <option value="1">
-                                        تهران
+                            <label for="edit_bank_type">نام بانک</label>
+                            <select id="edit_bank_type" name="edit_bank_type" class="form-control select2"
+                                style="width: 100%;">
+                                <option value="" selected>نام بانک را انتخاب کنید</option>
+                                @foreach ($banks_types as $banks_type)
+                                    <option value="{{ $banks_type->id }}">
+                                        {{ $banks_type->bank_name }}
                                     </option>
-                                    <option value="2">
-                                        یزد
-                                    </option>
-                                    {{-- @endforeach --}}
-                                </select>
-                                <div id="edit_bank_name_error" class="invalid-feedback"></div>
-                            </div>
+                                @endforeach
+                            </select>
+                            <div id="edit_bank_type_error" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -140,12 +138,19 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
+
+                        if (response.bank_accounts.chk_active == "فعال") {
+                            $('#edit_activeCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_activeCheckBox').prop('checked', false);
+                        }
+
                         $("#edit_bank_accounts_id").val(bank_accounts_id);
                         $("#edit_account_type").val(response.bank_accounts.account_type);
                         $("#edit_account_number").val(response.bank_accounts.account_number);
                         $("#edit_shaba_number").val(response.bank_accounts.shaba_number);
                         $("#edit_cart_number").val(response.bank_accounts.cart_number);
-                        $("#edit_bank_name").val(response.bank_accounts.bank_name);
+                        $('#edit_bank_type').val(response.bank_accounts.bank_type_id).change();
                         $("#edit_branch_name").val(response.bank_accounts.branch_name);
                         $("#edit_branch_address").val(response.bank_accounts.branch_address);
                         $("#edit_cheque_print_type").val(response.bank_accounts.cheque_print_type);
@@ -157,13 +162,20 @@
         $(document).on("click", ".updateBankAccounts", function(e) {
             e.preventDefault();
             var bank_accounts_id = $("#edit_bank_accounts_id").val();
+
+            if (document.getElementById("edit_activeCheckBox").checked) {
+                var edit_activeCheckBox = "فعال";
+            } else {
+                var edit_activeCheckBox = "غیرفعال";
+            }
+
             var data = {
-                bank_accounts_id: $("#edit_bank_accounts_id").val(),
+                chk_active: edit_activeCheckBox,
                 account_type: $("#edit_account_type").val(),
                 account_number: $("#edit_account_number").val(),
                 shaba_number: $("#edit_shaba_number").val(),
                 cart_number: $("#edit_cart_number").val(),
-                bank_name: $("#edit_bank_name").val(),
+                bank_type: $("#edit_bank_type").val(),
                 branch_name: $("#edit_branch_name").val(),
                 branch_address: $("#edit_branch_address").val(),
                 cheque_print_type: $("#edit_cheque_print_type").val(),
@@ -182,6 +194,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -191,7 +205,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -217,6 +231,8 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -228,14 +244,19 @@
             $("#edit_shaba_number").removeClass("is-invalid");
             $("#edit_cart_number_error").text("");
             $("#edit_cart_number").removeClass("is-invalid");
-            $("#edit_bank_name_error").text("");
-            $("#edit_bank_name").removeClass("is-invalid");
+            $("#edit_bank_type_error").text("");
+            $("#edit_bank_type").removeClass("is-invalid");
             $("#edit_branch_name_error").text("");
             $("#edit_branch_name").removeClass("is-invalid");
             $("#edit_branch_address_error").text("");
             $("#edit_branch_address").removeClass("is-invalid");
             $("#edit_cheque_print_type_error").text("");
             $("#edit_cheque_print_type").removeClass("is-invalid");
+        }
+
+        function edit_defaultSelectedValue() {
+            $('#edit_activeCheckBox').prop('checked', false);
+            $(edit_bank_type).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

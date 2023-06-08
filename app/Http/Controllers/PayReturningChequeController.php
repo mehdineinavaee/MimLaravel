@@ -3,17 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PayReturningChequeRequest;
+use App\Models\BankAccount;
 use App\Models\PayReturningCheque;
 use Illuminate\Http\Request;
 
 class PayReturningChequeController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $pay_returning_cheque = PayReturningCheque::orderBy('id', 'desc')->get();
-        return response()->json([
-            'pay_returning_cheque' => $pay_returning_cheque,
-        ]);
+        $output = '';
+        $data = PayReturningCheque::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                if ($item->total != null) {
+                    $total = number_format($item->total);
+                } else {
+                    $total = '-';
+                }
+
+                if ($item->wage != null) {
+                    $wage = number_format($item->wage);
+                } else {
+                    $wage = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->form_date . '</td>
+                        <td>' . $item->form_number . '</td>
+                        <td>' . $item->serial_number . '</td>
+                        <td>' . $total . ' ریال</td>
+                        <td>' . $wage . ' ریال</td>
+                        <td>' . $item->due_date . '</td>
+                        <td>' . $item->bank_account->account_number . '</td>
+                        <td>' . $item->receiver . '</td>
+                        <td>' . $item->considerations . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_pay_returning_cheque btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/pay-returning-cheque/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,9 +66,14 @@ class PayReturningChequeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('cheque-management/pay-returning-cheque.index');
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
+        $bank_accounts = BankAccount::all();
+        return view('cheque-management/pay-returning-cheque.index')
+            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -48,17 +98,14 @@ class PayReturningChequeController extends Controller
         $pay_returning_cheque->form_date = $request->input('form_date');
         $pay_returning_cheque->form_number = $request->input('form_number');
         $pay_returning_cheque->serial_number = $request->input('serial_number');
-        $pay_returning_cheque->total = $request->input('total');
-        $pay_returning_cheque->wage = $request->input('wage');
+        $pay_returning_cheque->total = str_replace(",", "", $request->input('total'));
+        $pay_returning_cheque->wage = str_replace(",", "", $request->input('wage'));
         $pay_returning_cheque->due_date = $request->input('due_date');
-        $pay_returning_cheque->bank_account_details = $request->input('bank_account_details');
         $pay_returning_cheque->receiver = $request->input('receiver');
         $pay_returning_cheque->considerations = $request->input('considerations');
+        $pay_returning_cheque->bank_account()->associate($request->bank_account_details);
         $pay_returning_cheque->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'برگشت چک ذخیره شد',
-        ]);
+        return self::fetchData(200, 'برگشت چک ذخیره شد');
     }
 
     /**
@@ -108,17 +155,14 @@ class PayReturningChequeController extends Controller
             $pay_returning_cheque->form_date = $request->input('form_date');
             $pay_returning_cheque->form_number = $request->input('form_number');
             $pay_returning_cheque->serial_number = $request->input('serial_number');
-            $pay_returning_cheque->total = $request->input('total');
-            $pay_returning_cheque->wage = $request->input('wage');
+            $pay_returning_cheque->total = str_replace(",", "", $request->input('total'));
+            $pay_returning_cheque->wage = str_replace(",", "", $request->input('wage'));
             $pay_returning_cheque->due_date = $request->input('due_date');
-            $pay_returning_cheque->bank_account_details = $request->input('bank_account_details');
             $pay_returning_cheque->receiver = $request->input('receiver');
             $pay_returning_cheque->considerations = $request->input('considerations');
+            $pay_returning_cheque->bank_account()->associate($request->bank_account_details);
             $pay_returning_cheque->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'برگشت چک ویرایش شد',
-            ]);
+            return self::fetchData(200, 'برگشت چک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -137,9 +181,6 @@ class PayReturningChequeController extends Controller
     {
         $pay_returning_cheque = PayReturningCheque::find($id);
         $pay_returning_cheque->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'برگشت چک حذف شد',
-        ]);
+        return self::fetchData(200, 'برگشت چک حذف شد');
     }
 }

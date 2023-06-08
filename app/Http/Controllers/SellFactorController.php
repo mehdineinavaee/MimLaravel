@@ -9,12 +9,61 @@ use Illuminate\Http\Request;
 
 class SellFactorController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $sell_factors = SellFactor::orderBy('id', 'desc')->get();
-        return response()->json([
-            'sell_factors' => $sell_factors,
-        ]);
+        $output = '';
+        $data = SellFactor::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                // switch ($item->customer_type) {
+                //     case ('1'):
+                //         $customer_type = 'مشتری دائم';
+                //         break;
+                //     case ('2'):
+                //         $customer_type = 'مشتری رهگذر';
+                //         break;
+                //     default:
+                //         $customer_type = '-';
+                // }
+
+                // if ($item->sell_price != null) {
+                //     $sell_price = number_format($item->sell_price);
+                // } else {
+                //     $sell_price = '-';
+                // }
+
+                if ($item->total != null) {
+                    $total = number_format($item->total);
+                } else {
+                    $total = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $item->factor_no . '</td>
+                        <td>' . $item->factor_date . '</td>
+                        <td>' . $item->buyer . '</td>
+                        <td>' . $total . ' ریال</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_sell_factor btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/sell_factor/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -22,8 +71,11 @@ class SellFactorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         $taraf_hesabs = TarafHesab::where('chk_buyer', '=', "فعال")->orderBy('fullname', 'asc')->get();
         $vasete_foroosh = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
         return view('buy-sell/sell-factor.index')
@@ -63,10 +115,7 @@ class SellFactorController extends Controller
         $sell_factor->settlement_deadline = $request->input('settlement_deadline');
         $sell_factor->settlement_date = $request->input('settlement_date');
         $sell_factor->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'فاکتور فروش جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'فاکتور فروش جدید ذخیره شد');
     }
 
     /**
@@ -126,10 +175,7 @@ class SellFactorController extends Controller
             $sell_factor->settlement_deadline = $request->input('settlement_deadline');
             $sell_factor->settlement_date = $request->input('settlement_date');
             $sell_factor->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'فاکتور فروش ویرایش شد',
-            ]);
+            return self::fetchData(200, 'فاکتور فروش ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -148,9 +194,6 @@ class SellFactorController extends Controller
     {
         $sell_factor = SellFactor::find($id);
         $sell_factor->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'فاکتور فروش حذف شد',
-        ]);
+        return self::fetchData(200, 'فاکتور فروش حذف شد');
     }
 }

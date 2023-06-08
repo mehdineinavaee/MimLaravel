@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('total'); // مبلغ چک
             $table->string('wage'); // کارمزد
             $table->string('due_date'); // سر رسید
-            $table->string('bank_account_details'); // مشخصات حساب بانکی
             $table->string('receiver'); // دریافت کننده
             $table->string('considerations'); // ملاحظات
             $table->timestamps();

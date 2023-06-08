@@ -62,6 +62,8 @@
                 url: "/banks-types/" + banks_types_id + "/edit",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     if (response.status == 404) {
                         Swal.fire({
                             icon: 'error',
@@ -70,6 +72,12 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
+
+                        if (response.banks_types.chk_active == "فعال") {
+                            $('#edit_activeCheckBox').prop('checked', true);
+                        } else {
+                            $('#edit_activeCheckBox').prop('checked', false);
+                        }
 
                         $("#edit_banks_types_id").val(banks_types_id);
                         $("#edit_bank_code").val(response.banks_types.bank_code);
@@ -82,8 +90,15 @@
         $(document).on("click", ".updateBanksTypes", function(e) {
             e.preventDefault();
             var banks_types_id = $("#edit_banks_types_id").val();
+
+            if (document.getElementById("edit_activeCheckBox").checked) {
+                var edit_activeCheckBox = "فعال";
+            } else {
+                var edit_activeCheckBox = "غیرفعال";
+            }
+
             var data = {
-                banks_types_id: $("#edit_banks_types_id").val(),
+                chk_active: edit_activeCheckBox,
                 bank_code: $("#edit_bank_code").val(),
                 bank_name: $("#edit_bank_name").val(),
             };
@@ -110,7 +125,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -136,6 +151,8 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -143,6 +160,10 @@
             $("#edit_bank_code").removeClass("is-invalid");
             $("#edit_bank_name_error").text("");
             $("#edit_bank_name").removeClass("is-invalid");
+        }
+
+        function edit_defaultSelectedValue() {
+            $('#edit_activeCheckBox').prop('checked', false);
         }
     </script>
 @endpush

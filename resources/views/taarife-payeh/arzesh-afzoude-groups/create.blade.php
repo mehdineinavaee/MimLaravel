@@ -34,24 +34,31 @@
                         <div class="form-group mb-3">
                             <label for="add_avarez">عوارض</label>
                             <input type="text" id="add_avarez" name="add_avarez" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'add_avarez_price');" />
                             <div id="add_avarez_error" class="invalid-feedback"></div>
+                            <div id="add_avarez_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_maliyat">مالیات</label>
                             <input type="text" id="add_maliyat" name="add_maliyat" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'add_maliyat_price');" />
                             <div id="add_maliyat_error" class="invalid-feedback"></div>
+                            <div id="add_maliyat_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_saghfe_moamelat">سقف معاملات</label>
                             <input type="text" id="add_saghfe_moamelat" name="add_saghfe_moamelat"
-                                class="form-control" autocomplete="off" />
+                                class="form-control" autocomplete="off"
+                                onkeyup="separateNum(this.value,this,'add_saghfe_moamelat_price');" />
                             <div id="add_saghfe_moamelat_error" class="invalid-feedback"></div>
+                            <div id="add_saghfe_moamelat_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -74,6 +81,8 @@
                     'group_name': $('#add_group_name').val(),
                     'financial_year': $('#add_financial_year').val(),
                     'avarez': $('#add_avarez').val(),
+                    'maliyat': $('#add_maliyat').val(),
+                    'saghfe_moamelat': $('#add_saghfe_moamelat').val(),
                 }
                 // console.log(data);
 
@@ -90,6 +99,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -99,7 +110,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_clearPrice();
                             });
                     },
 
@@ -127,6 +138,8 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_clearPrice();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -134,8 +147,18 @@
             $("#add_group_name").removeClass("is-invalid");
             $("#add_financial_year_error").text("");
             $("#add_financial_year").removeClass("is-invalid");
-            $("#add_add_avarez_error").text("");
-            $("#add_add_avarez").removeClass("is-invalid");
+            $("#add_avarez_error").text("");
+            $("#add_avarez").removeClass("is-invalid");
+            $("#add_maliyat_error").text("");
+            $("#add_maliyat").removeClass("is-invalid");
+            $("#add_saghfe_moamelat_error").text("");
+            $("#add_saghfe_moamelat").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_avarez_price").text("");
+            $("#add_maliyat_price").text("");
+            $("#add_saghfe_moamelat_price").text("");
         }
     </script>
 @endpush

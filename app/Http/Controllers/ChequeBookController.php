@@ -3,17 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ChequeBookRequest;
+use App\Models\BankAccount;
 use App\Models\ChequeBook;
 use Illuminate\Http\Request;
 
 class ChequeBookController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $cheque_book = ChequeBook::orderBy('id', 'desc')->get();
-        return response()->json([
-            'cheque_book' => $cheque_book,
-        ]);
+        $output = '';
+        $data = ChequeBook::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->code . '</td>
+                        <td>' . $item->receive_date . '</td>
+                        <td>' . $item->bank_account->account_number . '</td>
+                        <td>' . $item->quantity . '</td>
+                        <td>' . $item->cheque_from . '</td>
+                        <td>' . $item->cheque_to . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_cheque_book btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/cheque-book/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,9 +51,14 @@ class ChequeBookController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('cheque-management/cheque-book.index');
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
+        $bank_accounts = BankAccount::all();
+        return view('cheque-management/cheque-book.index')
+            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -47,15 +82,12 @@ class ChequeBookController extends Controller
         $cheque_book = new ChequeBook();
         $cheque_book->code = $request->input('code');
         $cheque_book->receive_date = $request->input('receive_date');
-        $cheque_book->bank_account_details = $request->input('bank_account_details');
         $cheque_book->quantity = $request->input('quantity');
         $cheque_book->cheque_from = $request->input('cheque_from');
         $cheque_book->cheque_to = $request->input('cheque_to');
+        $cheque_book->bank_account()->associate($request->bank_account_details);
         $cheque_book->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'دسته چک ذخیره شد',
-        ]);
+        return self::fetchData(200, 'دسته چک ذخیره شد');
     }
 
     /**
@@ -104,15 +136,12 @@ class ChequeBookController extends Controller
         if ($cheque_book) {
             $cheque_book->code = $request->input('code');
             $cheque_book->receive_date = $request->input('receive_date');
-            $cheque_book->bank_account_details = $request->input('bank_account_details');
             $cheque_book->quantity = $request->input('quantity');
             $cheque_book->cheque_from = $request->input('cheque_from');
             $cheque_book->cheque_to = $request->input('cheque_to');
+            $cheque_book->bank_account()->associate($request->bank_account_details);
             $cheque_book->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'دسته چک ویرایش شد',
-            ]);
+            return self::fetchData(200, 'دسته چک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -131,9 +160,6 @@ class ChequeBookController extends Controller
     {
         $cheque_book = ChequeBook::find($id);
         $cheque_book->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'دسته چک حذف شد',
-        ]);
+        return self::fetchData(200, 'دسته چک حذف شد');
     }
 }

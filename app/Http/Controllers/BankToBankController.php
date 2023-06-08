@@ -3,17 +3,72 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BankToBankRequest;
+use App\Models\BankAccount;
 use App\Models\BankToBank;
+use App\Models\BankType;
 use Illuminate\Http\Request;
 
 class BankToBankController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $bank_to_bank = BankToBank::orderBy('id', 'desc')->get();
-        return response()->json([
-            'bank_to_bank' => $bank_to_bank,
-        ]);
+        $output = '';
+        $data = BankToBank::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                if ($item->cash_amount != null) {
+                    $cash_amount = number_format($item->cash_amount);
+                } else {
+                    $cash_amount = '-';
+                }
+
+                if ($item->deposit_amount != null) {
+                    $deposit_amount = number_format($item->deposit_amount);
+                } else {
+                    $deposit_amount = '-';
+                }
+
+                if ($item->wage != null) {
+                    $wage = number_format($item->wage);
+                } else {
+                    $wage = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->from_bank->bank_name . '</td>
+                        <td>' . $item->to_bank->bank_name . '</td>
+                        <td>' . $item->form_date . '</td>
+                        <td>' . $item->form_number . '</td>
+                        <td>' . $cash_amount . ' ریال</td>
+                        <td>' . $item->considerations1 . '</td>
+                        <td>' . $item->date . '</td>
+                        <td>' . $item->bank_account->account_number . '</td>
+                        <td>' . $deposit_amount . ' ریال</td>
+                        <td>' . $wage . ' ریال</td>
+                        <td>' . $item->issue_tracking . '</td>
+                        <td>' . $item->considerations2 . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_bank_to_bank btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/bank-to-bank/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,9 +76,16 @@ class BankToBankController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('financial-management/bank-to-bank.index');
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
+        $banks_types = BankType::all();
+        $bank_accounts = BankAccount::all();
+        return view('financial-management/bank-to-bank.index')
+            ->with('banks_types', $banks_types)
+            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -45,23 +107,20 @@ class BankToBankController extends Controller
     public function store(BankToBankRequest $request)
     {
         $bank_to_bank = new BankToBank();
-        $bank_to_bank->from_bank = $request->input('from_bank');
-        $bank_to_bank->to_bank = $request->input('to_bank');
         $bank_to_bank->form_date = $request->input('form_date');
         $bank_to_bank->form_number = $request->input('form_number');
-        $bank_to_bank->cash_amount = $request->input('cash_amount');
+        $bank_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
         $bank_to_bank->considerations1 = $request->input('considerations1');
         $bank_to_bank->date = $request->input('date');
-        $bank_to_bank->bank_account_details = $request->input('bank_account_details');
-        $bank_to_bank->deposit_amount = $request->input('deposit_amount');
-        $bank_to_bank->wage = $request->input('wage');
+        $bank_to_bank->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+        $bank_to_bank->wage = str_replace(",", "", $request->input('wage'));
         $bank_to_bank->issue_tracking = $request->input('issue_tracking');
         $bank_to_bank->considerations2 = $request->input('considerations2');
+        $bank_to_bank->from_bank()->associate($request->from_bank);
+        $bank_to_bank->to_bank()->associate($request->to_bank);
+        $bank_to_bank->bank_account()->associate($request->bank_account_details);
         $bank_to_bank->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'از بانک به بانک جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'از بانک به بانک جدید ذخیره شد');
     }
 
     /**
@@ -108,23 +167,20 @@ class BankToBankController extends Controller
     {
         $bank_to_bank = BankToBank::find($id);
         if ($bank_to_bank) {
-            $bank_to_bank->from_bank = $request->input('from_bank');
-            $bank_to_bank->to_bank = $request->input('to_bank');
             $bank_to_bank->form_date = $request->input('form_date');
             $bank_to_bank->form_number = $request->input('form_number');
-            $bank_to_bank->cash_amount = $request->input('cash_amount');
+            $bank_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
             $bank_to_bank->considerations1 = $request->input('considerations1');
             $bank_to_bank->date = $request->input('date');
-            $bank_to_bank->bank_account_details = $request->input('bank_account_details');
-            $bank_to_bank->deposit_amount = $request->input('deposit_amount');
-            $bank_to_bank->wage = $request->input('wage');
+            $bank_to_bank->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+            $bank_to_bank->wage = str_replace(",", "", $request->input('wage'));
             $bank_to_bank->issue_tracking = $request->input('issue_tracking');
             $bank_to_bank->considerations2 = $request->input('considerations2');
+            $bank_to_bank->from_bank()->associate($request->from_bank);
+            $bank_to_bank->to_bank()->associate($request->to_bank);
+            $bank_to_bank->bank_account()->associate($request->bank_account_details);
             $bank_to_bank->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'از بانک به بانک ویرایش شد',
-            ]);
+            return self::fetchData(200, 'از بانک به بانک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -143,9 +199,6 @@ class BankToBankController extends Controller
     {
         $bank_to_bank = BankToBank::find($id);
         $bank_to_bank->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'از بانک به بانک حذف شد',
-        ]);
+        return self::fetchData(200, 'از بانک به بانک حذف شد');
     }
 }

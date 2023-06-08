@@ -88,6 +88,10 @@ a:hover {
     text-align: left;
 }
 
+.rightAlign {
+    text-align: right;
+}
+
 /* Change the hover color for a hover over table */
 .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover th {

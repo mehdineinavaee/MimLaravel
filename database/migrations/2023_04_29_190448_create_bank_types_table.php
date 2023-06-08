@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('bank_types', function (Blueprint $table) {
             $table->id();
+            $table->string('chk_active')->nullable(); // فعال
             $table->string('bank_code')->nullable(); // کد بانک
             $table->string('bank_name')->nullable(); // نام بانک
             $table->timestamps();

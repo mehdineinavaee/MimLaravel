@@ -29,7 +29,7 @@ class TransferPersonRequest extends FormRequest
             'form_date' => 'required',
             'form_number' => 'required',
             'cash_amount' => 'required',
-            'considerations' => 'required',
+            'document' => 'required',
         ];
     }
 }

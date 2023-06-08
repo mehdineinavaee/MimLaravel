@@ -19,13 +19,13 @@
                             style="text-align: center;">
                             <thead>
                                 <tr>
-                                    <th>ردیف</th>
+                                    <th style="min-width: 100px">ردیف</th>
                                     <th style="min-width: 110px">کد دسته چک</th>
-                                    <th style="min-width: 85px">شماره چک</th>
+                                    <th style="min-width: 100px">شماره چک</th>
                                     <th style="min-width: 355px">مشخصات حساب بانکی</th>
                                     <th style="min-width: 80px">تعداد برگه</th>
-                                    <th style="min-width: 80px">از سریال</th>
-                                    <th style="min-width: 80px">تا سریال</th>
+                                    <th style="min-width: 100px">از سریال</th>
+                                    <th style="min-width: 100px">تا سریال</th>
                                 </tr>
                             </thead>
                             <tbody>

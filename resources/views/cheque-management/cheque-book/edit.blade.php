@@ -29,7 +29,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_receive_date" name="edit_receive_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_receive_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -37,8 +37,15 @@
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_bank_account_details">مشخصات حساب بانکی</label>
-                            <input type="text" id="edit_bank_account_details" name="edit_bank_account_details"
-                                class="form-control" autocomplete="off" />
+                            <select id="edit_bank_account_details" name="edit_bank_account_details"
+                                class="form-control select2" style="width: 100%;">
+                                <option value="" selected>حساب بانکی را انتخاب کنید</option>
+                                @foreach ($bank_accounts as $bank_account)
+                                    <option value={{ $bank_account->id }}>
+                                        {{ $bank_account->account_number }}
+                                    </option>
+                                @endforeach
+                            </select>
                             <div id="edit_bank_account_details_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -99,7 +106,8 @@
                         $("#edit_cheque_book_id").val(cheque_book_id);
                         $("#edit_code").val(response.cheque_book.code);
                         $("#edit_receive_date").val(response.cheque_book.receive_date);
-                        $("#edit_bank_account_details").val(response.cheque_book.bank_account_details);
+                        $('#edit_bank_account_details').val(response.cheque_book.bank_account_id)
+                            .change();
                         $("#edit_quantity").val(response.cheque_book.quantity);
                         $("#edit_cheque_from").val(response.cheque_book.cheque_from);
                         $("#edit_cheque_to").val(response.cheque_book.cheque_to);
@@ -111,8 +119,8 @@
         $(document).on("click", ".updateChequeBook", function(e) {
             e.preventDefault();
             var cheque_book_id = $("#edit_cheque_book_id").val();
+
             var data = {
-                cheque_book_id: $("#edit_cheque_book_id").val(),
                 code: $("#edit_code").val(),
                 receive_date: $("#edit_receive_date").val(),
                 bank_account_details: $("#edit_bank_account_details").val(),
@@ -134,6 +142,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -143,7 +153,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -169,6 +179,8 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -184,6 +196,10 @@
             $("#edit_cheque_from").removeClass("is-invalid");
             $("#edit_cheque_to_error").text("");
             $("#edit_cheque_to").removeClass("is-invalid");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_bank_account_details).prop('selectedIndex', 0).change();
         }
 
         $("#edit_cheque_from").on("input", function() {

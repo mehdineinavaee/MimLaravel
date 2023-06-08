@@ -28,6 +28,7 @@ class BankAccountsRequest extends FormRequest
             'account_number' => 'required',
             'shaba_number' => 'required',
             'cart_number' => 'required',
+            'bank_type' => 'required',
             'branch_name' => 'required',
             'branch_address' => 'required',
             'cheque_print_type' => 'required',

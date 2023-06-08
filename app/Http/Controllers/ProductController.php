@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
         $output = '';
         $data = Product::orderBy('product_name', 'asc')->paginate(10);
@@ -38,7 +38,7 @@ class ProductController extends Controller
                         <td>' . $item->main_group . '</td>
                         <td>' . $item->sub_group . '</td>
                         <td>' . $item->product_name . '</td>
-                        <td>' . $item->product_unit_id . '</td>
+                        <td>' . $item->product_unit->title . '</td>
                         <td>' . $sell_price . ' ریال</td>
                         <td>' . $item->value_added_group . '</td>
                         <td>' . $item->introduce_date . '</td>
@@ -56,7 +56,12 @@ class ProductController extends Controller
                     </tr>
                     ';
             }
-            return [$output, $data];
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
         }
     }
 
@@ -68,11 +73,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            list($valueA, $valueB) = self::fetchData();
-            return response()->json([
-                'output' => $valueA,
-                'pagination' => (string)$valueB->links(),
-            ]);
+            return self::fetchData(200, '');
         }
         $product_unit = ProductNoUnit::orderBy('title', 'asc')->get();
         return view('taarife-payeh/products.index')
@@ -111,10 +112,7 @@ class ProductController extends Controller
         $product->order_point = $request->input('order_point');
         $product->product_unit()->associate($request->product_unit);
         $product->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'کالای جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'کالای جدید ذخیره شد');
     }
 
     /**
@@ -174,10 +172,7 @@ class ProductController extends Controller
             $product->order_point = $request->input('order_point');
             $product->product_unit()->associate($request->product_unit);
             $product->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'کالا ویرایش شد',
-            ]);
+            return self::fetchData(200, 'کالا ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -196,9 +191,6 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $product->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'کالا حذف شد',
-        ]);
+        return self::fetchData(200, 'کالا حذف شد');
     }
 }

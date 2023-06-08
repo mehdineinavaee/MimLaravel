@@ -20,16 +20,16 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 90px">کد خدمات</th>
-                        <th style="min-width: 80px">نام خدمات</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 100px">کد خدمات</th>
+                        <th style="min-width: 100px">نام خدمات</th>
                         <th style="min-width: 150px">قیمت ارائه خدمات</th>
                         <th style="min-width: 150px">گروه ارزش افزوده</th>
-                        <th style="min-width: 90px">فعال</th>
+                        <th style="min-width: 100px">فعال</th>
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -44,6 +44,8 @@
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -60,41 +62,12 @@
         function fetchData() {
             $.ajax({
                 type: "GET",
-                url: "/service",
+                url: "/services",
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.services, function(index, item) {
-                        $("tbody").append(
-                            "<tr>\
-                                                                                    <td>" +
-                            (index + 1) +
-                            "</td>\
-                                                                                    <td>" +
-                            item.service_code +
-                            "</td>\
-                                                                                    <td>" +
-                            item.service_name +
-                            "</td>\
-                                                                                    <td>" +
-                            item.price +
-                            "</td>\
-                                                                                    <td>" +
-                            item.group +
-                            "</td>\
-                                                                                    <td>" +
-                            item.chk_active +
-                            '</td>\
-                                                                                    <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_service btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                                                    <button type="button" value="/services/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                                                    </tr>'
-                        );
-                    });
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                 },
             });
         }

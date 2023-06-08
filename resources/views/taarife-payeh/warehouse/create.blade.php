@@ -93,7 +93,6 @@
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
                                 add_defaultSelectedValue();
-                                fetchData();
                             });
                     },
 
@@ -122,6 +121,7 @@
             // alert("bye");
             add_clearErrors();
             add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {

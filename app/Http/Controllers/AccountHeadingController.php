@@ -10,12 +10,35 @@ use Illuminate\Http\Request;
 
 class AccountHeadingController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $acount_headings = AccountHeading::orderBy('id', 'desc')->get();
-        return response()->json([
-            'acount_headings' => $acount_headings,
-        ]);
+        $output = '';
+        $data = AccountHeading::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_account_heading btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/account_heading/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -23,8 +46,11 @@ class AccountHeadingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         $account_groups = AccountGroup::all();
         $kols = Kol::all();
         $moeins = Moein::all();

@@ -16,4 +16,24 @@ class TarafHesab extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    public function receive_from_the_accounts()
+    {
+        return $this->hasMany(ReceiveFromTheAccount::class);
+    }
+
+    public function payment_to_accounts()
+    {
+        return $this->hasMany(PaymentToAccount::class);
+    }
+
+    public function withdrawal_partners()
+    {
+        return $this->hasMany(WithdrawalPartner::class);
+    }
+
+    public function transfer_persons()
+    {
+        return $this->hasMany(TransferPerson::class);
+    }
 }

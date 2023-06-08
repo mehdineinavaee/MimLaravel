@@ -70,13 +70,10 @@ class ReturnBuyFactorController extends Controller
      */
     public function store(ReturnBuyFactorRequest $request)
     {
-        if ($request->ajax()) {
-            $return_buy_factor = new ReturnBuyFactor();
-            $return_buy_factor->return_buy_factor_no = $request->input('return_buy_factor_no');
-            $return_buy_factor->save();
-            return self::fetchData(200, 'فاکتور برگشت از خرید ذخیره شد');
-        }
-        return view('buy-sell/return-buy-factor.index');
+        $return_buy_factor = new ReturnBuyFactor();
+        $return_buy_factor->return_buy_factor_no = $request->input('return_buy_factor_no');
+        $return_buy_factor->save();
+        return self::fetchData(200, 'فاکتور برگشت از خرید ذخیره شد');
     }
 
     /**
@@ -121,20 +118,17 @@ class ReturnBuyFactorController extends Controller
      */
     public function update(ReturnBuyFactorRequest $request, $id)
     {
-        if ($request->ajax()) {
-            $return_buy_factor = ReturnBuyFactor::find($id);
-            if ($return_buy_factor) {
-                $return_buy_factor->return_buy_factor_no = $request->input('return_buy_factor_no');
-                $return_buy_factor->update();
-                return self::fetchData(200, 'فاکتور برگشت از خرید ویرایش شد');
-            } else {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'اطلاعاتی یافت نشد',
-                ]);
-            }
+        $return_buy_factor = ReturnBuyFactor::find($id);
+        if ($return_buy_factor) {
+            $return_buy_factor->return_buy_factor_no = $request->input('return_buy_factor_no');
+            $return_buy_factor->update();
+            return self::fetchData(200, 'فاکتور برگشت از خرید ویرایش شد');
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'اطلاعاتی یافت نشد',
+            ]);
         }
-        return view('buy-sell/return-buy-factor.index');
     }
 
     /**

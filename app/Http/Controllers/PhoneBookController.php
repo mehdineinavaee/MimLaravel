@@ -8,12 +8,45 @@ use Illuminate\Http\Request;
 
 class PhoneBookController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $phone_book = PhoneBook::orderBy('contact', 'asc')->get();
-        return response()->json([
-            'phone_book' => $phone_book,
-        ]);
+        $output = '';
+        $data = PhoneBook::orderBy('contact', 'asc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->contact . '</td>
+                        <td>' . $item->main_contact . '</td>
+                        <td>' . $item->occupation . '</td>
+                        <td>' . $item->mobile . '</td>
+                        <td class="leftToRight">' . $item->fax . '</td>
+                        <td class="leftToRight">' . $item->tel . '</td>
+                        <td>' . $item->activity_type . '</td>
+                        <td>' . $item->email . '</td>
+                        <td>' . $item->website . '</td>
+                        <td>' . $item->address . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_phone_book btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/phone-book/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,8 +54,11 @@ class PhoneBookController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         return view('facilities/phone-book.index');
     }
 
@@ -56,10 +92,7 @@ class PhoneBookController extends Controller
         $phone_book->website = $request->input('website');
         $phone_book->address = $request->input('address');
         $phone_book->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'مخاطب جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'مخاطب جدید ذخیره شد');
     }
 
     /**
@@ -117,10 +150,7 @@ class PhoneBookController extends Controller
             $phone_book->website = $request->input('website');
             $phone_book->address = $request->input('address');
             $phone_book->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'مخاطب ویرایش شد',
-            ]);
+            return self::fetchData(200, 'مخاطب ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -139,9 +169,6 @@ class PhoneBookController extends Controller
     {
         $phone_book = PhoneBook::find($id);
         $phone_book->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'مخاطب حذف شد',
-        ]);
+        return self::fetchData(200, 'مخاطب حذف شد');
     }
 }

@@ -20,17 +20,17 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 100px">از طرف حساب</th>
-                        <th style="min-width: 100px">به طرف حساب</th>
-                        <th style="min-width: 200px">تاریخ فرم</th>
-                        <th style="min-width: 200px">شماره فرم</th>
-                        <th style="min-width: 90px">مبلغ نقدی</th>
-                        <th style="min-width: 90px">شرح سند</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 200px">از طرف حساب</th>
+                        <th style="min-width: 200px">به طرف حساب</th>
+                        <th style="min-width: 100px">تاریخ فرم</th>
+                        <th style="min-width: 100px">شماره فرم</th>
+                        <th style="min-width: 200px">مبلغ نقدی</th>
+                        <th style="min-width: 300px">شرح سند</th>
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -46,12 +46,14 @@
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
 
-    {{-- @include('financial-management.withdrawal-partner.create')
-    @include('financial-management.withdrawal-partner.edit') --}}
+    @include('financial-management.withdrawal-partner.create')
+    @include('financial-management.withdrawal-partner.edit')
     @include('common.delete')
 @endsection
 
@@ -66,37 +68,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.withdrawal_partner, function(index, item) {
-                        $("tbody").append(
-                            "<tr>\
-                                                    <td>" +
-                            (index + 1) +
-                            "</td>\
-                                                    <td>" +
-                            item.from_taraf_hesab +
-                            "</td>\
-                                                    <td>" +
-                            item.to_taraf_hesab +
-                            "</td>\
-                                                    <td>" +
-                            item.form_date +
-                            "</td>\
-                                                    <td>" +
-                            item.form_number +
-                            "</td>\
-                                                    <td>" +
-                            item.cash_amount +
-                            '</td>\
-                                                    <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_withdrawal_partner btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                    <button type="button" value="/withdrawal-partner/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                    </tr>'
-                        );
-                    });
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                 },
             });
         }

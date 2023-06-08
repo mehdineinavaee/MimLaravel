@@ -18,14 +18,11 @@
                         <select id="edit_from_bank" name="edit_from_bank" class="form-control select2"
                             style="width: 100%;">
                             <option value="" selected>بانک را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                بانک 1
-                            </option>
-                            <option value="2">
-                                بانک 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($banks_types as $banks_type)
+                                <option value={{ $banks_type->id }}>
+                                    {{ $banks_type->bank_name }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="edit_from_bank_error" class="invalid-feedback"></div>
                     </div>
@@ -35,14 +32,11 @@
                         <label for="edit_to_bank">به بانک</label>
                         <select id="edit_to_bank" name="edit_to_bank" class="form-control select2" style="width: 100%;">
                             <option value="" selected>بانک را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                بانک 1
-                            </option>
-                            <option value="2">
-                                بانک 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($banks_types as $banks_type)
+                                <option value={{ $banks_type->id }}>
+                                    {{ $banks_type->bank_name }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="edit_to_bank_error" class="invalid-feedback"></div>
                     </div>
@@ -55,7 +49,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="edit_form_date" name="edit_form_date"
-                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="edit_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -92,8 +86,11 @@
                             <div class="form-group mb-3">
                                 <label for="edit_cash_amount">مبلغ نقدی</label>
                                 <input type="text" id="edit_cash_amount" name="edit_cash_amount" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'edit_cash_amount_price');" />
                                 <div id="edit_cash_amount_error" class="invalid-feedback"></div>
+                                <div id="edit_cash_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -113,7 +110,7 @@
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
-                                        <th>ردیف</th>
+                                        <th style="min-width: 100px">ردیف</th>
                                         <th style="min-width: 200px">مبلغ چک</th>
                                         <th style="min-width: 200px">پشت نمره</th>
                                         <th style="min-width: 200px">تاریخ صدور</th>
@@ -154,7 +151,8 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="edit_date" name="edit_date"
-                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                        class="leftToRight rightAlign inputMaskDate form-control"
+                                        autocomplete="off" />
                                     <div id="edit_date_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -165,14 +163,11 @@
                                 <select id="edit_bank_account_details" name="edit_bank_account_details"
                                     class="form-control select2" style="width: 100%;">
                                     <option value="" selected>حساب بانکی را انتخاب کنید</option>
-                                    {{-- @foreach ($publishers as $publisher) --}}
-                                    <option value="1">
-                                        حساب 1
-                                    </option>
-                                    <option value="2">
-                                        حساب 2
-                                    </option>
-                                    {{-- @endforeach --}}
+                                    @foreach ($bank_accounts as $bank_account)
+                                        <option value={{ $bank_account->id }}>
+                                            {{ $bank_account->account_number }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <div id="edit_bank_account_details_error" class="invalid-feedback"></div>
                             </div>
@@ -181,16 +176,21 @@
                             <div class="form-group mb-3">
                                 <label for="edit_deposit_amount">مبلغ واریزی</label>
                                 <input type="text" id="edit_deposit_amount" name="edit_deposit_amount"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control" autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'edit_deposit_amount_price');" />
                                 <div id="edit_deposit_amount_error" class="invalid-feedback"></div>
+                                <div id="edit_deposit_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="edit_wage">کارمزد</label>
                                 <input type="text" id="edit_wage" name="edit_wage" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off" onkeyup="separateNum(this.value,this,'edit_wage_price');" />
                                 <div id="edit_wage_error" class="invalid-feedback"></div>
+                                <div id="edit_wage_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -242,22 +242,25 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
-
                         $("#edit_bank_to_bank_id").val(bank_to_bank_id);
-                        $("#edit_from_bank").val(response.bank_to_bank
-                            .from_bank);
-                        $("#edit_to_bank").val(response.bank_to_bank
-                            .to_bank);
+
+                        $('#edit_from_bank').val(response.bank_to_bank.from_bank_id).change();
+                        $('#edit_to_bank').val(response.bank_to_bank.to_bank_id).change();
                         $("#edit_form_date").val(response.bank_to_bank.form_date);
                         $("#edit_form_number").val(response.bank_to_bank.form_number);
-                        $("#edit_cash_amount").val(response.bank_to_bank.cash_amount);
+                        $('#edit_cash_amount').val(new Intl.NumberFormat().format(response.bank_to_bank
+                            .cash_amount));
                         $("#edit_considerations1").val(response.bank_to_bank
                             .considerations1);
                         $("#edit_date").val(response.bank_to_bank.date);
-                        $("#edit_bank_account_details").val(response.bank_to_bank
-                            .bank_account_details);
-                        $("#edit_deposit_amount").val(response.bank_to_bank.deposit_amount);
-                        $("#edit_wage").val(response.bank_to_bank.wage);
+                        $('#edit_bank_account_details').val(response.bank_to_bank.bank_account_id)
+                            .change();
+                        $('#edit_deposit_amount').val(new Intl.NumberFormat().format(response
+                            .bank_to_bank
+                            .deposit_amount));
+                        $('#edit_wage').val(new Intl.NumberFormat().format(response
+                            .bank_to_bank
+                            .wage));
                         $("#edit_issue_tracking").val(response.bank_to_bank.issue_tracking);
                         $("#edit_considerations2").val(response.bank_to_bank
                             .considerations2);
@@ -269,6 +272,7 @@
         $(document).on("click", ".updateBankToBank", function(e) {
             e.preventDefault();
             var bank_to_bank_id = $("#edit_bank_to_bank_id").val();
+
             var data = {
                 from_bank: $("#edit_from_bank").val(),
                 to_bank: $("#edit_to_bank").val(),
@@ -297,6 +301,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -306,7 +312,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -348,6 +355,9 @@
             $("#edit_tab01 h6").removeClass("text-muted");
             $("fieldset").removeClass("show");
             edit_clearErrors();
+            edit_clearPrice();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -375,6 +385,18 @@
             $("#edit_issue_tracking").removeClass("is-invalid");
             $("#edit_considerations2_error").text("");
             $("#edit_considerations2").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_cash_amount_price").text("");
+            $("#edit_deposit_amount_price").text("");
+            $("#edit_wage_price").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_from_bank).prop('selectedIndex', 0).change();
+            $(edit_to_bank).prop('selectedIndex', 0).change();
+            $(edit_bank_account_details).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

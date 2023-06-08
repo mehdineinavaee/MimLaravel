@@ -18,14 +18,11 @@
                         <select id="edit_cost_title" name="edit_cost_title" class="form-control select2"
                             style="width: 100%;">
                             <option value="" selected>عنوان هزینه را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                هزینه 1
-                            </option>
-                            <option value="2">
-                                هزینه 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($funds as $fund)
+                                <option value={{ $fund->id }}>
+                                    {{ $fund->daramad_name }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="edit_cost_title_error" class="invalid-feedback"></div>
                     </div>
@@ -38,7 +35,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="edit_form_date" name="edit_form_date"
-                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="edit_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -78,8 +75,11 @@
                             <div class="form-group mb-3">
                                 <label for="edit_cash_amount">مبلغ نقدی</label>
                                 <input type="text" id="edit_cash_amount" name="edit_cash_amount" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'edit_cash_amount_price');" />
                                 <div id="edit_cash_amount_error" class="invalid-feedback"></div>
+                                <div id="edit_cash_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -99,7 +99,7 @@
                                 style="text-align: center;">
                                 <thead>
                                     <tr>
-                                        <th>ردیف</th>
+                                        <th style="min-width: 100px">ردیف</th>
                                         <th style="min-width: 200px">مبلغ چک</th>
                                         <th style="min-width: 200px">پشت نمره</th>
                                         <th style="min-width: 200px">تاریخ صدور</th>
@@ -140,7 +140,8 @@
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     </div>
                                     <input type="text" id="edit_date" name="edit_date"
-                                        class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                        class="leftToRight rightAlign inputMaskDate form-control"
+                                        autocomplete="off" />
                                     <div id="edit_date_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -151,14 +152,11 @@
                                 <select id="edit_bank_account_details" name="edit_bank_account_details"
                                     class="form-control select2" style="width: 100%;">
                                     <option value="" selected>حساب بانکی را انتخاب کنید</option>
-                                    {{-- @foreach ($publishers as $publisher) --}}
-                                    <option value="1">
-                                        حساب 1
-                                    </option>
-                                    <option value="2">
-                                        حساب 2
-                                    </option>
-                                    {{-- @endforeach --}}
+                                    @foreach ($bank_accounts as $bank_account)
+                                        <option value={{ $bank_account->id }}>
+                                            {{ $bank_account->account_number }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <div id="edit_bank_account_details_error" class="invalid-feedback"></div>
                             </div>
@@ -167,16 +165,21 @@
                             <div class="form-group mb-3">
                                 <label for="edit_deposit_amount">مبلغ واریزی</label>
                                 <input type="text" id="edit_deposit_amount" name="edit_deposit_amount"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control" autocomplete="off"
+                                    onkeyup="separateNum(this.value,this,'edit_deposit_amount_price');" />
                                 <div id="edit_deposit_amount_error" class="invalid-feedback"></div>
+                                <div id="edit_deposit_amount_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="edit_wage">کارمزد</label>
                                 <input type="text" id="edit_wage" name="edit_wage" class="form-control"
-                                    autocomplete="off" />
+                                    autocomplete="off" onkeyup="separateNum(this.value,this,'edit_wage_price');" />
                                 <div id="edit_wage_error" class="invalid-feedback"></div>
+                                <div id="edit_wage_price" style="text-align: justify; color:green">
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -202,8 +205,11 @@
                         <div class="form-group mb-3">
                             <label for="edit_paid_discount">تخفیف پرداختی</label>
                             <input type="text" id="edit_paid_discount" name="edit_paid_discount"
-                                class="form-control" autocomplete="off" />
+                                class="form-control" autocomplete="off"
+                                onkeyup="separateNum(this.value,this,'edit_paid_discount_price');" />
                             <div id="edit_paid_discount_error" class="invalid-feedback"></div>
+                            <div id="edit_paid_discount_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                 </fieldset>
@@ -239,22 +245,26 @@
                     } else {
                         $("#editInfo").modal("show");
                         $("#edit_pay_id").val(pay_id);
-                        $("#edit_cost_title").val(response.pay
-                            .cost_title);
+
+                        $('#edit_cost_title').val(response.pay.fund_id).change();
                         $("#edit_form_date").val(response.pay.form_date);
                         $("#edit_form_number").val(response.pay.form_number);
-                        $("#edit_cash_amount").val(response.pay.cash_amount);
+                        $('#edit_cash_amount').val(new Intl.NumberFormat().format(response
+                            .pay.cash_amount));
                         $("#edit_considerations1").val(response.pay
                             .considerations1);
                         $("#edit_date").val(response.pay.date);
-                        $("#edit_bank_account_details").val(response.pay
-                            .bank_account_details);
-                        $("#edit_deposit_amount").val(response.pay.deposit_amount);
-                        $("#edit_wage").val(response.pay.wage);
+                        $('#edit_bank_account_details').val(response.pay
+                            .bank_account_id).change();
+                        $('#edit_deposit_amount').val(new Intl.NumberFormat().format(response
+                            .pay.deposit_amount));
+                        $('#edit_wage').val(new Intl.NumberFormat().format(response
+                            .pay.wage));
                         $("#edit_issue_tracking").val(response.pay.issue_tracking);
                         $("#edit_considerations2").val(response.pay
                             .considerations2);
-                        $("#edit_paid_discount").val(response.pay.paid_discount);
+                        $('#edit_paid_discount').val(new Intl.NumberFormat().format(response
+                            .pay.paid_discount));
                     }
                 },
             });
@@ -263,6 +273,7 @@
         $(document).on("click", ".updatePay", function(e) {
             e.preventDefault();
             var pay_id = $("#edit_pay_id").val();
+
             var data = {
                 cost_title: $("#edit_cost_title").val(),
                 form_date: $("#edit_form_date").val(),
@@ -291,6 +302,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -300,7 +313,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -343,6 +357,9 @@
             $("#edit_tab01 h6").removeClass("text-muted");
             $("fieldset").removeClass("show");
             edit_clearErrors();
+            edit_clearPrice();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -370,6 +387,18 @@
             $("#edit_considerations2").removeClass("is-invalid");
             $("#edit_paid_discount_error").text("");
             $("#edit_paid_discount").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_cash_amount_price").text("");
+            $("#edit_deposit_amount_price").text("");
+            $("#edit_wage_price").text("");
+            $("#edit_paid_discount").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_cost_title).prop('selectedIndex', 0).change();
+            $(edit_bank_account_details).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

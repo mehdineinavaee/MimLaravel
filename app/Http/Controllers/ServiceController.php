@@ -8,12 +8,47 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $services = Service::orderBy('id', 'desc')->get();
-        return response()->json([
-            'services' => $services,
-        ]);
+        $output = '';
+        $data = Service::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+
+                if ($item->price != null) {
+                    $price = number_format($item->price);
+                } else {
+                    $price = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->service_code . '</td>
+                        <td>' . $item->service_name . '</td>
+                        <td>' . $price . ' ریال</td>
+                        <td>' . $item->group . '</td>
+                        <td>' . $item->chk_active . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_service btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/services/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,8 +56,11 @@ class ServiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         return view('taarife-payeh/services.index');
     }
 
@@ -45,15 +83,13 @@ class ServiceController extends Controller
     public function store(ServiceRequest $request)
     {
         $service = new Service();
+        $service->chk_active = $request->input('chk_active');
         $service->service_code = $request->input('service_code');
         $service->service_name = $request->input('service_name');
-        $service->price = $request->input('price');
+        $service->price = str_replace(",", "", $request->input('price'));
         $service->group = $request->input('group');
         $service->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'خدمات جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'خدمات جدید ذخیره شد');
     }
 
     /**
@@ -100,15 +136,13 @@ class ServiceController extends Controller
     {
         $service = Service::find($id);
         if ($service) {
+            $service->chk_active = $request->input('chk_active');
             $service->service_code = $request->input('service_code');
             $service->service_name = $request->input('service_name');
-            $service->price = $request->input('price');
+            $service->price = str_replace(",", "", $request->input('price'));
             $service->group = $request->input('group');
             $service->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'خدمات ویرایش شد',
-            ]);
+            return self::fetchData(200, 'خدمات ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -127,9 +161,6 @@ class ServiceController extends Controller
     {
         $service = Service::find($id);
         $service->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'خدمات حذف شد',
-        ]);
+        return self::fetchData(200, 'خدمات حذف شد');
     }
 }

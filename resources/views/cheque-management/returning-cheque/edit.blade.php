@@ -21,7 +21,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_form_date" name="edit_form_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_form_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -54,8 +54,10 @@
                         <div class="form-group mb-3">
                             <label for="edit_total">مبلغ چک</label>
                             <input type="text" id="edit_total" name="edit_total" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'edit_total_price');" />
                             <div id="edit_total_error" class="invalid-feedback"></div>
+                            <div id="edit_total_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -66,7 +68,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_due_date" name="edit_due_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_due_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -74,8 +76,15 @@
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_bank_account_details">مشخصات حساب بانکی</label>
-                            <input type="text" id="edit_bank_account_details" name="edit_bank_account_details"
-                                class="form-control" autocomplete="off" />
+                            <select id="edit_bank_account_details" name="edit_bank_account_details"
+                                class="form-control select2" style="width: 100%;">
+                                <option value="" selected>حساب بانکی را انتخاب کنید</option>
+                                @foreach ($bank_accounts as $bank_account)
+                                    <option value={{ $bank_account->id }}>
+                                        {{ $bank_account->account_number }}
+                                    </option>
+                                @endforeach
+                            </select>
                             <div id="edit_bank_account_details_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -87,7 +96,7 @@
                             <div id="edit_payer_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_considerations">ملاحظات</label>
                             <input type="text" id="edit_considerations" name="edit_considerations"
@@ -125,16 +134,17 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
-
                         $("#edit_returning_cheque_id").val(returning_cheque_id);
+
                         $("#edit_form_date").val(response.returning_cheque.form_date);
                         $("#edit_form_number").val(response.returning_cheque.form_number);
                         $("#edit_mark_back").val(response.returning_cheque.mark_back);
                         $("#edit_serial_number").val(response.returning_cheque.serial_number);
-                        $("#edit_total").val(response.returning_cheque.total);
+                        $('#edit_total').val(new Intl.NumberFormat().format(response.returning_cheque
+                            .total));
                         $("#edit_due_date").val(response.returning_cheque.due_date);
-                        $("#edit_bank_account_details").val(response.returning_cheque
-                            .bank_account_details);
+                        $('#edit_bank_account_details').val(response.returning_cheque.bank_account_id)
+                            .change();
                         $("#edit_payer").val(response.returning_cheque.payer);
                         $("#edit_considerations").val(response.returning_cheque.considerations);
                     }
@@ -145,8 +155,8 @@
         $(document).on("click", ".updateReturningCheque", function(e) {
             e.preventDefault();
             var returning_cheque_id = $("#edit_returning_cheque_id").val();
+
             var data = {
-                returning_cheque_id: $("#edit_returning_cheque_id").val(),
                 form_date: $("#edit_form_date").val(),
                 form_number: $("#edit_form_number").val(),
                 mark_back: $("#edit_mark_back").val(),
@@ -171,6 +181,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -180,7 +192,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -206,6 +219,9 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            edit_clearPrice();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -227,6 +243,14 @@
             $("#edit_payer").removeClass("is-invalid");
             $("#edit_considerations_error").text("");
             $("#edit_considerations").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_total_price").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_bank_account_details).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

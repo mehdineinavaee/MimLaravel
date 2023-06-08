@@ -3,17 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FundToBankRequest;
+use App\Models\BankType;
 use App\Models\FundToBank;
 use Illuminate\Http\Request;
 
 class FundToBankController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $fund_to_bank = FundToBank::orderBy('id', 'desc')->get();
-        return response()->json([
-            'fund_to_bank' => $fund_to_bank,
-        ]);
+        $output = '';
+        $data = FundToBank::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                if ($item->cash_amount != null) {
+                    $cash_amount = number_format($item->cash_amount);
+                } else {
+                    $cash_amount = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->bank_type->bank_name . '</td>
+                        <td>' . $item->form_date . '</td>
+                        <td>' . $item->form_number . '</td>
+                        <td>' . $cash_amount . ' ریال</td>
+                        <td>' . $item->considerations . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_fund_to_bank btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/fund-to-bank/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,9 +56,14 @@ class FundToBankController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('financial-management/fund-to-bank.index');
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
+        $bank_types = BankType::all();
+        return view('financial-management/fund-to-bank.index')
+            ->with('bank_types', $bank_types);
     }
 
     /**
@@ -45,16 +85,13 @@ class FundToBankController extends Controller
     public function store(FundToBankRequest $request)
     {
         $fund_to_bank = new FundToBank();
-        $fund_to_bank->bank = $request->input('bank');
         $fund_to_bank->form_date = $request->input('form_date');
         $fund_to_bank->form_number = $request->input('form_number');
-        $fund_to_bank->cash_amount = $request->input('cash_amount');
+        $fund_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
         $fund_to_bank->considerations = $request->input('considerations');
+        $fund_to_bank->bank_type()->associate($request->bank);
         $fund_to_bank->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'از صندوق به بانک جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'از صندوق به بانک جدید ذخیره شد');
     }
 
     /**
@@ -101,16 +138,13 @@ class FundToBankController extends Controller
     {
         $fund_to_bank = FundToBank::find($id);
         if ($fund_to_bank) {
-            $fund_to_bank->bank = $request->input('bank');
             $fund_to_bank->form_date = $request->input('form_date');
             $fund_to_bank->form_number = $request->input('form_number');
-            $fund_to_bank->cash_amount = $request->input('cash_amount');
+            $fund_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
             $fund_to_bank->considerations = $request->input('considerations');
+            $fund_to_bank->bank_type()->associate($request->bank);
             $fund_to_bank->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'از صندوق به بانک ویرایش شد',
-            ]);
+            return self::fetchData(200, 'از صندوق به بانک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -129,9 +163,6 @@ class FundToBankController extends Controller
     {
         $fund_to_bank = FundToBank::find($id);
         $fund_to_bank->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'از صندوق به بانک حذف شد',
-        ]);
+        return self::fetchData(200, 'از صندوق به بانک حذف شد');
     }
 }

@@ -32,31 +32,31 @@
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_account_number">شماره حساب</label>
-                            <input type="text" id="add_account_number" name="add_account_number" class="form-control"
-                                autocomplete="off" />
+                            <input type="text" id="add_account_number" name="add_account_number"
+                                class="leftToRight rightAlign inputMaskAccountNumber form-control" autocomplete="off" />
                             <div id="add_account_number_error" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_shaba_number">شماره شبا</label>
-                            <input type="text" id="add_shaba_number" name="add_shaba_number" class="form-control"
-                                autocomplete="off" />
+                            <input type="text" id="add_shaba_number" name="add_shaba_number"
+                                class="leftToRight rightAlign inputMaskShabaNumber form-control" autocomplete="off" />
                             <div id="add_shaba_number_error" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_cart_number">شماره کارت</label>
-                            <input type="text" id="add_cart_number" name="add_cart_number" class="form-control"
-                                autocomplete="off" />
+                            <input type="text" id="add_cart_number" name="add_cart_number"
+                                class="leftToRight rightAlign inputMaskCartNumber form-control" autocomplete="off" />
                             <div id="add_cart_number_error" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
-                            <label for="add_bank_name">نام بانک</label>
-                            <select id="add_bank_name" name="add_bank_name" class="form-control select2"
+                            <label for="add_bank_type">نام بانک</label>
+                            <select id="add_bank_type" name="add_bank_type" class="form-control select2"
                                 style="width: 100%;">
                                 <option value="" selected>نام بانک را انتخاب کنید</option>
                                 @foreach ($banks_types as $banks_type)
@@ -65,7 +65,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <div id="add_bank_name_error" class="invalid-feedback"></div>
+                            <div id="add_bank_type_error" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -108,12 +108,19 @@
             $(document).on('click', '.addBankAccounts', function(e) {
                 e.preventDefault();
 
+                if (document.getElementById("add_activeCheckBox").checked) {
+                    var add_activeCheckBox = "فعال";
+                } else {
+                    var add_activeCheckBox = "غیرفعال";
+                }
+
                 var data = {
+                    'chk_active': add_activeCheckBox,
                     'account_type': $('#add_account_type').val(),
                     'account_number': $('#add_account_number').val(),
                     'shaba_number': $('#add_shaba_number').val(),
                     'cart_number': $('#add_cart_number').val(),
-                    'bank_name': $('#add_bank_name').val(),
+                    'bank_type': $('#add_bank_type').val(),
                     'branch_name': $('#add_branch_name').val(),
                     'branch_address': $('#add_branch_address').val(),
                     'cheque_print_type': $('#add_cheque_print_type').val(),
@@ -133,6 +140,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -142,7 +151,7 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -170,6 +179,8 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -181,14 +192,19 @@
             $("#add_shaba_number").removeClass("is-invalid");
             $("#add_cart_number_error").text("");
             $("#add_cart_number").removeClass("is-invalid");
-            $("#add_bank_name_error").text("");
-            $("#add_bank_name").removeClass("is-invalid");
+            $("#add_bank_type_error").text("");
+            $("#add_bank_type").removeClass("is-invalid");
             $("#add_branch_name_error").text("");
             $("#add_branch_name").removeClass("is-invalid");
             $("#add_branch_address_error").text("");
             $("#add_branch_address").removeClass("is-invalid");
             $("#add_cheque_print_type_error").text("");
             $("#add_cheque_print_type").removeClass("is-invalid");
+        }
+
+        function add_defaultSelectedValue() {
+            $('#add_activeCheckBox').prop('checked', false);
+            $(add_bank_type).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

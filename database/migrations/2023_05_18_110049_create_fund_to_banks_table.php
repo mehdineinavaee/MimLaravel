@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('fund_to_banks', function (Blueprint $table) {
             $table->id();
-            $table->string('bank')->nullable(); // بانک
             $table->string('form_date')->nullable(); // تاریخ فرم
             $table->string('form_number')->nullable(); // شماره فرم
             $table->string('cash_amount')->nullable(); // مبلغ نقدی

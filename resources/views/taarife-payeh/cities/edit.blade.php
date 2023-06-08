@@ -70,8 +70,8 @@
         $(document).on("click", ".updateCity", function(e) {
             e.preventDefault();
             var city_id = $("#edit_city_id").val();
+
             var data = {
-                city_id: $("#edit_city_id").val(),
                 city_code: $("#edit_city_code").val(),
                 city_name: $("#edit_city_name").val(),
             };
@@ -89,6 +89,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -98,7 +100,6 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
                         });
                 },
                 error: function(errors) {
@@ -124,6 +125,7 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {

@@ -65,7 +65,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_factor_date" name="edit_factor_date"
-                                    class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                                 <div id="edit_factor_date_error" class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -213,20 +213,18 @@
                         $("#editInfo").modal("show");
 
                         $("#edit_sell_factor_id").val(sell_factor_id);
-                        $("#edit_customer_type").val(response.sell_factor
-                            .customer_type);
-                        $("#edit_buyer").val(response.sell_factor.buyer);
+                        $('#edit_customer_type').val(response.sell_factor.customer_type).change();
+                        $('#edit_buyer').val(response.sell_factor.buyer).change();
                         $("#edit_factor_no").val(response.sell_factor.factor_no);
                         $("#edit_factor_date").val(response.sell_factor.factor_date);
-                        $("#edit_broker").val(response.sell_factor
-                            .broker);
+                        $('#edit_broker').val(response.sell_factor.broker).change();
                         $("#edit_commission").val(response.sell_factor
                             .commission);
                         $("#edit_amount").val(response.sell_factor.amount);
                         $("#edit_discount").val(response.sell_factor.discount);
-                        $("#edit_total").val(response.sell_factor.total);
-                        $("#edit_warehouse_name").val(response.sell_factor
-                            .warehouse_name);
+                        $('#edit_total').val(new Intl.NumberFormat().format(response.sell_factor
+                            .total));
+                        $('#edit_warehouse_name').val(response.sell_factor.warehouse_name).change();
                         $("#edit_considerations").val(response.sell_factor.considerations);
                         $("#edit_settlement_deadline").val(response.sell_factor.settlement_deadline);
                         $("#edit_settlement_date").val(response.sell_factor
@@ -239,6 +237,7 @@
         $(document).on("click", ".updateReturnSellFactor", function(e) {
             e.preventDefault();
             var return_sell_factor_id = $("#edit_return_sell_factor_id").val();
+
             var data = {
                 customer_type: $('#edit_customer_type').val(),
                 buyer: $('#edit_buyer').val(),
@@ -268,6 +267,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -277,7 +278,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -303,6 +305,9 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            edit_clearPrice();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -332,6 +337,18 @@
             $("#edit_settlement_deadline").removeClass("is-invalid");
             $("#edit_settlement_date_error").text("");
             $("#edit_settlement_date").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_total").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_customer_type).prop('selectedIndex', 0).change();
+            $(edit_buyer).prop('selectedIndex', 0).change();
+            $(edit_broker).prop('selectedIndex', 0).change();
+            $(edit_product_name).prop('selectedIndex', 0).change();
+            $(edit_werehouse_name).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

@@ -8,12 +8,37 @@ use Illuminate\Http\Request;
 
 class AccountGroupController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $account_groups = AccountGroup::orderBy('name', 'asc')->get();
-        return response()->json([
-            'account_groups' => $account_groups,
-        ]);
+        $output = '';
+        $data = AccountGroup::orderBy('name', 'asc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->code . '</td>
+                        <td>' . $item->name . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_account_group btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/account-group/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,8 +46,11 @@ class AccountGroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         return view('taarife-payeh/account-group.index');
     }
 
@@ -48,10 +76,7 @@ class AccountGroupController extends Controller
         $account_group->code = $request->input('code');
         $account_group->name = $request->input('name');
         $account_group->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'گروه حساب جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'گروه حساب جدید ذخیره شد');
     }
 
     /**
@@ -101,10 +126,7 @@ class AccountGroupController extends Controller
             $account_group->code = $request->input('code');
             $account_group->name = $request->input('name');
             $account_group->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'گروه حساب ویرایش شد',
-            ]);
+            return self::fetchData(200, 'گروه حساب ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -123,9 +145,6 @@ class AccountGroupController extends Controller
     {
         $account_group = AccountGroup::find($id);
         $account_group->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'گروه حساب حذف شد',
-        ]);
+        return self::fetchData(200, 'گروه حساب حذف شد');
     }
 }

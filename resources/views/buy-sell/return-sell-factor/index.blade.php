@@ -32,7 +32,7 @@
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -45,6 +45,8 @@
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -65,32 +67,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.return_sell_factors, function(index, item) {
-                        $("tbody").append(
-                            "<tr>\
-                    <td>" +
-                            item.sell_factor_no +
-                            "</td>\
-                    <td>" +
-                            item.date +
-                            "</td>\
-                    <td>" +
-                            item.buyer +
-                            "</td>\
-                    <td>" +
-                            new Intl.NumberFormat().format(item.total) +
-                            " ریال" +
-                            '</td>\
-                    <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_return_sell_factor btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                    <button type="button" value="/return-sell-factor/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button>\
-                    </tr>'
-                        );
-                    });
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                 },
             });
         }

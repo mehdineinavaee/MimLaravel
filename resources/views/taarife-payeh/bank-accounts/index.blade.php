@@ -20,20 +20,20 @@
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
-                        <th>ردیف</th>
-                        <th style="min-width: 100px">نوع حساب</th>
+                        <th style="min-width: 100px">ردیف</th>
+                        <th style="min-width: 200px">نوع حساب</th>
                         <th style="min-width: 200px">شماره حساب</th>
-                        <th style="min-width: 200px">شماره شبا</th>
+                        <th style="min-width: 300px">شماره شبا</th>
                         <th style="min-width: 200px">شماره کارت</th>
                         <th style="min-width: 200px">نام بانک</th>
                         <th style="min-width: 200px">نام شعبه</th>
-                        <th style="min-width: 200px">آدرس شعبه</th>
+                        <th style="min-width: 400px">آدرس شعبه</th>
                         <th style="min-width: 200px">نوع چاپ چک</th>
-                        <th style="min-width: 90px">فعال</th>
+                        <th style="min-width: 100px">فعال</th>
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -52,6 +52,8 @@
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div id="pagination"></div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -72,49 +74,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.banks_types, function(index, item) {
-                        $("tbody").append(
-                            "<tr>\
-                                                            <td>" +
-                            (index + 1) +
-                            "</td>\
-                                                            <td>" +
-                            item.account_type +
-                            "</td>\
-                                                            <td>" +
-                            item.account_number +
-                            "</td>\
-                                                            <td>" +
-                            item.shaba_number +
-                            "</td>\
-                                                            <td>" +
-                            item.cart_number +
-                            "</td>\
-                                                            <td>" +
-                            item.bank_name +
-                            "</td>\
-                                                            <td>" +
-                            item.branch_name +
-                            "</td>\
-                                                            <td>" +
-                            item.branch_address +
-                            "</td>\
-                                                            <td>" +
-                            item.cheque_print_type +
-                            "</td>\
-                                                            <td>" +
-                            item.chk_active +
-                            '</td>\
-                                                            <td style="text-align: center"><button type="button" value="' +
-                            item.id +
-                            '" class="edit_bank_accounts btn btn-primary btn-sm"><i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i></button>\
-                                                            <button type="button" value="/bank-accounts/' +
-                            item.id +
-                            '" class="delete btn btn-danger btn-sm"><i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i></button></td>\
-                                                            </tr>'
-                        );
-                    });
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                 },
             });
         }

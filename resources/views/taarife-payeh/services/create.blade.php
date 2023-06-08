@@ -41,8 +41,10 @@
                         <div class="form-group mb-3">
                             <label for="add_price">قیمت ارائه خدمات</label>
                             <input type="text" id="add_price" name="add_price" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'add_price_price');" />
                             <div id="add_price_error" class="invalid-feedback"></div>
+                            <div id="add_price_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -69,7 +71,14 @@
             $(document).on('click', '.addService', function(e) {
                 e.preventDefault();
 
+                if (document.getElementById("add_activeCheckBox").checked) {
+                    var add_activeCheckBox = "فعال";
+                } else {
+                    var add_activeCheckBox = "غیرفعال";
+                }
+
                 var data = {
+                    'chk_active': add_activeCheckBox,
                     'service_code': $('#add_service_code').val(),
                     'service_name': $('#add_service_name').val(),
                     'price': $('#add_price').val(),
@@ -90,6 +99,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -99,7 +110,8 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                fetchData();
+                                add_clearPrice();
+                                add_defaultSelectedValue();
                             });
                     },
 
@@ -127,6 +139,9 @@
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
+            add_clearPrice();
+            add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_clearErrors() {
@@ -138,6 +153,14 @@
             $("#add_price").removeClass("is-invalid");
             $("#add_group_error").text("");
             $("#add_group").removeClass("is-invalid");
+        }
+
+        function add_clearPrice() {
+            $("#add_price_price").text("");
+        }
+
+        function add_defaultSelectedValue() {
+            $('#add_activeCheckBox').prop('checked', false);
         }
     </script>
 @endpush

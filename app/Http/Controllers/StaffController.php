@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
         $output = '';
         $data = Staff::orderBy('id', 'desc')->paginate(10);
@@ -39,7 +39,12 @@ class StaffController extends Controller
                     </tr>
                     ';
             }
-            return [$output, $data];
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
         }
     }
 
@@ -51,11 +56,7 @@ class StaffController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            list($data, $pagination) = self::fetchData();
-            return response()->json([
-                'output' => $data,
-                'pagination' => (string)$pagination->links(),
-            ]);
+            return self::fetchData(200, '');
         }
         return view('taarife-payeh/staff.index');
     }
@@ -89,13 +90,7 @@ class StaffController extends Controller
         $staff->national_code = $request->input('national_code');
         $staff->occupation = $request->input('occupation');
         $staff->save();
-        list($data, $pagination) = self::fetchData();
-        return response()->json([
-            'output' => $data,
-            'pagination' => (string)$pagination->links(),
-            'status' => 200,
-            'message' => 'پرسنل جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'پرسنل جدید ذخیره شد');
     }
 
     /**
@@ -152,13 +147,7 @@ class StaffController extends Controller
             $staff->national_code = $request->input('national_code');
             $staff->occupation = $request->input('occupation');
             $staff->update();
-            list($data, $pagination) = self::fetchData();
-            return response()->json([
-                'output' => $data,
-                'pagination' => (string)$pagination->links(),
-                'status' => 200,
-                'message' => 'پرسنل ویرایش شد',
-            ]);
+            return self::fetchData(200, 'پرسنل ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -177,12 +166,6 @@ class StaffController extends Controller
     {
         $staff = Staff::find($id);
         $staff->delete();
-        list($data, $pagination) = self::fetchData();
-        return response()->json([
-            'output' => $data,
-            'pagination' => (string)$pagination->links(),
-            'status' => 200,
-            'message' => 'پرسنل حذف شد',
-        ]);
+        return self::fetchData(200, 'پرسنل حذف شد');
     }
 }

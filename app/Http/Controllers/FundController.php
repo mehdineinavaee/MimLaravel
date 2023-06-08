@@ -8,12 +8,55 @@ use Illuminate\Http\Request;
 
 class FundController extends Controller
 {
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $funds = Fund::orderBy('id', 'desc')->get();
-        return response()->json([
-            'funds' => $funds,
-        ]);
+        $output = '';
+        $data = Fund::orderBy('id', 'desc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                switch ($item->form_type) {
+                    case ('1'):
+                        $form_type = 'درآمد';
+                        break;
+                    case ('2'):
+                        $form_type = 'هزینه';
+                        break;
+                    case ('3'):
+                        $form_type = 'صندوق';
+                        break;
+                    default:
+                        $form_type = '-';
+                }
+
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $form_type . '</td>
+                        <td>' . $item->daramad_code . '</td>
+                        <td>' . $item->daramad_name . '</td>
+                        <td>' . $item->chk_system . '</td>
+                        <td>' . $item->chk_active . '</td>
+
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_fund btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/fund/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -21,8 +64,11 @@ class FundController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         return view('taarife-payeh/fund.index');
     }
 
@@ -45,14 +91,13 @@ class FundController extends Controller
     public function store(FundRequest $request)
     {
         $fund = new Fund();
+        $fund->chk_system = $request->chk_system;
+        $fund->chk_active = $request->chk_active;
         $fund->form_type = $request->input('form_type');
         $fund->daramad_code = $request->input('daramad_code');
         $fund->daramad_name = $request->input('daramad_name');
         $fund->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'درآمد، هزینه، صندوق جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'درآمد، هزینه، صندوق جدید ذخیره شد');
     }
 
     /**
@@ -99,14 +144,13 @@ class FundController extends Controller
     {
         $fund = Fund::find($id);
         if ($fund) {
+            $fund->chk_system = $request->chk_system;
+            $fund->chk_active = $request->chk_active;
             $fund->form_type = $request->input('form_type');
             $fund->daramad_code = $request->input('daramad_code');
             $fund->daramad_name = $request->input('daramad_name');
             $fund->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'درآمد، هزینه، صندوق ویرایش شد',
-            ]);
+            return self::fetchData(200, 'درآمد، هزینه، صندوق ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -125,9 +169,6 @@ class FundController extends Controller
     {
         $fund = Fund::find($id);
         $fund->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'درآمد، هزینه، صندوق حذف شد',
-        ]);
+        return self::fetchData(200, 'درآمد، هزینه، صندوق حذف شد');
     }
 }

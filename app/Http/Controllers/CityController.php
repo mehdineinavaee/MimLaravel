@@ -15,12 +15,37 @@ class CityController extends Controller
         return Excel::download(new CityExport, 'citylist.xlsx');
     }
 
-    public function fetchData()
+    public function fetchData($status, $message)
     {
-        $cities = City::orderBy('city_name', 'asc')->get();
-        return response()->json([
-            'cities' => $cities,
-        ]);
+        $output = '';
+        $data = City::orderBy('city_name', 'asc')->paginate(10);
+
+        if ($data) {
+            foreach ($data as $index => $item) {
+                $output .=
+                    '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->city_code . '</td>
+                        <td>' . $item->city_name . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_city btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/cities/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+            }
+            return response()->json([
+                'output' => $output,
+                'pagination' => (string)$data->links(),
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 
     /**
@@ -28,8 +53,11 @@ class CityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return self::fetchData(200, '');
+        }
         return view('taarife-payeh/cities.index');
     }
 
@@ -55,10 +83,7 @@ class CityController extends Controller
         $city->city_code = $request->input('city_code');
         $city->city_name = $request->input('city_name');
         $city->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'شهر جدید ذخیره شد',
-        ]);
+        return self::fetchData(200, 'شهر جدید ذخیره شد');
     }
 
     /**
@@ -108,10 +133,7 @@ class CityController extends Controller
             $city->city_code = $request->input('city_code');
             $city->city_name = $request->input('city_name');
             $city->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'شهر ویرایش شد',
-            ]);
+            return self::fetchData(200, 'شهر ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -130,9 +152,6 @@ class CityController extends Controller
     {
         $city = City::find($id);
         $city->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'شهر حذف شد',
-        ]);
+        return self::fetchData(200, 'شهر حذف شد');
     }
 }

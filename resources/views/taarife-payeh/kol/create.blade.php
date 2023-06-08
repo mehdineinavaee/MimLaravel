@@ -129,7 +129,6 @@
                                 $("#createKol").find("input").val("");
                                 add_kolClearErrors();
                                 add_defaultSelectedValue();
-                                fetchData();
                             });
                     },
 
@@ -158,6 +157,7 @@
             // alert("bye");
             add_kolClearErrors();
             add_defaultSelectedValue();
+            $("#createInfo").find("input").val(""); // Clear Input Values
         })
 
         function add_kolClearErrors() {

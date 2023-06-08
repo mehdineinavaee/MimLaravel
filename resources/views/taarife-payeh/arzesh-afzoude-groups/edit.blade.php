@@ -35,24 +35,31 @@
                         <div class="form-group mb-3">
                             <label for="edit_avarez">عوارض</label>
                             <input type="text" id="edit_avarez" name="edit_avarez" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'edit_avarez_price');" />
                             <div id="edit_avarez_error" class="invalid-feedback"></div>
+                            <div id="edit_avarez_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_maliyat">مالیات</label>
                             <input type="text" id="edit_maliyat" name="edit_maliyat" class="form-control"
-                                autocomplete="off" />
+                                autocomplete="off" onkeyup="separateNum(this.value,this,'edit_maliyat_price');" />
                             <div id="edit_maliyat_error" class="invalid-feedback"></div>
+                            <div id="edit_maliyat_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_saghfe_moamelat">سقف معاملات</label>
                             <input type="text" id="edit_saghfe_moamelat" name="edit_saghfe_moamelat"
-                                class="form-control" autocomplete="off" />
+                                class="form-control" autocomplete="off"
+                                onkeyup="separateNum(this.value,this,'edit_saghfe_moamelat_price');" />
                             <div id="edit_saghfe_moamelat_error" class="invalid-feedback"></div>
+                            <div id="edit_saghfe_moamelat_price" style="text-align: justify; color:green">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,11 +92,16 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
-
                         $("#edit_arzesh_afzoude_groups_id").val(arzesh_afzoude_groups_id);
+
                         $("#edit_group_name").val(response.arzesh_afzoude_group.group_name);
                         $("#edit_financial_year").val(response.arzesh_afzoude_group.financial_year);
-                        $("#edit_avarez").val(response.arzesh_afzoude_group.avarez);
+                        $('#edit_avarez').val(new Intl.NumberFormat().format(response
+                            .arzesh_afzoude_group.avarez));
+                        $('#edit_maliyat').val(new Intl.NumberFormat().format(response
+                            .arzesh_afzoude_group.maliyat));
+                        $('#edit_saghfe_moamelat').val(new Intl.NumberFormat().format(response
+                            .arzesh_afzoude_group.saghfe_moamelat));
                     }
                 },
             });
@@ -98,10 +110,13 @@
         $(document).on("click", ".updateArzeshAfzoudeGroups", function(e) {
             e.preventDefault();
             var arzesh_afzoude_groups_id = $("#edit_arzesh_afzoude_groups_id").val();
+
             var data = {
                 group_name: $("#edit_group_name").val(),
                 financial_year: $("#edit_financial_year").val(),
                 avarez: $("#edit_avarez").val(),
+                maliyat: $("#edit_maliyat").val(),
+                saghfe_moamelat: $("#edit_saghfe_moamelat").val(),
             };
 
             $.ajaxSetup({
@@ -117,6 +132,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -126,7 +143,7 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
                         });
                 },
                 error: function(errors) {
@@ -152,15 +169,27 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            edit_clearPrice();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
-            $("#edit_group_name_error").text("");
+            $("#edit_group_name").text("");
             $("#edit_group_name").removeClass("is-invalid");
             $("#edit_financial_year_error").text("");
             $("#edit_financial_year").removeClass("is-invalid");
             $("#edit_avarez_error").text("");
-            $("#edit_avarez_unit").removeClass("is-invalid");
+            $("#edit_avarez").removeClass("is-invalid");
+            $("#edit_maliyat_error").text("");
+            $("#edit_maliyat").removeClass("is-invalid");
+            $("#edit_saghfe_moamelat_error").text("");
+            $("#edit_saghfe_moamelat").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_avarez_price").text("");
+            $("#edit_maliyat_price").text("");
+            $("#edit_saghfe_moamelat_price").text("");
         }
     </script>
 @endpush

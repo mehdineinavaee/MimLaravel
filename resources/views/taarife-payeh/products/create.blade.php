@@ -96,7 +96,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="add_introduce_date" name="add_introduce_date"
-                                    class="form-control leftToRight leftAlign inputMaskDate" autocomplete="off" />
+                                    class="form-control leftToRight rightAlign inputMaskDate" autocomplete="off" />
                                 <div id="add_introduce_date_error" style="margin-right:38px;"
                                     class="invalid-feedback">
                                 </div>
@@ -182,6 +182,8 @@
                     dataType: "json",
 
                     success: function(response) {
+                        $('#myData').html(response.output);
+                        $('#pagination').html(response.pagination);
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -193,7 +195,6 @@
                                 add_clearErrors();
                                 add_clearPrice();
                                 add_defaultSelectedValue();
-                                fetchData();
                             });
                     },
 

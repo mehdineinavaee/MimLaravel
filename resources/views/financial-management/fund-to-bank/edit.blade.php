@@ -18,14 +18,11 @@
                         <label for="edit_bank">بانک</label>
                         <select id="edit_bank" name="edit_bank" class="form-control select2" style="width: 100%;">
                             <option value="" selected>بانک را انتخاب کنید</option>
-                            {{-- @foreach ($publishers as $publisher) --}}
-                            <option value="1">
-                                بانک 1
-                            </option>
-                            <option value="2">
-                                بانک 2
-                            </option>
-                            {{-- @endforeach --}}
+                            @foreach ($bank_types as $bank_type)
+                                <option value={{ $bank_type->id }}>
+                                    {{ $bank_type->bank_name }}
+                                </option>
+                            @endforeach
                         </select>
                         <div id="edit_bank_error" class="invalid-feedback"></div>
                     </div>
@@ -38,7 +35,7 @@
                                 <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                             </div>
                             <input type="text" id="edit_form_date" name="edit_form_date"
-                                class="leftToRight leftAlign inputMaskDate form-control" autocomplete="off" />
+                                class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
                             <div id="edit_form_date_error" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -51,22 +48,22 @@
                         <div id="edit_form_number_error" class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="row pt-4">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_cash_amount">مبلغ نقدی</label>
-                            <input type="text" id="edit_cash_amount" name="edit_cash_amount" class="form-control"
-                                autocomplete="off" />
-                            <div id="edit_cash_amount_error" class="invalid-feedback"></div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="form-group mb-3">
+                        <label for="edit_cash_amount">مبلغ نقدی</label>
+                        <input type="text" id="edit_cash_amount" name="edit_cash_amount" class="form-control"
+                            autocomplete="off" onkeyup="separateNum(this.value,this,'edit_cash_amount_price');" />
+                        <div id="edit_cash_amount_error" class="invalid-feedback"></div>
+                        <div id="edit_cash_amount_price" style="text-align: justify; color:green">
                         </div>
                     </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_considerations">ملاحظات</label>
-                            <input type="text" id="edit_considerations" name="edit_considerations"
-                                class="form-control" autocomplete="off" />
-                            <div id="edit_considerations_error" class="invalid-feedback"></div>
-                        </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="form-group mb-3">
+                        <label for="edit_considerations">ملاحظات</label>
+                        <input type="text" id="edit_considerations" name="edit_considerations" class="form-control"
+                            autocomplete="off" />
+                        <div id="edit_considerations_error" class="invalid-feedback"></div>
                     </div>
                 </div>
             </div>
@@ -99,13 +96,13 @@
                         })
                     } else {
                         $("#editInfo").modal("show");
-
                         $("#edit_fund_to_bank_id").val(fund_to_bank_id);
-                        $("#edit_bank").val(response.fund_to_bank
-                            .bank);
+
+                        $('#edit_bank').val(response.fund_to_bank.bank_type_id).change();
                         $("#edit_form_date").val(response.fund_to_bank.form_date);
                         $("#edit_form_number").val(response.fund_to_bank.form_number);
-                        $("#edit_cash_amount").val(response.fund_to_bank.cash_amount);
+                        $('#edit_cash_amount').val(new Intl.NumberFormat().format(response.fund_to_bank
+                            .cash_amount));
                         $("#edit_considerations").val(response.fund_to_bank
                             .considerations);
                     }
@@ -116,6 +113,7 @@
         $(document).on("click", ".updateFundToBank", function(e) {
             e.preventDefault();
             var fund_to_bank_id = $("#edit_fund_to_bank_id").val();
+
             var data = {
                 bank: $("#edit_bank").val(),
                 form_date: $("#edit_form_date").val(),
@@ -137,6 +135,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -146,7 +146,8 @@
                             $("#editInfo").modal("hide");
                             $("#editInfo").find("input").val("");
                             edit_clearErrors();
-                            fetchData();
+                            edit_clearPrice();
+                            edit_defaultSelectedValue();
                         });
                 },
                 error: function(errors) {
@@ -172,6 +173,9 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            edit_clearPrice();
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
@@ -185,6 +189,14 @@
             $("#edit_cash_amount").removeClass("is-invalid");
             $("#edit_considerations_error").text("");
             $("#edit_considerations").removeClass("is-invalid");
+        }
+
+        function edit_clearPrice() {
+            $("#edit_cash_amount_price").text("");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_bank).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

@@ -97,7 +97,7 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input type="text" id="edit_introduce_date" name="edit_introduce_date"
-                                    class="form-control leftToRight leftAlign inputMaskDate" autocomplete="off" />
+                                    class="form-control leftToRight rightAlign inputMaskDate" autocomplete="off" />
                                 <div id="edit_introduce_date_error" style="margin-right:38px;"
                                     class="invalid-feedback">
                                 </div>
@@ -182,8 +182,7 @@
                             .latest_buy_price));
                         $("#edit_main_barcode").val(response.product.main_barcode);
                         $("#edit_order_point").val(response.product.order_point);
-                        $(edit_product_unit).prop('selectedIndex', response.product.product_unit_id)
-                            .change();
+                        $('#edit_product_unit').val(response.product.product_unit_id).change();
                     }
                 },
             });
@@ -199,6 +198,7 @@
             }
 
             var product_id = $("#edit_product_id").val();
+
             var data = {
                 chk_active: edit_activeCheckBox,
                 code: $("#edit_code").val(),
@@ -227,6 +227,8 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    $('#myData').html(response.output);
+                    $('#pagination').html(response.pagination);
                     Swal.fire(
                             response.message,
                             response.status,
@@ -238,7 +240,6 @@
                             edit_clearErrors();
                             edit_clearPrice();
                             edit_defaultSelectedValue();
-                            fetchData();
                         });
                 },
                 error: function(errors) {
@@ -265,8 +266,8 @@
             // alert("bye");
             edit_clearErrors();
             edit_clearPrice();
-            edit_defaultSelectedValue();
-            $("#editInfo").find("input").val(""); // Clear Input Values
+            // edit_defaultSelectedValue();
+            // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
