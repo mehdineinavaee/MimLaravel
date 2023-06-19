@@ -131,16 +131,5 @@
                 },
             });
         }
-
-        $(document).on('click', '.address_print', function(e) {
-            e.preventDefault();
-            var address_print_id = $(this).val();
-            // console.log(address_print_id);
-
-            $.ajax({
-                type: "GET",
-                url: "/address-print-pdf/" + address_print_id,
-            });
-        });
     </script>
 @endpush

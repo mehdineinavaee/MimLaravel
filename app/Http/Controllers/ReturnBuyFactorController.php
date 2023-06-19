@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 
 class ReturnBuyFactorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = ReturnBuyFactor::orderBy('id', 'desc')->paginate(10);
+        $data = ReturnBuyFactor::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

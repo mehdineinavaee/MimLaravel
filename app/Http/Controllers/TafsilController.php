@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class TafsilController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData()
     {
         $tafsils = Tafsil::orderBy('id', 'desc')->get();

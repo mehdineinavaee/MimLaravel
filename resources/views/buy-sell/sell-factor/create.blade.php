@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="createInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="createInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
+    <div class="modal-dialog modal-dialog-centered" style="min-width:50%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createInfoLabel">ورود اطلاعات فاکتور فروش</h5>
@@ -12,7 +12,7 @@
             </div>
 
             <div class="modal-body">
-                <div class="row pt-4">
+                <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_customer_type">نوع مشتری</label>
@@ -36,7 +36,7 @@
                             <label for="add_buyer">خریدار</label>
                             <select id="add_buyer" name="add_buyer" class="form-control select2" style="width: 100%;">
                                 <option value="" selected>خریدار را انتخاب کنید</option>
-                                @foreach ($taraf_hesabs as $item)
+                                @foreach ($buyers as $item)
                                     <option value={{ $item->id }}>
                                         {{ $item->fullname }}
                                     </option>
@@ -71,7 +71,7 @@
                             <label for="add_broker">واسطه فروش</label>
                             <select id="add_broker" name="add_broker" class="form-control select2" style="width: 100%;">
                                 <option value="" selected>واسطه فروش را انتخاب کنید</option>
-                                @foreach ($vasete_foroosh as $item)
+                                @foreach ($brokers as $item)
                                     <option value={{ $item->id }}>
                                         {{ $item->fullname }}
                                     </option>
@@ -90,99 +90,47 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
-                            <label for="add_product_code">کد کالا</label>
-                            <input type="text" id="add_product_code" name="add_product_code" class="form-control"
-                                autocomplete="off" />
-                            <div id="add_product_code_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="add_product_name">نام کالا</label>
-                            <select id="add_product_name" name="add_product_name" class="form-control select2"
-                                style="width: 100%;">
-                                <option value="" selected>نام کالا را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    کالا 1
-                                </option>
-                                <option value="2">
-                                    کالا 2
-                                </option>
-                                {{-- @endforeach --}}
-                            </select>
-                            <div id="add_product_name_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="add_amount">مقدار</label>
-                            <input type="text" id="add_amount" name="add_amount" class="form-control"
-                                autocomplete="off" />
-                            <div id="add_amount_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="add_sell_price">بهای واحد</label>
-                            <input type="text" id="add_sell_price" name="add_sell_price" class="form-control"
-                                autocomplete="off" />
-                            <div id="add_sell_price_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="add_discount">درصد تخفیف</label>
-                            <input type="text" id="add_discount" name="add_discount" class="form-control"
-                                autocomplete="off" />
-                            <div id="add_discount_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="add_total">مبلغ کل</label>
-                            <input type="text" id="add_total" name="add_total" class="form-control"
-                                autocomplete="off" />
-                            <div id="add_total_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="add_warehouse_name">نام انبار</label>
-                            <select id="add_warehouse_name" name="add_warehouse_name" class="form-control select2"
-                                style="width: 100%;">
-                                <option value="" selected>نام انبار را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    انبار 1
-                                </option>
-                                <option value="2">
-                                    انبار 2
-                                </option>
-                                {{-- @endforeach --}}
-                            </select>
-                            <div id="add_warehouse_name_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="add_considerations">ملاحظات</label>
-                            <input type="text" id="add_considerations" name="add_considerations"
+                            <label for="add_settlement_deadline">مهلت تسویه</label>
+                            <input type="text" id="add_settlement_deadline" name="add_settlement_deadline"
                                 class="form-control" autocomplete="off" />
-                            <div id="add_considerations_error" class="invalid-feedback"></div>
+                            <div id="add_settlement_deadline_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="add_settlement_date">تاریخ تسویه</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" id="add_settlement_date" name="add_settlement_date"
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
+                                <div id="add_settlement_date_error" class="invalid-feedback"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>&nbsp;
-                <button type="button" class="btn btn-primary addSellFactor">تأیید</button>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <div>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInvoice">
+                        <i class="fa-lg fa fa-plus" title="افزودن اقلام فاکتور" data-toggle="tooltip"></i>&nbsp;
+                        اقلام جدید فاکتور
+                    </button>
+                </div>
+
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary addSellFactor">تأیید</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <!-- End Modal -->
+@include('buy-sell.sell-factor-details.create')
+
 @push('js')
     <script>
         $(document).ready(function() {
@@ -196,13 +144,9 @@
                     'factor_date': $('#add_factor_date').val(),
                     'broker': $('#add_broker').val(),
                     'commission': $('#add_commission').val(),
-                    'amount': $('#add_amount').val(),
-                    'discount': $('#add_discount').val(),
-                    'total': $('#add_total').val(),
-                    'warehouse_name': $('#add_warehouse_name').val(),
-                    'considerations': $('#add_considerations').val(),
                     'settlement_deadline': $('#add_settlement_deadline').val(),
                     'settlement_date': $('#add_settlement_date').val(),
+                    'factor_items': factors
                 }
                 // console.log(data);
 
@@ -221,6 +165,7 @@
                     success: function(response) {
                         $('#myData').html(response.output);
                         $('#pagination').html(response.pagination);
+                        factors = [];
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -230,7 +175,6 @@
                                 $("#createInfo").modal("hide");
                                 $("#createInfo").find("input").val("");
                                 add_clearErrors();
-                                add_clearPrice();
                                 add_defaultSelectedValue();
                             });
                     },
@@ -248,18 +192,17 @@
             });
         });
 
-        //call function on modal shown
+        // call function on modal shown
         $('#createInfo').on('shown.bs.modal', function(e) {
             // alert("hello");
             $(".sidebar-mini").removeClass("sidebar-open");
             $(".sidebar-mini").addClass("sidebar-collapse");
         });
 
-        //call function on hiding modal
+        // call function on hiding modal
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
-            add_clearPrice();
             add_defaultSelectedValue();
             $("#createInfo").find("input").val(""); // Clear Input Values
         })
@@ -277,32 +220,14 @@
             $("#add_broker").removeClass("is-invalid");
             $("#add_commission_error").text("");
             $("#add_commission").removeClass("is-invalid");
-            $("#add_amount_error").text("");
-            $("#add_amount").removeClass("is-invalid");
-            $("#add_discount_error").text("");
-            $("#add_discount").removeClass("is-invalid");
-            $("#add_total_error").text("");
-            $("#add_total").removeClass("is-invalid");
-            $("#add_warehouse_name_error").text("");
-            $("#add_warehouse_name").removeClass("is-invalid");
-            $("#add_considerations_error").text("");
-            $("#add_considerations").removeClass("is-invalid");
-            $("#add_settlement_deadline_error").text("");
-            $("#add_settlement_deadline").removeClass("is-invalid");
             $("#add_settlement_date_error").text("");
             $("#add_settlement_date").removeClass("is-invalid");
-        }
-
-        function add_clearPrice() {
-            $("#add_total").text("");
         }
 
         function add_defaultSelectedValue() {
             $(add_customer_type).prop('selectedIndex', 0).change();
             $(add_buyer).prop('selectedIndex', 0).change();
             $(add_broker).prop('selectedIndex', 0).change();
-            $(add_product_name).prop('selectedIndex', 0).change();
-            $(add_werehouse_name).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

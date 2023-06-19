@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class BuyFactorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData()
     {
         $buy_factors = BuyFactor::orderBy('buy_factor_no', 'asc')->get();

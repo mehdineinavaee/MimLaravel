@@ -33,6 +33,7 @@
                         <th style="min-width: 200px">آخرین قیمت خرید</th>
                         <th style="min-width: 250px">بارکد اصلی</th>
                         <th style="min-width: 250px">نقطه سفارش</th>
+                        <th style="min-width: 200px">انبار</th>
                         <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
@@ -54,6 +55,7 @@
                         <th>آخرین قیمت خرید</th>
                         <th>بارکد اصلی</th>
                         <th>نقطه سفارش</th>
+                        <th>انبار</th>
                         <th>اقدامات</th>
                     </tr>
                 </tfoot>

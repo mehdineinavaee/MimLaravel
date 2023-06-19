@@ -1,0 +1,9 @@
+@font-face {
+    font-family: "b_farnaz";
+    src: url("./b_farnaz.ttf") format("truetype");
+    font-weight: normal;
+}
+
+.b_farnaz {
+    font-family: "b_farnaz";
+}

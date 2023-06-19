@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="editInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="editInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"style="max-width: 700px;">
+    <div class="modal-dialog modal-dialog-centered"style="min-width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editInfoLabel">ویرایش کالا</h5>
@@ -124,7 +124,7 @@
                             <div id="edit_main_barcode_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_order_point">نقطه سفارش</label>
                             <input type="text" id="edit_order_point" name="edit_order_point" class="form-control"
@@ -132,11 +132,28 @@
                             <div id="edit_order_point_error" class="invalid-feedback"></div>
                         </div>
                     </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_warehouse_name">نام انبار</label>
+                            <select id="edit_warehouse_name" name="edit_warehouse_name" class="form-control select2"
+                                style="width: 100%;">
+                                <option value="" selected>نام انبار را انتخاب کنید</option>
+                                @foreach ($warehouses as $warehouse)
+                                    <option value={{ $warehouse->id }}>
+                                        {{ $warehouse->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div id="edit_warehouse_name_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>&nbsp;
-                <button type="button" class="btn btn-primary updateProduct">تأیید</button>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary updateProduct">تأیید</button>
+                </div>
             </div>
         </div>
     </div>
@@ -183,6 +200,7 @@
                         $("#edit_main_barcode").val(response.product.main_barcode);
                         $("#edit_order_point").val(response.product.order_point);
                         $('#edit_product_unit').val(response.product.product_unit_id).change();
+                        $('#edit_warehouse_name').val(response.product.warehouse_id).change();
                     }
                 },
             });
@@ -212,6 +230,7 @@
                 main_barcode: $("#edit_main_barcode").val(),
                 order_point: $("#edit_order_point").val(),
                 product_unit: $("#edit_product_unit").val(),
+                warehouse_name: $("#edit_warehouse_name").val(),
             };
 
             $.ajaxSetup({
@@ -254,14 +273,14 @@
             });
         });
 
-        //call function on modal shown
+        // call function on modal shown
         $('#editInfo').on('shown.bs.modal', function(e) {
             // alert("hello");
             $(".sidebar-mini").removeClass("sidebar-open");
             $(".sidebar-mini").addClass("sidebar-collapse");
         });
 
-        //call function on hiding modal
+        // call function on hiding modal
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
@@ -293,6 +312,8 @@
             $("#edit_main_barcode").removeClass("is-invalid");
             $("#edit_order_point_error").text("");
             $("#edit_order_point").removeClass("is-invalid");
+            $("#edit_warehouse_name_error").text("");
+            $("#edit_warehouse_name").removeClass("is-invalid");
         }
 
         function edit_clearPrice() {
@@ -303,6 +324,7 @@
         function edit_defaultSelectedValue() {
             $('#edit_activeCheckBox').prop('checked', false);
             $(edit_product_unit).prop('selectedIndex', 0).change();
+            $(edit_warehouse_name).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

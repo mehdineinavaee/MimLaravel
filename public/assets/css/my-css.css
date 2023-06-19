@@ -29,9 +29,11 @@ body {
 fieldset {
     display: none;
 }
+
 fieldset.show {
     display: block;
 }
+
 select:focus,
 input:focus {
     -moz-box-shadow: none !important;
@@ -41,6 +43,7 @@ input:focus {
     outline-width: 0 !important;
     font-weight: 400;
 }
+
 button:focus {
     -moz-box-shadow: none !important;
     -webkit-box-shadow: none !important;
@@ -52,27 +55,33 @@ button:focus {
     padding-bottom: 10px;
     cursor: pointer;
 }
+
 .tabs:hover,
 .tabs.active {
     border-bottom: 1px solid #2196f3;
 }
+
 a:hover {
     text-decoration: none;
     color: #1565c0;
 }
+
 .box {
     margin-bottom: 10px;
     border-radius: 5px;
     padding: 10px;
 }
+
 .modal-backdrop {
     background-color: #64b5f6;
 }
+
 .line {
     background-color: #cfd8dc;
     height: 1px;
     width: 100%;
 }
+
 @media screen and (max-width: 768px) {
     .tabs h6 {
         font-size: 12px;

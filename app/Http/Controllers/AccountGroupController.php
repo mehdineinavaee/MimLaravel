@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 
 class AccountGroupController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = AccountGroup::orderBy('name', 'asc')->paginate(10);
+        $data = AccountGroup::orderBy('name', 'asc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

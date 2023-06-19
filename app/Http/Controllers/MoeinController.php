@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class MoeinController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData()
     {
         $moeins = Moein::orderBy('id', 'desc')->get();

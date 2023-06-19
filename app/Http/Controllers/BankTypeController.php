@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 
 class BankTypeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = BankType::orderBy('bank_name', 'asc')->paginate(10);
+        $data = BankType::orderBy('bank_name', 'asc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

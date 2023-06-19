@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="addChequeBookList" data-backdrop="static" data-keyboard="false"
     aria-labelledby="addChequeBookListLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"style="max-width: 900px;">
+    <div class="modal-dialog modal-dialog-centered"style="min-width: 80%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addChequeBookListLabel">فهرست سریال چک</h5>

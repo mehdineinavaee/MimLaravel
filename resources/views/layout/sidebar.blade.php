@@ -617,15 +617,15 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href={{ route('users.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>فهرست کاربران</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href={{ route('profile.edit', ['profile' => Auth::user()->id]) }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
-                                <p>تغییر رمز کاربری</p>
+                                <p>پروفایل من</p>
                             </a>
                         </li>
                     </ul>

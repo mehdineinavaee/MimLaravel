@@ -10,6 +10,11 @@ use Excel;
 
 class CityController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function cityCSV()
     {
         return Excel::download(new CityExport, 'citylist.xlsx');
@@ -18,7 +23,7 @@ class CityController extends Controller
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = City::orderBy('city_name', 'asc')->paginate(10);
+        $data = City::orderBy('city_name', 'asc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

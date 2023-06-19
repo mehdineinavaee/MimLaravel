@@ -31,9 +31,6 @@
 <script src="{{ asset('plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
 <!-- FastClick -->
 <script src="{{ asset('plugins/fastclick/fastclick.js') }}"></script>
-<!-- Persian Data Picker -->
-<script src="{{ asset('assets/js/persian-date.min.js') }}"></script>
-<script src="{{ asset('assets/js/persian-datepicker.min.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset('assets/js/adminlte.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
@@ -42,9 +39,6 @@
 <script src="{{ asset('assets/js/demo.js') }}"></script>
 <!-- Menu highlight -->
 <script src="{{ asset('assets/js/menu-highlight.js') }}"></script>
-<!-- DataTables -->
-<script src="{{ asset('plugins/datatables/jquery.dataTables.js') }}"></script>
-<script src="{{ asset('plugins/datatables/dataTables.bootstrap4.js') }}"></script>
 <!--====== sweetalert2 Java Script ======-->
 <script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
 <!-- inputmask -->
@@ -53,8 +47,6 @@
 <script src="{{ asset('assets/js/my-js.js') }}"></script>
 <!-- Tree View -->
 <script src="{{ asset('assets/js/treeview.js') }}"></script>
-<!-- Custom Data Tables -->
-<script src="{{ asset('assets/js/custom-data-tables.js') }}"></script>
 <!-- Number To Persian JS -->
 <script src="{{ asset('assets/js/num2persian.js') }}"></script>
 <!-- Price JS -->
@@ -63,6 +55,5 @@
     $(function() {
         //Initialize Select2 Elements
         $('.select2').select2()
-        $('.normal-example').persianDatepicker();
     })
 </script>

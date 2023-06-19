@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="createInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="createInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"style="max-width: 700px;">
+    <div class="modal-dialog modal-dialog-centered"style="min-width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createInfoLabel">طرف حساب جدید</h5>
@@ -374,8 +374,10 @@
                 <!-- Tabs content -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>&nbsp;
-                <button type="button" class="btn btn-primary addTarafHesab">تأیید</button>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary addTarafHesab">تأیید</button>
+                </div>
             </div>
         </div>
     </div>
@@ -531,7 +533,7 @@
             });
         });
 
-        //call function on modal shown
+        // call function on modal shown
         $('#createInfo').on('shown.bs.modal', function(e) {
             // alert("hello");
             $(".sidebar-mini").removeClass("sidebar-open");
@@ -551,7 +553,7 @@
             }
         });
 
-        //call function on hiding modal
+        // call function on hiding modal
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             $(".tabs").removeClass("active");

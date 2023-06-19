@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Models\ProductNoUnit;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = Product::orderBy('product_name', 'asc')->paginate(10);
+        $data = Product::orderBy('product_name', 'asc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -45,6 +51,7 @@ class ProductController extends Controller
                         <td>' . $latest_buy_price . ' ریال</td>
                         <td>' . $item->main_barcode . '</td>
                         <td>' . $item->order_point . '</td>
+                        <td>' . $item->warehouse->title . '</td>
                         <td>
                             <button type="button" value=' . $item->id . ' class="edit_product btn btn-primary btn-sm">
                                 <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
@@ -76,8 +83,10 @@ class ProductController extends Controller
             return self::fetchData(200, '');
         }
         $product_unit = ProductNoUnit::orderBy('title', 'asc')->get();
+        $warehouses = Warehouse::orderBy('title', 'asc')->get();
         return view('taarife-payeh/products.index')
-            ->with('product_unit', $product_unit);
+            ->with('product_unit', $product_unit)
+            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -111,6 +120,7 @@ class ProductController extends Controller
         $product->main_barcode = $request->input('main_barcode');
         $product->order_point = $request->input('order_point');
         $product->product_unit()->associate($request->product_unit);
+        $product->warehouse()->associate($request->warehouse_name);
         $product->save();
         return self::fetchData(200, 'کالای جدید ذخیره شد');
     }
@@ -171,6 +181,7 @@ class ProductController extends Controller
             $product->main_barcode = $request->input('main_barcode');
             $product->order_point = $request->input('order_point');
             $product->product_unit()->associate($request->product_unit);
+            $product->warehouse()->associate($request->warehouse_name);
             $product->update();
             return self::fetchData(200, 'کالا ویرایش شد');
         } else {

@@ -35,6 +35,7 @@ class ProductRequest extends FormRequest
             'main_barcode' => 'required',
             'order_point' => 'required',
             'product_unit' => 'required',
+            'warehouse_name' => 'required',
         ];
     }
 }

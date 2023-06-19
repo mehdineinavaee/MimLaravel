@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = Warehouse::orderBy('id', 'desc')->paginate(10);
+        $data = Warehouse::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

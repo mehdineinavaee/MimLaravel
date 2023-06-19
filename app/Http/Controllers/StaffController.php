@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = Staff::orderBy('id', 'desc')->paginate(10);
+        $data = Staff::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

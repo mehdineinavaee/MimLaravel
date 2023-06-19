@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="editInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="editInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"style="max-width: 750px;">
+    <div class="modal-dialog modal-dialog-centered"style="min-width: 70%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editInfoLabel">ویرایش دریافت درآمد متفرقه</h5>
@@ -201,8 +201,10 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>&nbsp;
-                <button type="button" class="btn btn-primary updateReceiveMiscellaneousIncome">تأیید</button>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary updateReceiveMiscellaneousIncome">تأیید</button>
+                </div>
             </div>
         </div>
     </div>
@@ -312,7 +314,7 @@
             });
         });
 
-        //call function on modal shown
+        // call function on modal shown
         $('#editInfo').on('shown.bs.modal', function(e) {
             // alert("hello");
             $(".sidebar-mini").removeClass("sidebar-open");
@@ -331,7 +333,7 @@
             }
         });
 
-        //call function on hiding modal
+        // call function on hiding modal
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             $(".tabs").removeClass("active");

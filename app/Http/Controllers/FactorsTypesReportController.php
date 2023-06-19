@@ -9,6 +9,11 @@ use PDF;
 
 class FactorsTypesReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function factorsTypesReportPDF()
     {
         $cities = City::get();

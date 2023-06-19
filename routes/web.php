@@ -55,6 +55,7 @@ use App\Http\Controllers\ProductFareiController;
 use App\Http\Controllers\ProductNoUnitController;
 use App\Http\Controllers\ProductsBarcodeController;
 use App\Http\Controllers\ProductsBenefitController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptChequeController;
 use App\Http\Controllers\ReceiveChequeController;
 use App\Http\Controllers\ReceiveChequesReportController;
@@ -115,6 +116,9 @@ Route::resource('buy-factor', BuyFactorController::class);
 Route::resource('return-buy-factor', ReturnBuyFactorController::class);
 Route::resource('return-sell-factor', ReturnSellFactorController::class);
 Route::resource('sell-factor', SellFactorController::class);
+Route::get('/fetch-products', [SellFactorController::class, 'fetch_products'])->name('fetch_products');
+Route::get('/search', [SellFactorController::class, 'search'])->name('sell-factor.search');
+Route::get('/fetch-sell-factor-id/{id}', [SellFactorController::class, 'fetch_sell_factor_id'])->name('fetch_sell_factor_details');
 Route::resource('sell-factor-advanced', SellFactorAdvancedController::class);
 Route::resource('ttms', TtmsController::class);
 Route::resource('wastage-factor', WastageFactorController::class);
@@ -189,6 +193,9 @@ Route::resource('receive-cheques-report', ReceiveChequesReportController::class)
 
 // Security
 Route::resource('users', UserController::class);
+Route::resource('profile', ProfileController::class);
+Route::post('/ajaxUploadImg', [ProfileController::class, 'imgUploadPost']);
+Route::post('/update-password', [ProfileController::class, 'update_password'])->name('update_password');
 
 // Facilities
 Route::resource('phone-book', PhoneBookController::class);
@@ -281,3 +288,6 @@ Route::get('/phone-book-pdf', [PhoneBookController::class, 'phoneBookPDF'])->nam
 
 // CSV Report Routes
 Route::get('/city-csv', [CityController::class, 'cityCSV'])->name('cityCSV');
+
+Auth::routes(['register' => false]);
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

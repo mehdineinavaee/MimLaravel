@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class TarafHesabGroupController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     // public function fetchData()
     // {
     //     $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();

@@ -18,9 +18,18 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'chk_active',
+        'chk_messenger',
+        'national_code',
+        'first_name',
+        'last_name',
+        'father',
+        'opt_sex',
+        'birthdate',
+        'occupation',
         'email',
-        'password',
+        'email_verified_at',
+        'password'
     ];
 
     /**
@@ -41,4 +50,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role_id === 2;
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role_id === 3;
+    }
 }

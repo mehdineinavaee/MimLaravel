@@ -78,8 +78,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>&nbsp;
-                <button type="button" class="btn btn-primary addKol">تأیید</button>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary addKol">تأیید</button>
+                </div>
             </div>
         </div>
     </div>
@@ -145,14 +147,14 @@
             });
         });
 
-        //call function on modal shown
+        // call function on modal shown
         $('#createKol').on('shown.bs.modal', function(e) {
             // alert("hello");
             $(".sidebar-mini").removeClass("sidebar-open");
             $(".sidebar-mini").addClass("sidebar-collapse");
         });
 
-        //call function on hiding modal
+        // call function on hiding modal
         $('#createKol').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_kolClearErrors();

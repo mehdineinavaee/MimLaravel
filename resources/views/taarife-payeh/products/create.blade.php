@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="createInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="createInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"style="max-width: 700px;">
+    <div class="modal-dialog modal-dialog-centered"style="min-width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createInfoLabel">کالای جدید</h5>
@@ -123,7 +123,7 @@
                             <div id="add_main_barcode_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_order_point">نقطه سفارش</label>
                             <input type="text" id="add_order_point" name="add_order_point" class="form-control"
@@ -131,11 +131,28 @@
                             <div id="add_order_point_error" class="invalid-feedback"></div>
                         </div>
                     </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="add_warehouse_name">نام انبار</label>
+                            <select id="add_warehouse_name" name="add_warehouse_name" class="form-control select2"
+                                style="width: 100%;">
+                                <option value="" selected>نام انبار را انتخاب کنید</option>
+                                @foreach ($warehouses as $warehouse)
+                                    <option value={{ $warehouse->id }}>
+                                        {{ $warehouse->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div id="add_warehouse_name_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>&nbsp;
-                <button type="button" class="btn btn-primary addProduct">تأیید</button>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary addProduct">تأیید</button>
+                </div>
             </div>
         </div>
     </div>
@@ -166,6 +183,7 @@
                     'main_barcode': $('#add_main_barcode').val(),
                     'order_point': $('#add_order_point').val(),
                     'product_unit': $('#add_product_unit').val(),
+                    'warehouse_name': $('#add_warehouse_name').val(),
                 }
                 // console.log(data);
 
@@ -211,14 +229,14 @@
             });
         });
 
-        //call function on modal shown
+        // call function on modal shown
         $('#createInfo').on('shown.bs.modal', function(e) {
             // alert("hello");
             $(".sidebar-mini").removeClass("sidebar-open");
             $(".sidebar-mini").addClass("sidebar-collapse");
         });
 
-        //call function on hiding modal
+        // call function on hiding modal
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();
@@ -250,6 +268,8 @@
             $("#add_main_barcode").removeClass("is-invalid");
             $("#add_order_point_error").text("");
             $("#add_order_point").removeClass("is-invalid");
+            $("#add_warehouse_name_error").text("");
+            $("#add_warehouse_name").removeClass("is-invalid");
         }
 
         function add_clearPrice() {
@@ -260,6 +280,7 @@
         function add_defaultSelectedValue() {
             $('#add_activeCheckBox').prop('checked', false);
             $(add_product_unit).prop('selectedIndex', 0).change();
+            $(add_warehouse_name).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

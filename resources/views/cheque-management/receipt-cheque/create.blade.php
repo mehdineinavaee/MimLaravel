@@ -98,8 +98,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>&nbsp;
-                <button type="button" class="btn btn-primary addReceiptCheque">تأیید</button>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary addReceiptCheque">تأیید</button>
+                </div>
             </div>
         </div>
     </div>
@@ -165,14 +167,14 @@
             });
         });
 
-        //call function on modal shown
+        // call function on modal shown
         $('#createInfo').on('shown.bs.modal', function(e) {
             // alert("hello");
             $(".sidebar-mini").removeClass("sidebar-open");
             $(".sidebar-mini").addClass("sidebar-collapse");
         });
 
-        //call function on hiding modal
+        // call function on hiding modal
         $('#createInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             add_clearErrors();

@@ -9,10 +9,15 @@ use Illuminate\Http\Request;
 
 class FundToBankController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = FundToBank::orderBy('id', 'desc')->paginate(10);
+        $data = FundToBank::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

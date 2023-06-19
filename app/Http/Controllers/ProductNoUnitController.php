@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 
 class ProductNoUnitController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = ProductNoUnit::orderBy('id', 'desc')->paginate(10);
+        $data = ProductNoUnit::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

@@ -9,10 +9,15 @@ use Illuminate\Http\Request;
 
 class BankAccountController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = BankAccount::orderBy('id', 'desc')->paginate(10);
+        $data = BankAccount::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

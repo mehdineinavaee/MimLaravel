@@ -32,7 +32,8 @@ return [
     'pdfa'                     => false,
     'pdfaauto'                 => false,
     'use_active_forms'         => false,
-    'custom_font_dir'  => base_path('resources/fonts/vazir/'), // اسلش انتهایی را فراموش نکنید
+    'custom_font_dir'          => base_path('resources/fonts/'), // اسلش انتهایی را فراموش نکنید
+
     // 'custom_font_data' => [
     //     'vazir' => [ // باید با حروف کوچک و snake_case باشد
     //         'R'  => 'vazir.ttf',    // regular font

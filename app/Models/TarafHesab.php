@@ -36,4 +36,9 @@ class TarafHesab extends Model
     {
         return $this->hasMany(TransferPerson::class);
     }
+
+    public function sell_factors()
+    {
+        return $this->hasMany(SellFactor::class);
+    }
 }

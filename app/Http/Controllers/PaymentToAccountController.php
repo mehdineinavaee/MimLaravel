@@ -11,10 +11,15 @@ use Illuminate\Http\Request;
 
 class PaymentToAccountController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = PaymentToAccount::orderBy('id', 'desc')->paginate(10);
+        $data = PaymentToAccount::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {

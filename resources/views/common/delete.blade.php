@@ -15,11 +15,13 @@
                 <p class="justify">با کلیک روی دکمه "موافقم" امکان بازگشت وجود ندارد.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary badge-pill btn-w btn-sm" data-dismiss="modal">منصرف
-                    شدم
-                </button>&nbsp;
-                <button type="button" class="btn btn-success badge-pill btn-w btn-sm delete_btn">موافقم
-                </button>
+                <div>
+                    <button type="button" class="btn btn-secondary badge-pill btn-w btn-sm" data-dismiss="modal">منصرف
+                        شدم
+                    </button>
+                    <button type="button" class="btn btn-success badge-pill btn-w btn-sm delete_btn">موافقم
+                    </button>
+                </div>
             </div>
         </div>
     </div>

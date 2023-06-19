@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class KolController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function fetchData()
     {
         $kols = Kol::orderBy('id', 'desc')->get();

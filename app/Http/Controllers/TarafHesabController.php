@@ -12,6 +12,11 @@ use PDF;
 
 class TarafHesabController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function tarafHesabPDF()
     {
         $taraf_hesabs = TarafHesab::orderBy('fullname', 'asc')->get();
@@ -39,7 +44,7 @@ class TarafHesabController extends Controller
     public function fetchData($status, $message)
     {
         $output = '';
-        $data = TarafHesab::orderBy('id', 'desc')->paginate(10);
+        $data = TarafHesab::orderBy('id', 'desc')->paginate();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -115,9 +120,9 @@ class TarafHesabController extends Controller
                             <button type="button" value=' . $item->id . ' class="turnover btn btn-primary btn-sm">
                                 <i class="fa fa-money" title="گردش حساب" data-toggle="tooltip"></i>
                             </button>
-                            <button type="button" value=' . $item->id . ' class="address_print btn btn-primary btn-sm">
+                            <a href=' . route('addressPrintPDF', ['id' => $item->id]) . ' class="btn btn-primary btn-sm" target="_blank">
                                 <i class="fa fa-print" title="چاپ آدرس" data-toggle="tooltip"></i>
-                            </button>
+                            </a>
                         </td>
                     </tr>
                     ';

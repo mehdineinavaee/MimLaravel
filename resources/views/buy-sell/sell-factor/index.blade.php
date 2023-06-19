@@ -8,7 +8,7 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInvoice">
                     <i class="fa-lg fa fa-plus" title="افزودن فاکتور فروش" data-toggle="tooltip"></i>
                     <br />
                     جدید

@@ -64,7 +64,7 @@
             <span class="badge badge-warning navbar-badge">15</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left">
-            <span class="dropdown-item dropdown-header">15 نوتیفیکیشن</span>
+            <span class="dropdown-item dropdown-header">15 اطلاعیه</span>
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item">
                 <i class="fa fa-envelope ml-2"></i> 4 پیام جدید
