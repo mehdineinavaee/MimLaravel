@@ -142,8 +142,16 @@
                     dataType: "json",
 
                     success: function(response) {
-                        $('#myData').html(response.output);
-                        $('#pagination').html(response.pagination);
+                        fetchDataAsPaginate
+                            (
+                                'index_search',
+                                '/bank-accounts',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
                         Swal.fire(
                                 response.message,
                                 response.status,

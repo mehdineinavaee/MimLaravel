@@ -8,6 +8,7 @@ use App\Models\PhoneBook;
 use App\Models\TarafHesab;
 use App\Models\TarafHesabGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use PDF;
 
 class TarafHesabController extends Controller
@@ -41,10 +42,13 @@ class TarafHesabController extends Controller
         return $pdf->stream('document.pdf');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_taraf_hesab($row, $status, $message)
     {
-        $output = '';
-        $data = TarafHesab::orderBy('id', 'desc')->paginate();
+        $data = TarafHesab::orderBy('id', 'desc')->paginate($row);
+
+        $taraf_hesabs = '';
+
+        $count = DB::table('taraf_hesabs')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -74,7 +78,7 @@ class TarafHesabController extends Controller
                     $broker = '-';
                 }
 
-                $output .=
+                $taraf_hesabs .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -128,11 +132,129 @@ class TarafHesabController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $taraf_hesabs,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_taraf_hesab(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $taraf_hesabs = TarafHesab::where('code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('fullname', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('zip_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('phone', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('commission', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('ceo_fullname', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('national_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('birthdate', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('occupation', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('economic_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('email', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('website', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($taraf_hesabs) {
+                foreach ($taraf_hesabs as $index => $item) {
+                    switch ($item->person_type) {
+                        case ('1'):
+                            $person_type = 'حقیقی';
+                            break;
+                        case ('2'):
+                            $person_type = 'حقوقی غیر دولتی';
+                            break;
+                        case ('3'):
+                            $person_type = 'حقوقی دولتی وزارت خانه ها و سازمان ها';
+                            break;
+                        default:
+                            $person_type = '-';
+                    }
+
+                    if ($item->credit_limit != null) {
+                        $credit_limit = number_format($item->credit_limit);
+                    } else {
+                        $credit_limit = '-';
+                    }
+
+                    if ($item->broker != null) {
+                        $broker = TarafHesab::find($item->broker)->fullname;
+                    } else {
+                        $broker = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->chk_seller . '</td>
+                            <td>' . $item->chk_buyer . '</td>
+                            <td>' . $item->chk_broker . '</td>
+                            <td>' . $item->chk_investor . '</td>
+                            <td>' . $item->chk_block_list . '</td>
+                            <td>' . $item->chk_active . '</td>
+                            <td>' . $item->chk_move_phone . '</td>
+                            <td>' . $item->code . '</td>
+                            <td>' . $item->fullname . '</td>
+                            <td>' . $item->zip_code . '</td>
+                            <td>' . $item->phone . '</td>
+                            <td>' . $item->city->city_name . '</td>
+                            <td>' . $broker . '</td>
+                            <td>' . $item->commission . '</td>
+                            <td>' . $item->address . '</td>
+                            <td>' . $person_type . '</td>
+                            <td>' . $item->ceo_fullname . '</td>
+                            <td>' . $item->national_code . '</td>
+                            <td>' . $item->birthdate . '</td>
+                            <td>' . $item->occupation . '</td>
+                            <td class="leftToRight">' . $item->fax . '</td>
+                            <td class="leftToRight">' . $item->tel . '</td>
+                            <td>' . $item->activity_type . '</td>
+                            <td>' . $item->economic_code . '</td>
+                            <td>' . $item->email . '</td>
+                            <td>' . $item->website . '</td>
+                            <td>' . $credit_limit . ' ریال</td>
+                            <td>' . $item->opt_warning . '</td>
+                            <td>' . $item->opt_prohibition_sale . '</td>
+                            <td>' . $item->opt_uncleared . '</td>
+                            <td>' . $item->opt_customer_balance . '</td>
+                            <td>' . $item->not_spent . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_taraf_hesab btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/taraf-hesab/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value=' . $item->id . ' class="turnover btn btn-primary btn-sm">
+                                    <i class="fa fa-money" title="گردش حساب" data-toggle="tooltip"></i>
+                                </button>
+                                <a href=' . route('addressPrintPDF', ['id' => $item->id]) . ' class="btn btn-primary btn-sm" target="_blank">
+                                    <i class="fa fa-print" title="چاپ آدرس" data-toggle="tooltip"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$taraf_hesabs->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -144,7 +266,8 @@ class TarafHesabController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_taraf_hesab($row, 200, '');
         }
         $cities = City::all();
         $vaseteh_foroosh = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
@@ -221,7 +344,8 @@ class TarafHesabController extends Controller
             $phone_book->address = $request->input('address');
             $phone_book->save();
         }
-        return self::fetchData(200, 'طرف حساب جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_taraf_hesab($row, 200, 'طرف حساب جدید ذخیره شد');
     }
 
     /**
@@ -326,7 +450,8 @@ class TarafHesabController extends Controller
                 $phone_book->address = $request->input('address');
                 $phone_book->save();
             }
-            return self::fetchData(200, 'طرف حساب ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_taraf_hesab($row, 200, 'طرف حساب ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -345,6 +470,6 @@ class TarafHesabController extends Controller
     {
         $taraf_hesab = TarafHesab::find($id);
         $taraf_hesab->delete();
-        return self::fetchData(200, 'طرف حساب حذف شد');
+        return self::index_fetch_taraf_hesab(10, 200, 'طرف حساب حذف شد');
     }
 }

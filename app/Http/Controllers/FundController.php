@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FundRequest;
 use App\Models\Fund;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class FundController extends Controller
 {
@@ -13,10 +15,13 @@ class FundController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_fund($row, $status, $message)
     {
-        $output = '';
-        $data = Fund::orderBy('id', 'desc')->paginate();
+        $data = Fund::orderBy('id', 'desc')->paginate($row);
+
+        $funds = '';
+
+        $count = DB::table('funds')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -34,7 +39,7 @@ class FundController extends Controller
                         $form_type = '-';
                 }
 
-                $output .=
+                $funds .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -56,11 +61,75 @@ class FundController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $funds,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_fund(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $funds = Fund::where('daramad_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('daramad_name', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($funds) {
+                foreach ($funds as $index => $item) {
+                    switch ($item->form_type) {
+                        case ('1'):
+                            $form_type = 'درآمد';
+                            break;
+                        case ('2'):
+                            $form_type = 'هزینه';
+                            break;
+                        case ('3'):
+                            $form_type = 'صندوق';
+                            break;
+                        default:
+                            $form_type = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $form_type . '</td>
+                            <td>' . $item->daramad_code . '</td>
+                            <td>' . $item->daramad_name . '</td>
+                            <td>' . $item->chk_system . '</td>
+                            <td>' . $item->chk_active . '</td>
+    
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_fund btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/fund/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$funds->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -72,7 +141,8 @@ class FundController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_fund($row, 200, '');
         }
         return view('taarife-payeh/fund.index');
     }
@@ -102,7 +172,8 @@ class FundController extends Controller
         $fund->daramad_code = $request->input('daramad_code');
         $fund->daramad_name = $request->input('daramad_name');
         $fund->save();
-        return self::fetchData(200, 'درآمد، هزینه، صندوق جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_fund($row, 200, 'درآمد، هزینه، صندوق جدید ذخیره شد');
     }
 
     /**
@@ -155,7 +226,8 @@ class FundController extends Controller
             $fund->daramad_code = $request->input('daramad_code');
             $fund->daramad_name = $request->input('daramad_name');
             $fund->update();
-            return self::fetchData(200, 'درآمد، هزینه، صندوق ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_fund($row, 200, 'درآمد، هزینه، صندوق ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -174,6 +246,6 @@ class FundController extends Controller
     {
         $fund = Fund::find($id);
         $fund->delete();
-        return self::fetchData(200, 'درآمد، هزینه، صندوق حذف شد');
+        return self::index_fetch_fund(10, 200, 'درآمد، هزینه، صندوق حذف شد');
     }
 }

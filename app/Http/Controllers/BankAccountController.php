@@ -6,6 +6,8 @@ use App\Http\Requests\BankAccountsRequest;
 use App\Models\BankAccount;
 use App\Models\BankType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class BankAccountController extends Controller
 {
@@ -14,14 +16,17 @@ class BankAccountController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_bank_account($row, $status, $message)
     {
-        $output = '';
-        $data = BankAccount::orderBy('id', 'desc')->paginate();
+        $data = BankAccount::orderBy('id', 'desc')->paginate($row);
+
+        $bank_accounts = '';
+
+        $count = DB::table('bank_accounts')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-                $output .=
+                $bank_accounts .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -46,11 +51,68 @@ class BankAccountController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $bank_accounts,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_bank_account(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $bank_accounts = BankAccount::where('account_type', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('shaba_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cart_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('branch_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('branch_address', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cheque_print_type', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($bank_accounts) {
+                foreach ($bank_accounts as $index => $item) {
+                    $search .=
+                        '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->account_type . '</td>
+                        <td>' . $item->account_number . '</td>
+                        <td>' . $item->shaba_number . '</td>
+                        <td>' . $item->cart_number . '</td>
+                        <td>' . $item->bank_type->bank_name . '</td>
+                        <td>' . $item->branch_name . '</td>
+                        <td>' . $item->branch_address . '</td>
+                        <td>' . $item->cheque_print_type . '</td>
+                        <td>' . $item->chk_active . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_bank_accounts btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/bank-accounts/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$bank_accounts->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -62,7 +124,8 @@ class BankAccountController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_bank_account($row, 200, '');
         }
         $banks_types = BankType::orderBy('bank_name')->get();
         return view('taarife-payeh/bank-accounts.index')
@@ -98,7 +161,8 @@ class BankAccountController extends Controller
         $bank_accounts->cheque_print_type = $request->input('cheque_print_type');
         $bank_accounts->bank_type()->associate($request->bank_type);
         $bank_accounts->save();
-        return self::fetchData(200, 'حساب بانکی جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_bank_account($row, 200, 'حساب بانکی جدید ذخیره شد');
     }
 
     /**
@@ -156,7 +220,8 @@ class BankAccountController extends Controller
             $bank_accounts->fill($request->only(['account_type', 'account_number', 'shaba_number', 'cart_number', 'bank_name', 'branch_name', 'branch_address', 'cheque_print_type'])); // 'cover nabayad dashte bashe choon dar virayesh ax moshkel be vojood miyad'
             $bank_accounts->bank_type()->associate($request->bank_type);
             $bank_accounts->save();
-            return self::fetchData(200, 'حساب بانکی ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_bank_account($row, 200, 'حساب بانکی ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -175,6 +240,6 @@ class BankAccountController extends Controller
     {
         $bank_accounts = BankAccount::find($id);
         $bank_accounts->delete();
-        return self::fetchData(200, 'حساب بانکی حذف شد');
+        return self::index_fetch_bank_account(10, 200, 'حساب بانکی حذف شد');
     }
 }

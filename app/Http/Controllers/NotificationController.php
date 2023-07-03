@@ -6,6 +6,8 @@ use App\Http\Requests\NotificationRequest;
 use App\Models\BankAccount;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class NotificationController extends Controller
 {
@@ -14,10 +16,13 @@ class NotificationController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_notification($row, $status, $message)
     {
-        $output = '';
-        $data = Notification::orderBy('id', 'desc')->paginate();
+        $data = Notification::orderBy('id', 'desc')->paginate($row);
+
+        $notifications = '';
+
+        $count = DB::table('notifications')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -27,7 +32,7 @@ class NotificationController extends Controller
                     $total = '-';
                 }
 
-                $output .=
+                $notifications .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -52,11 +57,76 @@ class NotificationController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $notifications,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_notification(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $notifications = Notification::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('mark_back', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('serial_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('total', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('due_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('payer', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($notifications) {
+                foreach ($notifications as $index => $item) {
+                    if ($item->total != null) {
+                        $total = number_format($item->total);
+                    } else {
+                        $total = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $item->mark_back . '</td>
+                            <td>' . $item->serial_number . '</td>
+                            <td>' . $total . ' ریال</td>
+                            <td>' . $item->due_date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $item->payer . '</td>
+                            <td>' . $item->considerations . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_notification btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/notification/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$notifications->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -68,7 +138,8 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_notification($row, 200, '');
         }
         $bank_accounts = BankAccount::all();
         return view('cheque-management/notification.index')
@@ -104,7 +175,8 @@ class NotificationController extends Controller
         $notification->considerations = $request->input('considerations');
         $notification->bank_account()->associate($request->bank_account_details);
         $notification->save();
-        return self::fetchData(200, 'اعلام وصول چک های خوابانده شده ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_notification($row, 200, 'اعلام وصول چک های خوابانده شده ذخیره شد');
     }
 
     /**
@@ -161,7 +233,8 @@ class NotificationController extends Controller
             $notification->considerations = $request->input('considerations');
             $notification->bank_account()->associate($request->bank_account_details);
             $notification->update();
-            return self::fetchData(200, 'اعلام وصول چک های خوابانده شده ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_notification($row, 200, 'اعلام وصول چک های خوابانده شده ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -180,6 +253,6 @@ class NotificationController extends Controller
     {
         $notification = Notification::find($id);
         $notification->delete();
-        return self::fetchData(200, 'اعلام وصول چک های خوابانده شده حذف شد');
+        return self::index_fetch_notification(10, 200, 'اعلام وصول چک های خوابانده شده حذف شد');
     }
 }

@@ -231,7 +231,8 @@
                                     <input type="text" id="add_birthdate" name="add_birthdate"
                                         class="leftToRight rightAlign inputMaskDate form-control"
                                         autocomplete="off" />
-                                    <div id="add_birthdate_error" class="invalid-feedback"></div>
+                                    <div id="add_birthdate_error" class="invalid-feedback"
+                                        style="margin-right:38px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -252,7 +253,8 @@
                                     </div>
                                     <input type="text" id="add_fax" name="add_fax"
                                         class="form-control leftToRight rightAlign inputMaskFax" autocomplete="off" />
-                                    <div id="add_fax_error" class="invalid-feedback"></div>
+                                    <div id="add_fax_error" class="invalid-feedback" style="margin-right:38px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -265,7 +267,8 @@
                                     </div>
                                     <input type="text" id="add_tel" name="add_tel"
                                         class="form-control leftToRight rightAlign inputMaskTel" autocomplete="off" />
-                                    <div id="add_tel_error" class="invalid-feedback"></div>
+                                    <div id="add_tel_error" class="invalid-feedback" style="margin-right:38px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -294,7 +297,8 @@
                                     </div>
                                     <input type="text" id="add_email" name="add_email" class="form-control"
                                         autocomplete="off" />
-                                    <div id="add_email_error" class="invalid-feedback"></div>
+                                    <div id="add_email_error" class="invalid-feedback" style="margin-right:38px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -504,8 +508,16 @@
                     dataType: "json",
 
                     success: function(response) {
-                        $('#myData').html(response.output);
-                        $('#pagination').html(response.pagination);
+                        fetchDataAsPaginate
+                            (
+                                'index_search',
+                                '/taraf-hesab',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
                         Swal.fire(
                                 response.message,
                                 response.status,

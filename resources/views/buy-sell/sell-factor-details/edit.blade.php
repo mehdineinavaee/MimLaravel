@@ -25,6 +25,7 @@
                                 <th style="min-width: 100px">مقدار</th>
                                 <th style="min-width: 150px">درصد تخفیف</th>
                                 <th style="min-width: 200px">ملاحظات</th>
+                                <th style="min-width: 50px">اقدامات</th>
                             </tr>
                         </thead>
                         <tbody id="edit_product_data">
@@ -39,12 +40,13 @@
                                 <th>مقدار</th>
                                 <th>درصد تخفیف</th>
                                 <th>ملاحظات</th>
+                                <th>اقدامات</th>
                             </tr>
                         </tfoot>
                     </table>
                     <div class="col-lg-12 col-md-12 col-sm-12" style="text-align: left">
                         مجموع رکوردها:
-                        <span id="edit_count"></span>
+                        <span id="edit_count">0</span>
                     </div>
                     <input type="hidden" id="edit_invoice_product_id" name="edit_invoice_product_id" disabled />
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -131,14 +133,10 @@
             <div class="modal-footer">
                 <div>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
-                    <button type="button" class="btn btn-danger" title="حذف" data-toggle="tooltip">
-                        <i class="fa-lg fa fa-trash"></i>&nbsp;
-                        حذف کالا از لیست فاکتور
-                    </button>
-                    <button type="button" class="btn btn-success editInvoiceList" title="ویرایش"
+                    <button type="button" class="btn btn-success editInvoiceList" title="ویرایش کالا در لیست فاکتور"
                         data-toggle="tooltip">
                         <i class="fa-lg fa fa-edit"></i>&nbsp;
-                        ویرایش کالا در لیست فاکتور
+                        ویرایش
                     </button>
                 </div>
             </div>
@@ -154,7 +152,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/fetch-sell-factor-id/" + sell_factor_id,
+                url: "/sell-factor-detail/" + sell_factor_id + "/edit",
                 dataType: "json",
                 success: function(response) {
                     if (response.status == 404) {
@@ -176,7 +174,68 @@
             $(document).on('click', '.editInvoiceList', function(e) {
                 e.preventDefault();
                 var isValid = edit_validation();
-                if (isValid) {}
+                if (isValid) {
+                    var sell_factor_id = $("#edit_sell_factor_id").val();
+                    var product_id = $('#edit_invoice_product_id').val();
+                    // console.log(sell_factor_id);
+                    // console.log(product_id);
+
+                    var invoice_total = String($('#edit_invoice_total').val()).replaceAll(" ریال", "");
+                    invoice_total = String(invoice_total).replaceAll(",", "");
+                    invoice_total = invoice_total.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+                        .replace(
+                            /[۰-۹]/g,
+                            d =>
+                            "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+
+                    var data = {
+                        invoice_total: invoice_total,
+                        invoice_amount: $('#edit_invoice_amount').val(),
+                        invoice_discount: $('#edit_invoice_discount').val(),
+                        invoice_considerations: $('#edit_invoice_considerations').val(),
+                    };
+
+                    $.ajaxSetup({
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        },
+                    });
+
+                    $.ajax({
+                        type: "PUT",
+                        url: "/update-factor-items/" + sell_factor_id + "/" + product_id,
+                        data: data,
+                        dataType: "json",
+                        success: function(response) {
+                            // console.log(response);
+                            if (response.status == 404) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'خطا',
+                                    text: response.message,
+                                })
+                            } else {
+                                $('#edit_count').html(response.count);
+                                $('#edit_product_data').html(response.sell_factor_by_id);
+                                Swal.fire(
+                                    response.message,
+                                    response.status,
+                                    'success'
+                                )
+                                fetchDataAsPaginate
+                                    (
+                                        'index_invoice_search',
+                                        '/sell-factor',
+                                        1,
+                                        10,
+                                        'index_count',
+                                        'myData',
+                                        'index_pagination'
+                                    );
+                            }
+                        }
+                    });
+                }
             });
         });
 
@@ -312,5 +371,64 @@
                 }
             }
         }
+
+        // Delete Details - e.g. (Factors)
+        $(document).on("click", ".delete_details", function(e) {
+            e.preventDefault();
+            var url = $(this).val();
+            $("#url").val(url);
+            $("#DeleteDetailsModal").modal("show");
+        });
+
+        $(document).on("click", ".delete_details_btn", function(e) {
+            e.preventDefault();
+
+            $(this).text("در حال حذف ...");
+
+            var url = $("#url").val();
+            // console.log(url);
+
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+            });
+
+            $.ajax({
+                type: "DELETE",
+                url: url,
+                success: function(response) {
+                    $('#edit_count').html(response.count);
+                    $('#edit_product_data').html(response.sell_factor_by_id);
+                    Swal.fire(
+                        response.message,
+                        response.status,
+                        'success'
+                    )
+                    fetchDataAsPaginate
+                        (
+                            'index_invoice_search',
+                            '/sell-factor',
+                            1,
+                            10,
+                            'index_count',
+                            'myData',
+                            'index_pagination'
+                        );
+                    $("#DeleteDetailsModal").modal("hide");
+                    $(".delete_details_btn").text("موافقم");
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: "error",
+                        title: "متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید",
+                        denyButtonText: "OK",
+                        // text: textStatus,
+                    });
+                    $("#DeleteDetailsModal").modal("hide");
+                    $(".delete_details_btn").text("موافقم");
+                },
+            });
+        });
     </script>
 @endpush

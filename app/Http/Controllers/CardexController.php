@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cardex;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class CardexController extends Controller
 {

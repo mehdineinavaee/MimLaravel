@@ -12,20 +12,167 @@
             </div>
 
             <div class="modal-body">
-                <input type="hidden" id="edit_return_buy_factor_id">
-                <div class="row pt-4">
+                <div class="row">
+                    <input type="hidden" id="edit_return_buy_factor_id">
+                    <div class="col-lg-12 col-md-12 col-sm-12" id="edit_hidden_div" style="display: none;">
+                        <div class="form-group mb-3">
+                            <button type="button" class="edit_collapsible">
+                                در این بخش می توانید مشخصات مشتری رهگذر را وارد کنید
+                            </button>
+                            <div class="expansion">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_national_code">کد ملی</label>
+                                                <input type="text" id="edit_national_code" name="edit_national_code"
+                                                    class="form-control leftToRight rightAlign inputMaskNationalCode"
+                                                    autocomplete="off" />
+                                                <div id="edit_national_code_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_viator">نام رهگذر</label>
+                                                <input type="text" id="edit_viator" name="edit_viator"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="edit_viator_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_tel">تلفن</label>
+                                                <input type="text" id="edit_tel" name="edit_tel"
+                                                    class="form-control leftToRight rightAlign inputMaskTel"
+                                                    autocomplete="off" />
+                                                <div id="edit_tel_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_address">آدرس</label>
+                                                <input type="text" id="edit_address" name="edit_address"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="edit_address_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
-                            <label for="edit_return_buy_factor_no">شماره</label>
-                            <input type="text" id="edit_return_buy_factor_no" name="edit_return_buy_factor_no"
+                            <label for="edit_customer_type">نوع مشتری</label>
+                            <select id="edit_customer_type" name="edit_customer_type" class="form-control select2"
+                                style="width: 100%;" onChange="editCustomerType('edit_hidden_div',this.value)">
+                                <option value="" selected>نوع مشتری را انتخاب کنید</option>
+                                {{-- @foreach ($publishers as $publisher) --}}
+                                <option value="1">
+                                    مشتری دائم
+                                </option>
+                                <option value="2">
+                                    مشتری رهگذر
+                                </option>
+                                {{-- @endforeach --}}
+                            </select>
+                            <div id="edit_customer_type_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_seller">فروشنده</label>
+                            <select id="edit_seller" name="edit_seller" class="form-control select2"
+                                style="width: 100%;">
+                                <option value="" selected>فروشنده را انتخاب کنید</option>
+                                @foreach ($sellers as $item)
+                                    <option value={{ $item->id }}>
+                                        {{ $item->fullname }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div id="edit_seller_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_factor_no">شماره فاکتور</label>
+                            <input type="text" id="edit_factor_no" name="edit_factor_no" class="form-control"
+                                autocomplete="off" />
+                            <div id="edit_factor_no_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_factor_date">تاریخ فاکتور</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" id="edit_factor_date" name="edit_factor_date"
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
+                                <div id="edit_factor_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_broker">واسطه فروش</label>
+                            <select id="edit_broker" name="edit_broker" class="form-control select2"
+                                style="width: 100%;">
+                                <option value="" selected>واسطه فروش را انتخاب کنید</option>
+                                @foreach ($brokers as $item)
+                                    <option value={{ $item->id }}>
+                                        {{ $item->fullname }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div id="edit_broker_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_commission">پورسانت</label>
+                            <input type="text" id="edit_commission" name="edit_commission" class="form-control"
+                                autocomplete="off" />
+                            <div id="edit_commission_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_settlement_deadline">مهلت تسویه</label>
+                            <input type="text" id="edit_settlement_deadline" name="edit_settlement_deadline"
                                 class="form-control" autocomplete="off" />
-                            <div id="edit_return_buy_factor_no_error" class="invalid-feedback"></div>
+                            <div id="edit_settlement_deadline_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_settlement_date">تاریخ تسویه</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" id="edit_settlement_date" name="edit_settlement_date"
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
+                                <div id="edit_settlement_date_error" class="invalid-feedback"
+                                    style="margin-right:38px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="modal-footer">
+            <div class="modal-footer" style="justify-content: space-between;">
+                <div>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#editInvoice">
+                        <span data-toggle="tooltip" title="حذف / ویرایش">
+                            <i class="fa-lg fa fa-list"></i>&nbsp;
+                            مشاهده لیست فاکتور
+                        </span>
+                    </button>
+                </div>
                 <div>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
                     <button type="button" class="btn btn-primary updateReturnBuyFactor">تأیید</button>
@@ -35,12 +182,42 @@
     </div>
 </div>
 <!-- End Modal -->
+@include('buy-sell.return-buy-factor-details.edit')
+
 @push('js')
     <script>
+        var coll = document.getElementsByClassName("edit_collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+
+        function editCustomerType(divId, element) {
+            if (element == 2) {
+                document.getElementById(divId).style.display = 'block';
+                $(edit_seller).prop('selectedIndex', 0).change();
+                document.getElementById("edit_seller").disabled = true;
+                $("#edit_seller_error").text("");
+                $("#edit_seller").removeClass("is-invalid");
+            } else {
+                document.getElementById(divId).style.display = 'none';
+                document.getElementById("edit_seller").disabled = false;
+            }
+        }
+
         $(document).on('click', '.edit_return_buy_factor', function(e) {
             e.preventDefault();
             var return_buy_factor_id = $(this).val();
-            // console.log(return_buy_factor_id);
+            // console.log(buy_factor_id);
 
             $.ajax({
                 type: "GET",
@@ -57,8 +234,21 @@
                         $("#editInfo").modal("show");
 
                         $("#edit_return_buy_factor_id").val(return_buy_factor_id);
-                        $("#edit_return_buy_factor_no").val(response.return_buy_factor
-                            .return_buy_factor_no);
+                        $("#edit_national_code").val(response.return_buy_factor.national_code);
+                        $("#edit_viator").val(response.return_buy_factor.viator);
+                        $("#edit_tel").val(response.return_buy_factor.tel);
+                        $("#edit_address").val(response.return_buy_factor.address);
+                        $('#edit_customer_type').val(response.return_buy_factor.customer_type).change();
+                        $('#edit_seller').val(response.return_buy_factor.seller_id).change();
+                        $("#edit_factor_no").val(response.return_buy_factor.factor_no);
+                        $("#edit_factor_date").val(response.return_buy_factor.factor_date);
+                        $('#edit_broker').val(response.return_buy_factor.broker_id).change();
+                        $("#edit_commission").val(response.return_buy_factor
+                            .commission);
+                        $("#edit_settlement_deadline").val(response.return_buy_factor
+                            .settlement_deadline);
+                        $("#edit_settlement_date").val(response.return_buy_factor
+                            .settlement_date);
                     }
                 },
             });
@@ -69,7 +259,18 @@
             var return_buy_factor_id = $("#edit_return_buy_factor_id").val();
 
             var data = {
-                return_buy_factor_no: $('#edit_return_buy_factor_no').val(),
+                national_code: $('#edit_national_code').val(),
+                viator: $('#edit_viator').val(),
+                tel: $('#edit_tel').val(),
+                address: $('#edit_address').val(),
+                customer_type: $('#edit_customer_type').val(),
+                seller: $('#edit_seller').val(),
+                factor_no: $('#edit_factor_no').val(),
+                factor_date: $('#edit_factor_date').val(),
+                broker: $('#edit_broker').val(),
+                commission: $('#edit_commission').val(),
+                settlement_deadline: $('#edit_settlement_deadline').val(),
+                settlement_date: $('#edit_settlement_date').val(),
             };
 
             $.ajaxSetup({
@@ -84,19 +285,36 @@
                 data: data,
                 dataType: "json",
                 success: function(response) {
-                    $('#myData').html(response.output);
-                    $('#pagination').html(response.pagination);
                     // console.log(response);
-                    Swal.fire(
-                            response.message,
-                            response.status,
-                            'success'
-                        )
-                        .then((result) => {
-                            $("#editInfo").modal("hide");
-                            $("#editInfo").find("input").val("");
-                            edit_clearErrors();
-                        });
+                    if (response.status == 404) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا',
+                            text: response.message,
+                        })
+                    } else {
+                        fetchDataAsPaginate
+                            (
+                                'index_invoice_search',
+                                '/return-buy-factor',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
+                        Swal.fire(
+                                response.message,
+                                response.status,
+                                'success'
+                            )
+                            .then((result) => {
+                                $("#editInfo").modal("hide");
+                                $("#editInfo").find("input").val("");
+                                edit_clearErrors();
+                                edit_defaultSelectedValue();
+                            });
+                    }
                 },
                 error: function(errors) {
                     edit_clearErrors();
@@ -121,12 +339,39 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
+            // edit_defaultSelectedValue();
             // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
-            $("#edit_return_buy_factor_no_error").text("");
-            $("#edit_return_buy_factor_no").removeClass("is-invalid");
+            $("#edit_national_code_error").text("");
+            $("#edit_national_code").removeClass("is-invalid");
+            $("#edit_viator_error").text("");
+            $("#edit_viator").removeClass("is-invalid");
+            $("#edit_tel_error").text("");
+            $("#edit_tel").removeClass("is-invalid");
+            $("#edit_address_error").text("");
+            $("#edit_address").removeClass("is-invalid");
+            $("#edit_customer_type_error").text("");
+            $("#edit_customer_type").removeClass("is-invalid");
+            $("#edit_seller_error").text("");
+            $("#edit_seller").removeClass("is-invalid");
+            $("#edit_factor_no_error").text("");
+            $("#edit_factor_no").removeClass("is-invalid");
+            $("#edit_factor_date_error").text("");
+            $("#edit_factor_date").removeClass("is-invalid");
+            $("#edit_broker_error").text("");
+            $("#edit_broker").removeClass("is-invalid");
+            $("#edit_commission_error").text("");
+            $("#edit_commission").removeClass("is-invalid");
+            $("#edit_settlement_date_error").text("");
+            $("#edit_settlement_date").removeClass("is-invalid");
+        }
+
+        function edit_defaultSelectedValue() {
+            $(edit_customer_type).prop('selectedIndex', 0).change();
+            $(edit_seller).prop('selectedIndex', 0).change();
+            $(edit_broker).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

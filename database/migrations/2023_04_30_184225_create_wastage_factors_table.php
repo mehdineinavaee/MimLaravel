@@ -15,6 +15,16 @@ return new class extends Migration
     {
         Schema::create('wastage_factors', function (Blueprint $table) {
             $table->id();
+            $table->string('national_code')->nullable(); // کد ملی
+            $table->string('viator')->nullable(); // رهگذر
+            $table->string('tel')->nullable(); // تلفن
+            $table->string('address')->nullable(); // آدرس
+            $table->string('wastage_type'); // نوع ضایعات
+            $table->string('customer_type')->nullable(); // نوع مشتری
+            $table->string('factor_no'); // شماره فاکتور
+            $table->string('factor_date'); // تاریخ فاکتور
+            $table->string('settlement_deadline')->nullable(); // مهلت تسویه
+            $table->string('settlement_date')->nullable(); // تاریخ تسویه
             $table->timestamps();
         });
     }

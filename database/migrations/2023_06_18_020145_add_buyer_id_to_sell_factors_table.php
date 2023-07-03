@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('sell_factors', function (Blueprint $table) {
-            $table->foreignId('buyer_id')->after('customer_type');
+            $table->foreignId('buyer_id')->after('customer_type')->nullable();
             $table->foreign('buyer_id')
                 ->references('id')
                 ->on('taraf_hesabs')

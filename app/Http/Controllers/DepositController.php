@@ -6,6 +6,8 @@ use App\Http\Requests\DepositRequest;
 use App\Models\BankAccount;
 use App\Models\Deposit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class DepositController extends Controller
 {
@@ -14,10 +16,13 @@ class DepositController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_deposit($row, $status, $message)
     {
-        $output = '';
-        $data = Deposit::orderBy('id', 'desc')->paginate();
+        $data = Deposit::orderBy('id', 'desc')->paginate($row);
+
+        $deposits = '';
+
+        $count = DB::table('deposits')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -27,7 +32,7 @@ class DepositController extends Controller
                     $total = '-';
                 }
 
-                $output .=
+                $deposits .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -52,11 +57,76 @@ class DepositController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $deposits,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_deposit(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $deposits = Deposit::where('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('place', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('mark_back', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('serial_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('total', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('due_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('payer', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($deposits) {
+                foreach ($deposits as $index => $item) {
+                    if ($item->total != null) {
+                        $total = number_format($item->total);
+                    } else {
+                        $total = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->place . '</td>
+                            <td>' . $item->mark_back . '</td>
+                            <td>' . $item->serial_number . '</td>
+                            <td>' . $total . ' ریال</td>
+                            <td>' . $item->due_date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $item->payer . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_deposit btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/deposit/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$deposits->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -68,7 +138,8 @@ class DepositController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_deposit($row, 200, '');
         }
         $bank_accounts = BankAccount::all();
         return view('cheque-management/deposit.index')
@@ -104,7 +175,8 @@ class DepositController extends Controller
         $deposit->payer = $request->input('payer');
         $deposit->bank_account()->associate($request->bank_account_details);
         $deposit->save();
-        return self::fetchData(200, 'خواباندن چک به حساب ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_deposit($row, 200, 'خواباندن چک به حساب ذخیره شد');
     }
 
     /**
@@ -161,7 +233,8 @@ class DepositController extends Controller
             $deposit->payer = $request->input('payer');
             $deposit->bank_account()->associate($request->bank_account_details);
             $deposit->update();
-            return self::fetchData(200, 'خواباندن چک به حساب ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_deposit($row, 200, 'خواباندن چک به حساب ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -180,6 +253,6 @@ class DepositController extends Controller
     {
         $deposit = Deposit::find($id);
         $deposit->delete();
-        return self::fetchData(200, 'خواباندن چک به حساب حذف شد');
+        return self::index_fetch_deposit(10, 200, 'خواباندن چک به حساب حذف شد');
     }
 }

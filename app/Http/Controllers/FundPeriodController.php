@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\FundPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class FundPeriodController extends Controller
 {

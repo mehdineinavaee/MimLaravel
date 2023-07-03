@@ -36,7 +36,7 @@
                             </div>
                             <input type="text" id="edit_form_date" name="edit_form_date"
                                 class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                            <div id="edit_form_date_error" class="invalid-feedback"></div>
+                            <div id="edit_form_date_error" class="invalid-feedback" style="margin-right:38px;"></div>
                         </div>
                     </div>
                 </div>
@@ -137,7 +137,8 @@
                                                 name="edit_tab2_issue_date"
                                                 class="leftToRight rightAlign inputMaskDate form-control"
                                                 autocomplete="off" />
-                                            <div id="edit_tab2_issue_date_error" class="invalid-feedback"></div>
+                                            <div id="edit_tab2_issue_date_error" class="invalid-feedback"
+                                                style="margin-right:38px;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -151,7 +152,8 @@
                                             <input type="text" id="edit_tab2_due_date" name="edit_tab2_due_date"
                                                 class="leftToRight rightAlign inputMaskDate form-control"
                                                 autocomplete="off" />
-                                            <div id="edit_tab2_due_date_error" class="invalid-feedback"></div>
+                                            <div id="edit_tab2_due_date_error" class="invalid-feedback"
+                                                style="margin-right:38px;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -233,7 +235,8 @@
                                     <input type="text" id="edit_date" name="edit_date"
                                         class="leftToRight rightAlign inputMaskDate form-control"
                                         autocomplete="off" />
-                                    <div id="edit_date_error" class="invalid-feedback"></div>
+                                    <div id="edit_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -453,8 +456,16 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $('#myData').html(response.output);
-                    $('#pagination').html(response.pagination);
+                    fetchDataAsPaginate
+                        (
+                            'index_search',
+                            '/payment-to-account',
+                            1,
+                            10,
+                            'index_count',
+                            'myData',
+                            'index_pagination'
+                        );
                     Swal.fire(
                             response.message,
                             response.status,

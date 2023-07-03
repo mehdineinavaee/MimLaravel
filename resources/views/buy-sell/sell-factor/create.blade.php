@@ -13,11 +13,58 @@
 
             <div class="modal-body">
                 <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12" id="add_hidden_div" style="display: none;">
+                        <div class="form-group mb-3">
+                            <button type="button" class="add_collapsible">
+                                در این بخش می توانید مشخصات مشتری رهگذر را وارد کنید
+                            </button>
+                            <div class="expansion">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="add_national_code">کد ملی</label>
+                                                <input type="text" id="add_national_code" name="add_national_code"
+                                                    class="form-control leftToRight rightAlign inputMaskNationalCode"
+                                                    autocomplete="off" />
+                                                <div id="add_national_code_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="add_viator">نام رهگذر</label>
+                                                <input type="text" id="add_viator" name="add_viator"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="add_viator_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="add_tel">تلفن</label>
+                                                <input type="text" id="add_tel" name="add_tel"
+                                                    class="form-control leftToRight rightAlign inputMaskTel"
+                                                    autocomplete="off" />
+                                                <div id="add_tel_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="add_address">آدرس</label>
+                                                <input type="text" id="add_address" name="add_address"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="add_address_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_customer_type">نوع مشتری</label>
                             <select id="add_customer_type" name="add_customer_type" class="form-control select2"
-                                style="width: 100%;">
+                                style="width: 100%;" onChange="addCustomerType('add_hidden_div',this.value)">
                                 <option value="" selected>نوع مشتری را انتخاب کنید</option>
                                 {{-- @foreach ($publishers as $publisher) --}}
                                 <option value="1">
@@ -62,14 +109,16 @@
                                 </div>
                                 <input type="text" id="add_factor_date" name="add_factor_date"
                                     class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                <div id="add_factor_date_error" class="invalid-feedback"></div>
+                                <div id="add_factor_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_broker">واسطه فروش</label>
-                            <select id="add_broker" name="add_broker" class="form-control select2" style="width: 100%;">
+                            <select id="add_broker" name="add_broker" class="form-control select2"
+                                style="width: 100%;">
                                 <option value="" selected>واسطه فروش را انتخاب کنید</option>
                                 @foreach ($brokers as $item)
                                     <option value={{ $item->id }}>
@@ -105,7 +154,8 @@
                                 </div>
                                 <input type="text" id="add_settlement_date" name="add_settlement_date"
                                     class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                <div id="add_settlement_date_error" class="invalid-feedback"></div>
+                                <div id="add_settlement_date_error" class="invalid-feedback"
+                                    style="margin-right:38px;"></div>
                             </div>
                         </div>
                     </div>
@@ -115,8 +165,10 @@
             <div class="modal-footer" style="justify-content: space-between;">
                 <div>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInvoice">
-                        <i class="fa-lg fa fa-plus" title="افزودن اقلام فاکتور" data-toggle="tooltip"></i>&nbsp;
-                        اقلام جدید فاکتور
+                        <span data-toggle="tooltip" title="افزودن کالا به لیست فاکتور">
+                            <i class="fa-lg fa fa-plus"></i>&nbsp;
+                            افزودن کالا
+                        </span>
                     </button>
                 </div>
 
@@ -133,11 +185,47 @@
 
 @push('js')
     <script>
+        var coll = document.getElementsByClassName("add_collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+
+        function addCustomerType(divId, element) {
+            if (element == 2) {
+                document.getElementById(divId).style.display = 'block';
+                $(add_buyer).prop('selectedIndex', 0).change();
+                document.getElementById("add_buyer").disabled = true;
+                $("#add_buyer_error").text("");
+                $("#add_buyer").removeClass("is-invalid");
+            } else {
+                document.getElementById(divId).style.display = 'none';
+                document.getElementById("add_buyer").disabled = false;
+                $('#add_national_code').val("");
+                $('#add_viator').val("");
+                $('#add_tel').val("");
+                $('#add_address').val("");
+            }
+        }
+
         $(document).ready(function() {
             $(document).on('click', '.addSellFactor', function(e) {
                 e.preventDefault();
 
                 var data = {
+                    'national_code': $('#add_national_code').val(),
+                    'viator': $('#add_viator').val(),
+                    'tel': $('#add_tel').val(),
+                    'address': $('#add_address').val(),
                     'customer_type': $('#add_customer_type').val(),
                     'buyer': $('#add_buyer').val(),
                     'factor_no': $('#add_factor_no').val(),
@@ -163,8 +251,16 @@
                     dataType: "json",
 
                     success: function(response) {
-                        $('#myData').html(response.output);
-                        $('#pagination').html(response.pagination);
+                        fetchDataAsPaginate
+                            (
+                                'index_invoice_search',
+                                '/sell-factor',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
                         factors = [];
                         Swal.fire(
                                 response.message,
@@ -208,6 +304,14 @@
         })
 
         function add_clearErrors() {
+            $("#add_national_code_error").text("");
+            $("#add_national_code").removeClass("is-invalid");
+            $("#add_viator_error").text("");
+            $("#add_viator").removeClass("is-invalid");
+            $("#add_tel_error").text("");
+            $("#add_tel").removeClass("is-invalid");
+            $("#add_address_error").text("");
+            $("#add_address").removeClass("is-invalid");
             $("#add_customer_type_error").text("");
             $("#add_customer_type").removeClass("is-invalid");
             $("#add_buyer_error").text("");

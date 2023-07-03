@@ -9,6 +9,7 @@ use App\Models\TarafHesab;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 class SellFactorController extends Controller
 {
@@ -17,47 +18,118 @@ class SellFactorController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_factors($row, $status, $message)
     {
-        $output = '';
-        $data = SellFactor::orderBy('id', 'desc')->paginate();
+        $data = SellFactor::orderBy('factor_no', 'desc')->paginate($row);
+
+        $factors = '';
+
+        $count = DB::table('sell_factors')->count();
 
         if ($data) {
-            foreach ($data as $index => $item) {
+            foreach ($data as $index => $factor) {
                 $total = 0;
-                $new_data = DB::table('product_sell_factor')->where('sell_factor_id', $item->id)->get();
-                foreach ($new_data as $n) {
-                    $total = $total + $n->total;
+
+                foreach ($factor->products as $detail) {
+                    $total = $total + $detail->pivot->total;
                 }
 
-                $output .=
+                if ($factor->buyer === null) {
+                    $bv = $factor->viator;
+                } else {
+                    $bv = $factor->buyer->fullname;
+                }
+
+                $factors .=
                     '
-                    <tr>
-                        <td>' . $item->factor_no . '</td>
-                        <td>' . $item->factor_date . '</td>
-                        <td>' . $item->buyer->fullname . '</td>
-                        <td>' . number_format($total) . ' ریال</td>
-                        <td>
-                            <button type="button" value=' . $item->id . ' class="edit_sell_factor btn btn-primary btn-sm">
-                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
-                            </button>
-                            <button type="button" value="/sell-factor/' . $item->id . '" class="delete btn btn-danger btn-sm">
-                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr class="indexRow">
+                            <td style="display:none;" id="index_id">' . $factor->id . '</td>
+                            <td>' . $factor->factor_no . '</td>
+                            <td>' . $factor->factor_date . '</td>
+                            <td>' . $bv . '</td>
+                            <td>' . number_format($total) . ' ریال</td>
+                            <td>
+                                <button type="button" value=' . $factor->id . ' class="edit_sell_factor btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/sell-factor/' . $factor->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $factors,
+                'pagination' => (string)$data->links(),
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
             ]);
         }
     }
 
-    public function fetch_products(Request $request)
+    public function index_search_factors(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $factors = SellFactor::where('factor_no', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('factor_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('viator', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('buyer_id', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('factor_no', 'asc')->paginate($request->row);
+            }
+            if ($factors) {
+                foreach ($factors as $factor) {
+                    $total = 0;
+
+                    foreach ($factor->products as $detail) {
+                        $total = $total + $detail->pivot->total;
+                    }
+
+                    if ($factor->buyer === null) {
+                        $bv = $factor->viator;
+                    } else {
+                        $bv = $factor->buyer->fullname;
+                    }
+                    $search .=
+                        '
+                            <tr class="indexRow">
+                                <td style="display:none;">' . $factor->id . '</td>
+                                <td>' . $factor->factor_no . '</td>
+                                <td>' . $factor->factor_date . '</td>
+                                <td>' . $bv . '</td>
+                                <td>' . number_format($total) . ' ریال</td>
+                                <td>
+                                    <button type="button" value=' . $factor->id . ' class="edit_sell_factor btn btn-primary btn-sm">
+                                        <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                    </button>
+                                    <button type="button" value="/sell-factor/' . $factor->id . '" class="delete btn btn-danger btn-sm">
+                                        <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$factors->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
+        }
+    }
+
+    public function add_fetch_products(Request $request)
     {
         if ($request->row != null) {
             $data = Product::orderBy('product_name', 'asc')->paginate($request->row);
@@ -83,8 +155,8 @@ class SellFactorController extends Controller
             return response()->json([
                 'status' => 200,
                 'count' => $count,
-                'products' => $products,
-                'productPagination' => (string)$data->links(),
+                'data' => $products,
+                'pagination' => (string)$data->links(),
             ]);
         } else {
             return response()->json([
@@ -93,14 +165,14 @@ class SellFactorController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function add_search_products(Request $request)
     {
         if ($request->ajax()) {
             $search = '';
             if ($request->row != null) {
-                $products = Product::where('code', 'LIKE', '%' . $request->invoice_search . '%')
-                    ->orWhere('product_name', 'LIKE', '%' . $request->invoice_search . '%')
-                    ->orWhere('sell_price', 'LIKE', '%' . $request->invoice_search . '%')
+                $products = Product::where('code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('product_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('sell_price', 'LIKE', '%' . $request->search . '%')
                     ->orderBy('product_name', 'asc')->paginate($request->row);
             }
             if ($products) {
@@ -118,8 +190,8 @@ class SellFactorController extends Controller
                 }
                 return response()->json([
                     'status' => 200,
-                    'products' => $search,
-                    'productPagination' => (string)$products->links(),
+                    'data' => $search,
+                    'pagination' => (string)$products->links(),
                 ]);
             } else {
                 return response()->json([
@@ -137,7 +209,8 @@ class SellFactorController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_factors($row, 200, '');
         }
         $buyers = TarafHesab::where('chk_buyer', '=', "فعال")->orderBy('fullname', 'asc')->get();
         $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
@@ -169,6 +242,20 @@ class SellFactorController extends Controller
     public function store(SellFactorRequest $request)
     {
         $sell_factor = new SellFactor();
+        if ($request->customer_type == 2) {
+            $sell_factor->national_code = $request->input('national_code');
+            $sell_factor->viator = $request->input('viator');
+            $sell_factor->tel = $request->input('tel');
+            $sell_factor->address = $request->input('address');
+        } else {
+            $sell_factor->national_code = null;
+            $sell_factor->viator = null;
+            $sell_factor->tel = null;
+            $sell_factor->address = null;
+            $request->validate([
+                'buyer' => 'required',
+            ]);
+        }
         $sell_factor->customer_type = $request->input('customer_type');
         $sell_factor->factor_no = $request->input('factor_no');
         $sell_factor->factor_date = $request->input('factor_date');
@@ -192,7 +279,8 @@ class SellFactorController extends Controller
             ]);
         }
 
-        return self::fetchData(200, 'فاکتور فروش ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_factors($row, 200, 'فاکتور فروش ذخیره شد');
     }
 
     /**
@@ -239,6 +327,20 @@ class SellFactorController extends Controller
     {
         $sell_factor = SellFactor::find($id);
         if ($sell_factor) {
+            if ($request->customer_type == 2) {
+                $sell_factor->national_code = $request->input('national_code');
+                $sell_factor->viator = $request->input('viator');
+                $sell_factor->tel = $request->input('tel');
+                $sell_factor->address = $request->input('address');
+            } else {
+                $sell_factor->national_code = null;
+                $sell_factor->viator = null;
+                $sell_factor->tel = null;
+                $sell_factor->address = null;
+                $request->validate([
+                    'buyer' => 'required',
+                ]);
+            }
             $sell_factor->customer_type = $request->input('customer_type');
             $sell_factor->factor_no = $request->input('factor_no');
             $sell_factor->factor_date = $request->input('factor_date');
@@ -249,7 +351,8 @@ class SellFactorController extends Controller
             $sell_factor->broker()->associate($request->broker);
             $sell_factor->update();
             $sell_factor->products()->attach($request->products);
-            return self::fetchData(200, 'فاکتور فروش ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_factors($row, 200, 'فاکتور فروش ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -268,42 +371,6 @@ class SellFactorController extends Controller
     {
         $sell_factor = SellFactor::find($id);
         $sell_factor->delete();
-        return self::fetchData(200, 'فاکتور فروش حذف شد');
-    }
-
-    public function fetch_sell_factor_id($id)
-    {
-        $sell_factor = SellFactor::findOrFail($id);
-
-        $sell_factor_by_id = '';
-
-        if ($sell_factor) {
-            $count = $sell_factor->products->count();
-            foreach ($sell_factor->products as $product) {
-                $sell_factor_by_id .=
-                    '
-                    <tr class="editRow">
-                    <td style="display:none;">' . $product->id . '</td>
-                    <td>' . $product->code . '</td>
-                    <td>' . $product->product_name . '</td>
-                    <td>' . number_format($product->sell_price) . ' ریال</td>
-                    <td>' . number_format($product->pivot->total) . ' ریال</td>
-                    <td style="display:none;">' . $product->warehouse->id . '</td>
-                    <td>' . $product->pivot->amount . '</td>
-                    <td>' . $product->pivot->discount . '</td>
-                    <td>' . $product->pivot->considerations . '</td>
-                    </tr>
-                ';
-            }
-            return response()->json([
-                'status' => 200,
-                'count' => $count,
-                'sell_factor_by_id' => $sell_factor_by_id,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-            ]);
-        }
+        return self::index_fetch_factors(10, 200, 'فاکتور فروش حذف شد');
     }
 }

@@ -13,7 +13,7 @@ class InventoryProductsPeriodRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,10 @@ class InventoryProductsPeriodRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'warehouse' => 'required',
+            'product' => 'required',
+            'amount' => 'required',
+            'buy_price' => 'required',
         ];
     }
 }

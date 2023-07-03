@@ -6,6 +6,8 @@ use App\Http\Requests\ChequeBookRequest;
 use App\Models\BankAccount;
 use App\Models\ChequeBook;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ChequeBookController extends Controller
 {
@@ -14,14 +16,17 @@ class ChequeBookController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_cheque_book($row, $status, $message)
     {
-        $output = '';
-        $data = ChequeBook::orderBy('id', 'desc')->paginate();
+        $data = ChequeBook::orderBy('id', 'desc')->paginate($row);
+
+        $cheque_books = '';
+
+        $count = DB::table('cheque_books')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-                $output .=
+                $cheque_books .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -43,11 +48,64 @@ class ChequeBookController extends Controller
                 ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $cheque_books,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_cheque_book(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $cheque_books = ChequeBook::where('code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('receive_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('quantity', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cheque_from', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cheque_to', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($cheque_books) {
+                foreach ($cheque_books as $index => $item) {
+                    $search .=
+                        '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->code . '</td>
+                        <td>' . $item->receive_date . '</td>
+                        <td>' . $item->bank_account->account_number . '</td>
+                        <td>' . $item->quantity . '</td>
+                        <td>' . $item->cheque_from . '</td>
+                        <td>' . $item->cheque_to . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_cheque_book btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/cheque-book/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$cheque_books->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -59,7 +117,8 @@ class ChequeBookController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_cheque_book($row, 200, '');
         }
         $bank_accounts = BankAccount::all();
         return view('cheque-management/cheque-book.index')
@@ -92,7 +151,8 @@ class ChequeBookController extends Controller
         $cheque_book->cheque_to = $request->input('cheque_to');
         $cheque_book->bank_account()->associate($request->bank_account_details);
         $cheque_book->save();
-        return self::fetchData(200, 'دسته چک ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_cheque_book($row, 200, 'دسته چک ذخیره شد');
     }
 
     /**
@@ -146,7 +206,8 @@ class ChequeBookController extends Controller
             $cheque_book->cheque_to = $request->input('cheque_to');
             $cheque_book->bank_account()->associate($request->bank_account_details);
             $cheque_book->update();
-            return self::fetchData(200, 'دسته چک ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_cheque_book($row, 200, 'دسته چک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -165,6 +226,6 @@ class ChequeBookController extends Controller
     {
         $cheque_book = ChequeBook::find($id);
         $cheque_book->delete();
-        return self::fetchData(200, 'دسته چک حذف شد');
+        return self::index_fetch_cheque_book(10, 200, 'دسته چک حذف شد');
     }
 }

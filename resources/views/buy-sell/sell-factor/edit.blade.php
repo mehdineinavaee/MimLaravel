@@ -14,11 +14,58 @@
             <div class="modal-body">
                 <div class="row">
                     <input type="hidden" id="edit_sell_factor_id">
+                    <div class="col-lg-12 col-md-12 col-sm-12" id="edit_hidden_div" style="display: none;">
+                        <div class="form-group mb-3">
+                            <button type="button" class="edit_collapsible">در این بخش می توانید مشخصات مشتری رهگذر را
+                                وارد
+                                کنید</button>
+                            <div class="expansion">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_national_code">کد ملی</label>
+                                                <input type="text" id="edit_national_code" name="edit_national_code"
+                                                    class="form-control leftToRight rightAlign inputMaskNationalCode"
+                                                    autocomplete="off" />
+                                                <div id="edit_national_code_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_viator">نام رهگذر</label>
+                                                <input type="text" id="edit_viator" name="edit_viator"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="edit_viator_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_tel">تلفن</label>
+                                                <input type="text" id="edit_tel" name="edit_tel"
+                                                    class="form-control leftToRight rightAlign inputMaskTel"
+                                                    autocomplete="off" />
+                                                <div id="edit_tel_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_address">آدرس</label>
+                                                <input type="text" id="edit_address" name="edit_address"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="edit_address_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_customer_type">نوع مشتری</label>
                             <select id="edit_customer_type" name="edit_customer_type" class="form-control select2"
-                                style="width: 100%;">
+                                style="width: 100%;" onChange="editCustomerType('edit_hidden_div',this.value)">
                                 <option value="" selected>نوع مشتری را انتخاب کنید</option>
                                 {{-- @foreach ($publishers as $publisher) --}}
                                 <option value="1">
@@ -63,7 +110,8 @@
                                 </div>
                                 <input type="text" id="edit_factor_date" name="edit_factor_date"
                                     class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                <div id="edit_factor_date_error" class="invalid-feedback"></div>
+                                <div id="edit_factor_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,7 +155,8 @@
                                 </div>
                                 <input type="text" id="edit_settlement_date" name="edit_settlement_date"
                                     class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                <div id="edit_settlement_date_error" class="invalid-feedback"></div>
+                                <div id="edit_settlement_date_error" class="invalid-feedback"
+                                    style="margin-right:38px;"></div>
                             </div>
                         </div>
                     </div>
@@ -117,8 +166,10 @@
             <div class="modal-footer" style="justify-content: space-between;">
                 <div>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#editInvoice">
-                        <i class="fa-lg fa fa-search" title="مشاهده جزئیات فاکتور" data-toggle="tooltip"></i>&nbsp;
-                        حذف / ویرایش اقلام فاکتور
+                        <span data-toggle="tooltip" title="حذف / ویرایش">
+                            <i class="fa-lg fa fa-list"></i>&nbsp;
+                            مشاهده لیست فاکتور
+                        </span>
                     </button>
                 </div>
                 <div>
@@ -134,6 +185,34 @@
 
 @push('js')
     <script>
+        var coll = document.getElementsByClassName("edit_collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+
+        function editCustomerType(divId, element) {
+            if (element == 2) {
+                document.getElementById(divId).style.display = 'block';
+                $(edit_buyer).prop('selectedIndex', 0).change();
+                document.getElementById("edit_buyer").disabled = true;
+                $("#edit_buyer_error").text("");
+                $("#edit_buyer").removeClass("is-invalid");
+            } else {
+                document.getElementById(divId).style.display = 'none';
+                document.getElementById("edit_buyer").disabled = false;
+            }
+        }
+
         $(document).on('click', '.edit_sell_factor', function(e) {
             e.preventDefault();
             var sell_factor_id = $(this).val();
@@ -154,6 +233,10 @@
                         $("#editInfo").modal("show");
 
                         $("#edit_sell_factor_id").val(sell_factor_id);
+                        $("#edit_national_code").val(response.sell_factor.national_code);
+                        $("#edit_viator").val(response.sell_factor.viator);
+                        $("#edit_tel").val(response.sell_factor.tel);
+                        $("#edit_address").val(response.sell_factor.address);
                         $('#edit_customer_type').val(response.sell_factor.customer_type).change();
                         $('#edit_buyer').val(response.sell_factor.buyer_id).change();
                         $("#edit_factor_no").val(response.sell_factor.factor_no);
@@ -174,6 +257,10 @@
             var sell_factor_id = $("#edit_sell_factor_id").val();
 
             var data = {
+                national_code: $('#edit_national_code').val(),
+                viator: $('#edit_viator').val(),
+                tel: $('#edit_tel').val(),
+                address: $('#edit_address').val(),
                 customer_type: $('#edit_customer_type').val(),
                 buyer: $('#edit_buyer').val(),
                 factor_no: $('#edit_factor_no').val(),
@@ -204,8 +291,16 @@
                             text: response.message,
                         })
                     } else {
-                        $('#myData').html(response.output);
-                        $('#pagination').html(response.pagination);
+                        fetchDataAsPaginate
+                            (
+                                'index_invoice_search',
+                                '/sell-factor',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -247,6 +342,14 @@
         })
 
         function edit_clearErrors() {
+            $("#edit_national_code_error").text("");
+            $("#edit_national_code").removeClass("is-invalid");
+            $("#edit_viator_error").text("");
+            $("#edit_viator").removeClass("is-invalid");
+            $("#edit_tel_error").text("");
+            $("#edit_tel").removeClass("is-invalid");
+            $("#edit_address_error").text("");
+            $("#edit_address").removeClass("is-invalid");
             $("#edit_customer_type_error").text("");
             $("#edit_customer_type").removeClass("is-invalid");
             $("#edit_buyer_error").text("");

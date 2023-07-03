@@ -41,4 +41,9 @@ class TarafHesab extends Model
     {
         return $this->hasMany(SellFactor::class);
     }
+
+    public function buy_factors()
+    {
+        return $this->hasMany(BuyFactor::class);
+    }
 }

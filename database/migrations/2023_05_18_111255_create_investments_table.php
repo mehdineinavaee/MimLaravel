@@ -15,6 +15,16 @@ return new class extends Migration
     {
         Schema::create('investments', function (Blueprint $table) {
             $table->id();
+            $table->string('shareholder')->nullable(); // نام سهام دار
+            $table->string('form_date')->nullable(); // تاریخ فرم
+            $table->string('cash_amount')->nullable(); // مبلغ نقدی
+            $table->string('cash_register')->nullable(); // نام صندوق
+            $table->string('considerations1')->nullable(); // ملاحظات
+            $table->string('date')->nullable(); // تاریخ
+            $table->string('deposit_amount')->nullable(); // مبلغ واریزی
+            $table->string('wage')->nullable(); // کارمزد
+            $table->string('issue_tracking')->nullable(); // شماره پیگیری
+            $table->string('considerations2')->nullable(); // ملاحظات
             $table->timestamps();
         });
     }

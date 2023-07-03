@@ -37,7 +37,7 @@
                             </div>
                             <input type="text" id="add_form_date" name="add_form_date"
                                 class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                            <div id="add_form_date_error" class="invalid-feedback"></div>
+                            <div id="add_form_date_error" class="invalid-feedback" style="margin-right:38px;"></div>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,8 @@
                                             <input type="text" id="add_tab2_issue_date" name="add_tab2_issue_date"
                                                 class="leftToRight rightAlign inputMaskDate form-control"
                                                 autocomplete="off" />
-                                            <div id="add_tab2_issue_date_error" class="invalid-feedback"></div>
+                                            <div id="add_tab2_issue_date_error" class="invalid-feedback"
+                                                style="margin-right:38px;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -150,7 +151,8 @@
                                             <input type="text" id="add_tab2_due_date" name="add_tab2_due_date"
                                                 class="leftToRight rightAlign inputMaskDate form-control"
                                                 autocomplete="off" />
-                                            <div id="add_tab2_due_date_error" class="invalid-feedback"></div>
+                                            <div id="add_tab2_due_date_error" class="invalid-feedback"
+                                                style="margin-right:38px;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -233,7 +235,8 @@
                                     <input type="text" id="add_date" name="add_date"
                                         class="leftToRight rightAlign inputMaskDate form-control"
                                         autocomplete="off" />
-                                    <div id="add_date_error" class="invalid-feedback"></div>
+                                    <div id="add_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -394,8 +397,16 @@
                     dataType: "json",
 
                     success: function(response) {
-                        $('#myData').html(response.output);
-                        $('#pagination').html(response.pagination);
+                        fetchDataAsPaginate
+                            (
+                                'index_search',
+                                '/payment-to-account',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
                         Swal.fire(
                                 response.message,
                                 response.status,
@@ -506,6 +517,7 @@
             $("#add_tab2_cheque_total_price").text("");
             $("#add_deposit_amount_price").text("");
             $("#add_wage_price").text("");
+            $("#add_paid_discount_price").text("");
         }
 
         function add_defaultSelectedValue() {

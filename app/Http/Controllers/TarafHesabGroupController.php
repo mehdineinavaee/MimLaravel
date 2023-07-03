@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TarafHesabGroupRequest;
 use App\Models\TarafHesabGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class TarafHesabGroupController extends Controller
 {

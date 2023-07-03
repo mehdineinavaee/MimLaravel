@@ -17,12 +17,12 @@
                         <div class="form-group mb-3">
                             <input type="search" id="add_invoice_search" name="add_invoice_search" class="form-control"
                                 autocomplete="off" placeholder="جستجو" />
-                            <div id="add_invoice_search_error" class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        <select id="add_invoice_row" onChange="addFetchProducts(1,this.value)"
+                        <select id="add_invoice_row"
+                            onChange="fetchDataAsPaginate('add_invoice_search','/add-fetch-products',1,this.value,'add_count','add_product_data','add_product_pagination')"
                             class="select form-control">
                             <option value="10">10</option>
                             <option value="25">25</option>
@@ -32,7 +32,7 @@
                     </div>
                     <table id="add_invoice_table"
                         class="table-responsive table table-hover table-bordered table-striped"
-                        style="text-align: center; max-height: 400px;">
+                        style="text-align: center; max-height: 180px;">
                         <thead>
                             <tr>
                                 <th style="min-width: 100px">کد کالا</th>
@@ -56,7 +56,7 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: left">
                         مجموع رکوردها:
-                        <span id="add_count"></span>
+                        <span id="add_count">0</span>
                     </div>
                     <input type="hidden" id="add_invoice_product_id" name="add_invoice_product_id" disabled />
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -142,15 +142,15 @@
 
             <div class="modal-footer" style="justify-content: space-between;">
                 <div>
-                    <button type="button" class="btn btn-success addInvoiceList" title="افزودن اقلام فاکتور"
+                    <button type="button" class="btn btn-success addInvoiceList" title="افزودن کالا به لیست فاکتور"
                         data-toggle="tooltip">
                         <i class="fa-lg fa fa-plus"></i>&nbsp;
-                        افزودن به لیست فاکتور
+                        افزودن به لیست
                     </button>
                     <button type="button" class="btn btn-danger addCancelInvoice" title="صرف نظر از لیست فاکتور"
                         data-toggle="tooltip">
                         <i class="fa-lg fa fa-trash"></i>&nbsp;
-                        صرف نظر از لیست فاکتور
+                        حذف لیست
                     </button>
                 </div>
                 <div>
@@ -166,69 +166,29 @@
 
 @push('js')
     <script>
-        //pagination 
+        // pagination
         $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
             let page = $(this).attr('href').split('page=')[1];
             var row = document.getElementById("add_invoice_row");
-            addFetchProducts(page, row.value)
+            fetchDataAsPaginate('add_invoice_search', '/add-fetch-products', page, row.value, 'add_count',
+                'add_product_data', 'add_product_pagination')
         })
 
-        addFetchProducts(1, 10);
+        fetchDataAsPaginate('add_invoice_search', '/add-fetch-products', 1, 10, 'add_count', 'add_product_data',
+            'add_product_pagination');
+        // end pagination
 
-        function addFetchProducts(page, row) {
-            $("#add_invoice_search").val("");
-            $.ajax({
-                type: "GET",
-                url: "/fetch-products?page=" + page,
-                data: {
-                    'row': row
-                },
-                dataType: "json",
-                success: function(response) {
-                    if (response.status == 404) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطا',
-                            text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
-                        })
-                    } else {
-                        // console.log(response);
-                        $('#add_count').html(response.count);
-                        $('#add_product_data').html(response.products);
-                        $('#add_product_pagination').html(response.productPagination);
-                    }
-                },
-            });
-        }
-
+        // search data
         $(document).ready(function() {
             $('#add_invoice_search').on('keyup', function() {
                 var value = $(this).val();
                 var row = document.getElementById("add_invoice_row").value;
-                $.ajax({
-                    type: "GET",
-                    url: "/search",
-                    data: {
-                        'invoice_search': value,
-                        'row': row
-                    },
-                    success: function(response) {
-                        if (response.status == 404) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'خطا',
-                                text: 'متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید',
-                            })
-                        } else {
-                            // console.log(response);
-                            $('#add_product_data').html(response.products);
-                            $('#add_product_pagination').html(response.productPagination);
-                        }
-                    }
-                });
+                serach_data(value, row, "/add-search-products", "add_product_data",
+                    "add_product_pagination");
             });
         });
+        // end search data
 
         var factors = [];
         $(document).ready(function() {

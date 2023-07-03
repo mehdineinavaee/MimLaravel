@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StaffRequest;
 use App\Models\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class StaffController extends Controller
 {
@@ -13,14 +15,17 @@ class StaffController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_staff($row, $status, $message)
     {
-        $output = '';
-        $data = Staff::orderBy('id', 'desc')->paginate();
+        $data = Staff::orderBy('id', 'desc')->paginate($row);
+
+        $staffs = '';
+
+        $count = DB::table('staff')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-                $output .=
+                $staffs .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -45,11 +50,68 @@ class StaffController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $staffs,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_staff(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $staffs = Staff::where('first_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('father', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('birthdate', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('national_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('occupation', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($staffs) {
+                foreach ($staffs as $index => $item) {
+                    $search .=
+                        '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->chk_active . '</td>
+                        <td>' . $item->chk_messenger . '</td>
+                        <td>' . $item->opt_sex . '</td>
+                        <td>' . $item->first_name . '</td>
+                        <td>' . $item->last_name . '</td>
+                        <td>' . $item->father . '</td>
+                        <td>' . $item->birthdate . '</td>
+                        <td>' . $item->national_code . '</td>
+                        <td>' . $item->occupation . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_staff btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/staff/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$staffs->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -61,7 +123,8 @@ class StaffController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_staff($row, 200, '');
         }
         return view('taarife-payeh/staff.index');
     }
@@ -95,7 +158,8 @@ class StaffController extends Controller
         $staff->national_code = $request->input('national_code');
         $staff->occupation = $request->input('occupation');
         $staff->save();
-        return self::fetchData(200, 'پرسنل جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_staff($row, 200, 'پرسنل جدید ذخیره شد');
     }
 
     /**
@@ -152,7 +216,8 @@ class StaffController extends Controller
             $staff->national_code = $request->input('national_code');
             $staff->occupation = $request->input('occupation');
             $staff->update();
-            return self::fetchData(200, 'پرسنل ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_staff($row, 200, 'پرسنل ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -171,6 +236,6 @@ class StaffController extends Controller
     {
         $staff = Staff::find($id);
         $staff->delete();
-        return self::fetchData(200, 'پرسنل حذف شد');
+        return self::index_fetch_staff(10, 200, 'پرسنل حذف شد');
     }
 }

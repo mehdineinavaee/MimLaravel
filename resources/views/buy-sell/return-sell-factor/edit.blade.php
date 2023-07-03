@@ -12,13 +12,60 @@
             </div>
 
             <div class="modal-body">
-                <input type="hidden" id="edit_return_sell_factor_id">
-                <div class="row pt-4">
+                <div class="row">
+                    <input type="hidden" id="edit_return_sell_factor_id">
+                    <div class="col-lg-12 col-md-12 col-sm-12" id="edit_hidden_div" style="display: none;">
+                        <div class="form-group mb-3">
+                            <button type="button" class="edit_collapsible">
+                                در این بخش می توانید مشخصات مشتری رهگذر را وارد کنید
+                            </button>
+                            <div class="expansion">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_national_code">کد ملی</label>
+                                                <input type="text" id="edit_national_code" name="edit_national_code"
+                                                    class="form-control leftToRight rightAlign inputMaskNationalCode"
+                                                    autocomplete="off" />
+                                                <div id="edit_national_code_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_viator">نام رهگذر</label>
+                                                <input type="text" id="edit_viator" name="edit_viator"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="edit_viator_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_tel">تلفن</label>
+                                                <input type="text" id="edit_tel" name="edit_tel"
+                                                    class="form-control leftToRight rightAlign inputMaskTel"
+                                                    autocomplete="off" />
+                                                <div id="edit_tel_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <label for="edit_address">آدرس</label>
+                                                <input type="text" id="edit_address" name="edit_address"
+                                                    class="form-control" autocomplete="off" />
+                                                <div id="edit_address_error" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_customer_type">نوع مشتری</label>
                             <select id="edit_customer_type" name="edit_customer_type" class="form-control select2"
-                                style="width: 100%;">
+                                style="width: 100%;" onChange="editCustomerType('edit_hidden_div',this.value)">
                                 <option value="" selected>نوع مشتری را انتخاب کنید</option>
                                 {{-- @foreach ($publishers as $publisher) --}}
                                 <option value="1">
@@ -37,14 +84,11 @@
                             <label for="edit_buyer">خریدار</label>
                             <select id="edit_buyer" name="edit_buyer" class="form-control select2" style="width: 100%;">
                                 <option value="" selected>خریدار را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    خریدار 1
-                                </option>
-                                <option value="2">
-                                    خریدار 2
-                                </option>
-                                {{-- @endforeach --}}
+                                @foreach ($buyers as $item)
+                                    <option value={{ $item->id }}>
+                                        {{ $item->fullname }}
+                                    </option>
+                                @endforeach
                             </select>
                             <div id="edit_buyer_error" class="invalid-feedback"></div>
                         </div>
@@ -66,7 +110,8 @@
                                 </div>
                                 <input type="text" id="edit_factor_date" name="edit_factor_date"
                                     class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                <div id="edit_factor_date_error" class="invalid-feedback"></div>
+                                <div id="edit_factor_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -76,14 +121,11 @@
                             <select id="edit_broker" name="edit_broker" class="form-control select2"
                                 style="width: 100%;">
                                 <option value="" selected>واسطه فروش را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    واسطه فروش 1
-                                </option>
-                                <option value="2">
-                                    واسطه فروش 2
-                                </option>
-                                {{-- @endforeach --}}
+                                @foreach ($brokers as $item)
+                                    <option value={{ $item->id }}>
+                                        {{ $item->fullname }}
+                                    </option>
+                                @endforeach
                             </select>
                             <div id="edit_broker_error" class="invalid-feedback"></div>
                         </div>
@@ -98,92 +140,38 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group mb-3">
-                            <label for="edit_product_code">کد کالا</label>
-                            <input type="text" id="edit_product_code" name="edit_product_code" class="form-control"
-                                autocomplete="off" />
-                            <div id="edit_product_code_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_product_name">نام کالا</label>
-                            <select id="edit_product_name" name="edit_product_name" class="form-control select2"
-                                style="width: 100%;">
-                                <option value="" selected>نام کالا را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    کالا 1
-                                </option>
-                                <option value="2">
-                                    کالا 2
-                                </option>
-                                {{-- @endforeach --}}
-                            </select>
-                            <div id="edit_product_name_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_amount">مقدار</label>
-                            <input type="text" id="edit_amount" name="edit_amount" class="form-control"
-                                autocomplete="off" />
-                            <div id="edit_amount_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_sell_price">بهای واحد</label>
-                            <input type="text" id="edit_sell_price" name="edit_sell_price" class="form-control"
-                                autocomplete="off" />
-                            <div id="edit_sell_price_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_discount">درصد تخفیف</label>
-                            <input type="text" id="edit_discount" name="edit_discount" class="form-control"
-                                autocomplete="off" />
-                            <div id="edit_discount_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_total">مبلغ کل</label>
-                            <input type="text" id="edit_total" name="edit_total" class="form-control"
-                                autocomplete="off" />
-                            <div id="edit_total_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_warehouse_name">نام انبار</label>
-                            <select id="edit_warehouse_name" name="edit_warehouse_name" class="form-control select2"
-                                style="width: 100%;">
-                                <option value="" selected>نام انبار را انتخاب کنید</option>
-                                {{-- @foreach ($publishers as $publisher) --}}
-                                <option value="1">
-                                    انبار 1
-                                </option>
-                                <option value="2">
-                                    انبار 2
-                                </option>
-                                {{-- @endforeach --}}
-                            </select>
-                            <div id="edit_warehouse_name_error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="form-group mb-3">
-                            <label for="edit_considerations">ملاحظات</label>
-                            <input type="text" id="edit_considerations" name="edit_considerations"
+                            <label for="edit_settlement_deadline">مهلت تسویه</label>
+                            <input type="text" id="edit_settlement_deadline" name="edit_settlement_deadline"
                                 class="form-control" autocomplete="off" />
-                            <div id="edit_considerations_error" class="invalid-feedback"></div>
+                            <div id="edit_settlement_deadline_error" class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group mb-3">
+                            <label for="edit_settlement_date">تاریخ تسویه</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" id="edit_settlement_date" name="edit_settlement_date"
+                                    class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
+                                <div id="edit_settlement_date_error" class="invalid-feedback"
+                                    style="margin-right:38px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="modal-footer">
+            <div class="modal-footer" style="justify-content: space-between;">
+                <div>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#editInvoice">
+                        <span data-toggle="tooltip" title="حذف / ویرایش">
+                            <i class="fa-lg fa fa-list"></i>&nbsp;
+                            مشاهده لیست فاکتور
+                        </span>
+                    </button>
+                </div>
                 <div>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
                     <button type="button" class="btn btn-primary updateReturnSellFactor">تأیید</button>
@@ -193,9 +181,39 @@
     </div>
 </div>
 <!-- End Modal -->
+@include('buy-sell.return-sell-factor-details.edit')
+
 @push('js')
     <script>
-        $(document).on('click', '.edit_sell_factor', function(e) {
+        var coll = document.getElementsByClassName("edit_collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+
+        function editCustomerType(divId, element) {
+            if (element == 2) {
+                document.getElementById(divId).style.display = 'block';
+                $(edit_buyer).prop('selectedIndex', 0).change();
+                document.getElementById("edit_buyer").disabled = true;
+                $("#edit_buyer_error").text("");
+                $("#edit_buyer").removeClass("is-invalid");
+            } else {
+                document.getElementById(divId).style.display = 'none';
+                document.getElementById("edit_buyer").disabled = false;
+            }
+        }
+
+        $(document).on('click', '.edit_return_sell_factor', function(e) {
             e.preventDefault();
             var return_sell_factor_id = $(this).val();
             // console.log(return_sell_factor_id);
@@ -214,22 +232,22 @@
                     } else {
                         $("#editInfo").modal("show");
 
-                        $("#edit_sell_factor_id").val(sell_factor_id);
-                        $('#edit_customer_type').val(response.sell_factor.customer_type).change();
-                        $('#edit_buyer').val(response.sell_factor.buyer).change();
-                        $("#edit_factor_no").val(response.sell_factor.factor_no);
-                        $("#edit_factor_date").val(response.sell_factor.factor_date);
-                        $('#edit_broker').val(response.sell_factor.broker).change();
-                        $("#edit_commission").val(response.sell_factor
+                        $("#edit_return_sell_factor_id").val(return_sell_factor_id);
+                        $("#edit_national_code").val(response.return_sell_factor.national_code);
+                        $("#edit_viator").val(response.return_sell_factor.viator);
+                        $("#edit_tel").val(response.return_sell_factor.tel);
+                        $("#edit_address").val(response.return_sell_factor.address);
+                        $('#edit_customer_type').val(response.return_sell_factor.customer_type)
+                            .change();
+                        $('#edit_buyer').val(response.return_sell_factor.buyer_id).change();
+                        $("#edit_factor_no").val(response.return_sell_factor.factor_no);
+                        $("#edit_factor_date").val(response.return_sell_factor.factor_date);
+                        $('#edit_broker').val(response.return_sell_factor.broker_id).change();
+                        $("#edit_commission").val(response.return_sell_factor
                             .commission);
-                        $("#edit_amount").val(response.sell_factor.amount);
-                        $("#edit_discount").val(response.sell_factor.discount);
-                        $('#edit_total').val(new Intl.NumberFormat().format(response.sell_factor
-                            .total));
-                        $('#edit_warehouse_name').val(response.sell_factor.warehouse_name).change();
-                        $("#edit_considerations").val(response.sell_factor.considerations);
-                        $("#edit_settlement_deadline").val(response.sell_factor.settlement_deadline);
-                        $("#edit_settlement_date").val(response.sell_factor
+                        $("#edit_settlement_deadline").val(response.return_sell_factor
+                            .settlement_deadline);
+                        $("#edit_settlement_date").val(response.return_sell_factor
                             .settlement_date);
                     }
                 },
@@ -241,17 +259,16 @@
             var return_sell_factor_id = $("#edit_return_sell_factor_id").val();
 
             var data = {
+                national_code: $('#edit_national_code').val(),
+                viator: $('#edit_viator').val(),
+                tel: $('#edit_tel').val(),
+                address: $('#edit_address').val(),
                 customer_type: $('#edit_customer_type').val(),
                 buyer: $('#edit_buyer').val(),
                 factor_no: $('#edit_factor_no').val(),
                 factor_date: $('#edit_factor_date').val(),
                 broker: $('#edit_broker').val(),
                 commission: $('#edit_commission').val(),
-                amount: $('#edit_amount').val(),
-                discount: $('#edit_discount').val(),
-                total: $('#edit_total').val(),
-                warehouse_name: $('#edit_warehouse_name').val(),
-                considerations: $('#edit_considerations').val(),
                 settlement_deadline: $('#edit_settlement_deadline').val(),
                 settlement_date: $('#edit_settlement_date').val(),
             };
@@ -269,20 +286,35 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $('#myData').html(response.output);
-                    $('#pagination').html(response.pagination);
-                    Swal.fire(
-                            response.message,
-                            response.status,
-                            'success'
-                        )
-                        .then((result) => {
-                            $("#editInfo").modal("hide");
-                            $("#editInfo").find("input").val("");
-                            edit_clearErrors();
-                            edit_clearPrice();
-                            edit_defaultSelectedValue();
-                        });
+                    if (response.status == 404) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا',
+                            text: response.message,
+                        })
+                    } else {
+                        fetchDataAsPaginate
+                            (
+                                'index_invoice_search',
+                                '/return-sell-factor',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
+                        Swal.fire(
+                                response.message,
+                                response.status,
+                                'success'
+                            )
+                            .then((result) => {
+                                $("#editInfo").modal("hide");
+                                $("#editInfo").find("input").val("");
+                                edit_clearErrors();
+                                edit_defaultSelectedValue();
+                            });
+                    }
                 },
                 error: function(errors) {
                     edit_clearErrors();
@@ -307,12 +339,19 @@
         $('#editInfo').on('hidden.bs.modal', function(e) {
             // alert("bye");
             edit_clearErrors();
-            edit_clearPrice();
             // edit_defaultSelectedValue();
             // $("#editInfo").find("input").val(""); // Clear Input Values
         })
 
         function edit_clearErrors() {
+            $("#edit_national_code_error").text("");
+            $("#edit_national_code").removeClass("is-invalid");
+            $("#edit_viator_error").text("");
+            $("#edit_viator").removeClass("is-invalid");
+            $("#edit_tel_error").text("");
+            $("#edit_tel").removeClass("is-invalid");
+            $("#edit_address_error").text("");
+            $("#edit_address").removeClass("is-invalid");
             $("#edit_customer_type_error").text("");
             $("#edit_customer_type").removeClass("is-invalid");
             $("#edit_buyer_error").text("");
@@ -325,32 +364,14 @@
             $("#edit_broker").removeClass("is-invalid");
             $("#edit_commission_error").text("");
             $("#edit_commission").removeClass("is-invalid");
-            $("#edit_amount_error").text("");
-            $("#edit_amount").removeClass("is-invalid");
-            $("#edit_discount_error").text("");
-            $("#edit_discount").removeClass("is-invalid");
-            $("#edit_total_error").text("");
-            $("#edit_total").removeClass("is-invalid");
-            $("#edit_warehouse_name_error").text("");
-            $("#edit_warehouse_name").removeClass("is-invalid");
-            $("#edit_considerations_error").text("");
-            $("#edit_considerations").removeClass("is-invalid");
-            $("#edit_settlement_deadline_error").text("");
-            $("#edit_settlement_deadline").removeClass("is-invalid");
             $("#edit_settlement_date_error").text("");
             $("#edit_settlement_date").removeClass("is-invalid");
-        }
-
-        function edit_clearPrice() {
-            $("#edit_total").text("");
         }
 
         function edit_defaultSelectedValue() {
             $(edit_customer_type).prop('selectedIndex', 0).change();
             $(edit_buyer).prop('selectedIndex', 0).change();
             $(edit_broker).prop('selectedIndex', 0).change();
-            $(edit_product_name).prop('selectedIndex', 0).change();
-            $(edit_werehouse_name).prop('selectedIndex', 0).change();
         }
     </script>
 @endpush

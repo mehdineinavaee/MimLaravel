@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="createInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="createInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="min-width: 60%;">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createInfoLabel">گروه ارزش افزوده جدید</h5>
@@ -12,7 +12,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_group_name">نام گروه</label>
                             <input type="text" id="add_group_name" name="add_group_name" class="form-control"
@@ -20,7 +20,7 @@
                             <div id="add_group_name_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <div class="form-group mb-3">
                                 <label for="add_financial_year">سال مالی</label>
@@ -30,7 +30,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_avarez">عوارض</label>
                             <input type="text" id="add_avarez" name="add_avarez" class="form-control"
@@ -40,7 +40,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_maliyat">مالیات</label>
                             <input type="text" id="add_maliyat" name="add_maliyat" class="form-control"
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_saghfe_moamelat">سقف معاملات</label>
                             <input type="text" id="add_saghfe_moamelat" name="add_saghfe_moamelat"
@@ -101,8 +101,16 @@
                     dataType: "json",
 
                     success: function(response) {
-                        $('#myData').html(response.output);
-                        $('#pagination').html(response.pagination);
+                        fetchDataAsPaginate
+                            (
+                                'index_search',
+                                '/arzesh-afzoude-groups',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
                         Swal.fire(
                                 response.message,
                                 response.status,

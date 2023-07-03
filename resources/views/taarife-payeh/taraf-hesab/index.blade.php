@@ -9,12 +9,15 @@
         <div class="card-header">
             <h3 class="card-title">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-plus" title="افزودن طرف حساب" data-toggle="tooltip"></i>
-                    <br />
-                    جدید
+                    <span data-toggle="tooltip" data-placement="left" title="افزودن طرف حساب">
+                        <i class="fa-lg fa fa-plus"></i>
+                        <br />
+                        جدید
+                    </span>
                 </button>
-                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank">
-                    <i class="fa-lg fa fa-file" title="فهرست طرف های حساب" data-toggle="tooltip"></i>
+                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank" title="فهرست طرف های حساب"
+                    data-toggle="tooltip">
+                    <i class="fa-lg fa fa-file"></i>
                     <br />
                     فهرست
                 </a>
@@ -22,6 +25,25 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+            <div class="row">
+                <div class="col-lg-10 col-md-10 col-sm-12">
+                    <div class="form-group mb-3">
+                        <input type="search" id="index_search" name="index_search" class="form-control" autocomplete="off"
+                            placeholder="جستجو" />
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <select id="index_row"
+                        onChange="fetchDataAsPaginate('index_search','/taraf-hesab',1,this.value,'index_count','myData','index_pagination')"
+                        class="select form-control">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
             <table class="table-responsive table table-hover table-bordered table-striped" style="text-align: center;">
                 <thead>
                     <tr>
@@ -103,8 +125,15 @@
                     </tr>
                 </tfoot>
             </table>
-            <br />
-            <div id="pagination"></div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div id="index_pagination"></div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: left">
+                    مجموع رکوردها:
+                    <span id="index_count">0</span>
+                </div>
+            </div>
         </div>
         <!-- /.card-body -->
     </div>
@@ -117,19 +146,50 @@
 
 @push('js')
     <script>
-        fetchData();
+        // pagination
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1];
+            var row = document.getElementById("index_row");
+            fetchDataAsPaginate
+                (
+                    'index_search',
+                    '/taraf-hesab',
+                    page,
+                    row.value,
+                    'index_count',
+                    'myData',
+                    'index_pagination'
+                );
+        });
 
-        function fetchData() {
-            $.ajax({
-                type: "GET",
-                url: "/taraf-hesab",
-                dataType: "json",
-                success: function(response) {
-                    // console.log(response);
-                    $('#myData').html(response.output);
-                    $('#pagination').html(response.pagination);
-                },
+        fetchDataAsPaginate
+            (
+                'index_search',
+                '/taraf-hesab',
+                1,
+                10,
+                'index_count',
+                'myData',
+                'index_pagination'
+            );
+        // end pagination
+
+        // search data
+        $(document).ready(function() {
+            $('#index_search').on('keyup', function() {
+                var value = $(this).val();
+                var row = document.getElementById("index_row").value;
+                serach_data
+                    (
+                        value,
+                        row,
+                        "/index-search-taraf-hesab",
+                        "myData",
+                        "index_pagination"
+                    );
             });
-        }
+        });
+        // end search data
     </script>
 @endpush

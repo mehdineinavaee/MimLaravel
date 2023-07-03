@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\KolRequest;
 use App\Models\Kol;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class KolController extends Controller
 {

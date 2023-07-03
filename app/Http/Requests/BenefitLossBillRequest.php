@@ -13,7 +13,7 @@ class BenefitLossBillRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class BenefitLossBillRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'from_date' => 'required',
+            'to_date' => 'required',
         ];
     }
 }

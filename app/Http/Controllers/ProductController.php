@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\ProductNoUnit;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ProductController extends Controller
 {
@@ -15,14 +17,16 @@ class ProductController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_product($row, $status, $message)
     {
-        $output = '';
-        $data = Product::orderBy('product_name', 'asc')->paginate();
+        $data = Product::orderBy('product_name', 'asc')->paginate($row);
+
+        $products = '';
+
+        $count = DB::table('products')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-
                 if ($item->sell_price != null) {
                     $sell_price = number_format($item->sell_price);
                 } else {
@@ -35,7 +39,7 @@ class ProductController extends Controller
                     $latest_buy_price = '-';
                 }
 
-                $output .=
+                $products .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -64,11 +68,85 @@ class ProductController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $products,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_product(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $products = Product::where('code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('product_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('sell_price', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('introduce_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('latest_buy_price', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('main_barcode', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('order_point', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('product_name', 'asc')->paginate($request->row);
+            }
+            if ($products) {
+                foreach ($products as $index => $item) {
+                    if ($item->sell_price != null) {
+                        $sell_price = number_format($item->sell_price);
+                    } else {
+                        $sell_price = '-';
+                    }
+
+                    if ($item->latest_buy_price != null) {
+                        $latest_buy_price = number_format($item->latest_buy_price);
+                    } else {
+                        $latest_buy_price = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->chk_active . '</td>
+                            <td>' . $item->code . '</td>
+                            <td>' . $item->main_group . '</td>
+                            <td>' . $item->sub_group . '</td>
+                            <td>' . $item->product_name . '</td>
+                            <td>' . $item->product_unit->title . '</td>
+                            <td>' . $sell_price . ' ریال</td>
+                            <td>' . $item->value_added_group . '</td>
+                            <td>' . $item->introduce_date . '</td>
+                            <td>' . $latest_buy_price . ' ریال</td>
+                            <td>' . $item->main_barcode . '</td>
+                            <td>' . $item->order_point . '</td>
+                            <td>' . $item->warehouse->title . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_product btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/products/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$products->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -80,7 +158,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_product($row, 200, '');
         }
         $product_unit = ProductNoUnit::orderBy('title', 'asc')->get();
         $warehouses = Warehouse::orderBy('title', 'asc')->get();
@@ -122,7 +201,8 @@ class ProductController extends Controller
         $product->product_unit()->associate($request->product_unit);
         $product->warehouse()->associate($request->warehouse_name);
         $product->save();
-        return self::fetchData(200, 'کالای جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_product($row, 200, 'کالای جدید ذخیره شد');
     }
 
     /**
@@ -183,7 +263,8 @@ class ProductController extends Controller
             $product->product_unit()->associate($request->product_unit);
             $product->warehouse()->associate($request->warehouse_name);
             $product->update();
-            return self::fetchData(200, 'کالا ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_product($row, 200, 'کالا ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -202,6 +283,6 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $product->delete();
-        return self::fetchData(200, 'کالا حذف شد');
+        return self::index_fetch_product(10, 200, 'کالا حذف شد');
     }
 }

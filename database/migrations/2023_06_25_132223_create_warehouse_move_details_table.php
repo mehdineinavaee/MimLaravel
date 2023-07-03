@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('warehouse_wastage_factors', function (Blueprint $table) {
+        Schema::create('warehouse_move_details', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('warehouse_wastage_factors');
+        Schema::dropIfExists('warehouse_move_details');
     }
 };

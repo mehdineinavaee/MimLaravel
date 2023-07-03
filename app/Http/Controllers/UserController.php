@@ -6,6 +6,7 @@ use App\Http\Requests\UserRequest;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -15,14 +16,17 @@ class UserController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_user($row, $status, $message)
     {
-        $output = '';
-        $data = User::orderBy('last_name', 'asc')->paginate();
+        $data = User::orderBy('last_name', 'asc')->paginate($row);
+
+        $users = '';
+
+        $count = DB::table('users')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-                $output .=
+                $users .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -47,11 +51,70 @@ class UserController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $users,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_user(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $users = User::where('national_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('first_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('father', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('opt_sex', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('birthdate', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('occupation', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('email', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('last_name', 'asc')->paginate($request->row);
+            }
+            if ($users) {
+                foreach ($users as $index => $item) {
+                    $search .=
+                        '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->chk_active . '</td>
+                        <td>' . $item->chk_messenger . '</td>
+                        <td>' . $item->opt_sex . '</td>
+                        <td>' . $item->first_name . '</td>
+                        <td>' . $item->last_name . '</td>
+                        <td>' . $item->father . '</td>
+                        <td>' . $item->birthdate . '</td>
+                        <td>' . $item->national_code . '</td>
+                        <td>' . $item->occupation . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_user btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/users/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$users->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -63,7 +126,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_user($row, 200, '');
         }
         $roles = Role::All();
         return view('security/users.index')
@@ -103,7 +167,8 @@ class UserController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->role()->associate($request->role);
         $user->save();
-        return self::fetchData(200, 'کاربر جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_user($row, 200, 'کاربر جدید ذخیره شد');
     }
 
     /**
@@ -169,7 +234,8 @@ class UserController extends Controller
             $user->occupation = $request->input('occupation');
             $user->role()->associate($request->role);
             $user->update();
-            return self::fetchData(200, 'کاربر ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_user($row, 200, 'کاربر ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -188,6 +254,6 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $user->delete();
-        return self::fetchData(200, 'کاربر حذف شد');
+        return self::index_fetch_user(10, 200, 'کاربر حذف شد');
     }
 }

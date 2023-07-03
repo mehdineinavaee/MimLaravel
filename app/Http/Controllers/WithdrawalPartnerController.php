@@ -6,6 +6,8 @@ use App\Http\Requests\WithdrawalPartnerRequest;
 use App\Models\TarafHesab;
 use App\Models\WithdrawalPartner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class WithdrawalPartnerController extends Controller
 {
@@ -14,10 +16,13 @@ class WithdrawalPartnerController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_withdrawal_partner($row, $status, $message)
     {
-        $output = '';
-        $data = WithdrawalPartner::orderBy('id', 'desc')->paginate();
+        $data = WithdrawalPartner::orderBy('id', 'desc')->paginate($row);
+
+        $withdrawal_partners = '';
+
+        $count = DB::table('withdrawal_partners')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -27,7 +32,7 @@ class WithdrawalPartnerController extends Controller
                     $cash_amount = '-';
                 }
 
-                $output .=
+                $withdrawal_partners .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -49,11 +54,69 @@ class WithdrawalPartnerController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $withdrawal_partners,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_withdrawal_partner(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $withdrawal_partners = WithdrawalPartner::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cash_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('document', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($withdrawal_partners) {
+                foreach ($withdrawal_partners as $index => $item) {
+                    if ($item->cash_amount != null) {
+                        $cash_amount = number_format($item->cash_amount);
+                    } else {
+                        $cash_amount = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->from_taraf_hesab->fullname . '</td>
+                            <td>' . $item->to_taraf_hesab->fullname . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $cash_amount . ' ریال</td>
+                            <td>' . $item->document . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_withdrawal_partner btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/withdrawal-partner/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$withdrawal_partners->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -65,7 +128,8 @@ class WithdrawalPartnerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_withdrawal_partner($row, 200, '');
         }
         $taraf_hesabs = TarafHesab::all();
         return view('financial-management/withdrawal-partner.index')
@@ -98,7 +162,8 @@ class WithdrawalPartnerController extends Controller
         $withdrawal_partner->from_taraf_hesab()->associate($request->from_taraf_hesab);
         $withdrawal_partner->to_taraf_hesab()->associate($request->to_taraf_hesab);
         $withdrawal_partner->save();
-        return self::fetchData(200, 'برداشت شرکا جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_withdrawal_partner($row, 200, 'برداشت شرکا جدید ذخیره شد');
     }
 
     /**
@@ -152,7 +217,8 @@ class WithdrawalPartnerController extends Controller
             $withdrawal_partner->from_taraf_hesab()->associate($request->from_taraf_hesab);
             $withdrawal_partner->to_taraf_hesab()->associate($request->to_taraf_hesab);
             $withdrawal_partner->update();
-            return self::fetchData(200, 'برداشت شرکا ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_withdrawal_partner($row, 200, 'برداشت شرکا ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -171,6 +237,6 @@ class WithdrawalPartnerController extends Controller
     {
         $withdrawal_partner = WithdrawalPartner::find($id);
         $withdrawal_partner->delete();
-        return self::fetchData(200, 'برداشت شرکا حذف شد');
+        return self::index_fetch_withdrawal_partner(10, 200, 'برداشت شرکا حذف شد');
     }
 }

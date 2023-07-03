@@ -66,26 +66,29 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="margin-top:2rem; margin-right:2rem; !important">
-                            <div class="col-lg-12 col-md-12 col-sm-12">
-                                <div class="form-group mb-3">
-                                    <label class="form-check-label" for="index_chk2">
-                                        <input class="form-check-input" type="checkbox" value="" id="index_chk2">
-                                        تجمیع معاملات کمتر از 10 درصد مبلغ حد نصاب
-                                    </label>
+                        <div class="row">
+                            <div style="margin-right:2rem; !important">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label class="form-check-label" for="index_chk2">
+                                            <input class="form-check-input" type="checkbox" value="" id="index_chk2">
+                                            تجمیع معاملات کمتر از 10 درصد مبلغ حد نصاب
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-right:2rem; !important">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group mb-3">
+                                        <label class="form-check-label" for="index_chk3">
+                                            <input class="form-check-input" type="checkbox" value="" id="index_chk3">
+                                            تجمیع فاکتورهای هر طرف حساب در یک سطر
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div style="margin-top:2rem; margin-right:2rem; !important">
-                            <div class="col-lg-12 col-md-12 col-sm-12">
-                                <div class="form-group mb-3">
-                                    <label class="form-check-label" for="index_chk3">
-                                        <input class="form-check-input" type="checkbox" value="" id="index_chk3">
-                                        تجمیع فاکتورهای هر طرف حساب در یک سطر
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
                                 <label for="index_price">مبلغ حد نصاب معاملات</label>
@@ -103,7 +106,8 @@
                                     </div>
                                     <input type="text" id="index_from_date" name="index_from_date"
                                         class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                    <div id="index_from_date_error" class="invalid-feedback"></div>
+                                    <div id="index_from_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +120,8 @@
                                     </div>
                                     <input type="text" id="index_to_date" name="index_to_date"
                                         class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                    <div id="index_to_date_error" class="invalid-feedback"></div>
+                                    <div id="index_to_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -163,13 +168,17 @@
                     </div>
                 </div>
                 <br />
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-search" title="جستجو" data-toggle="tooltip"></i>
-                    <br />
-                    نمایش در جدول
+                <button type="button" class="btn btn-success showInTable" data-toggle="modal"
+                    data-target="#createInfo">
+                    <span data-toggle="tooltip" title="جستجو">
+                        <i class="fa-lg fa fa-search"></i>
+                        <br />
+                        نمایش در جدول
+                    </span>
                 </button>
-                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank">
-                    <i class="fa-lg fa fa-print" title="گزارش گیری" data-toggle="tooltip"></i>
+                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank" title="گزارش گیری"
+                    data-toggle="tooltip">
+                    <i class="fa-lg fa fa-print"></i>
                     <br />
                     پیش نمایش و چاپ
                 </a>
@@ -329,50 +338,6 @@
 
 @push('js')
     <script>
-        fetchData();
-
-        function fetchData() {
-            $.ajax({
-                type: "GET",
-                url: "/ttms",
-                dataType: "json",
-                success: function(response) {
-                    // console.log(response);
-                    $("tbody").html("");
-                    $.each(response.period_report, function(index, item) {
-                        $("#data").append(
-                            "<tr>\
-                                                                                                <td>" +
-                            (index + 1) +
-                            "</td>\
-                                                                                                <td>" +
-                            item.product_code +
-                            "</td>\
-                                                                                                <td>" +
-                            item.product_name +
-                            "</td>\
-                                                                                                <td>" +
-                            item.amount +
-                            "</td>\
-                                                                                                <td>" +
-                            new Intl.NumberFormat().format(item.price) +
-                            " ریال" +
-                            "</td>\
-                                                                                                    <td>" +
-                            new Intl.NumberFormat().format(item.discount) +
-                            " ریال" +
-                            "</td>\
-                                                                                                    <td>" +
-                            new Intl.NumberFormat().format(item.total) +
-                            " ریال" +
-                            '</td>\
-                                                                                                </tr>'
-                        );
-                    });
-                },
-            });
-        }
-
         $(document).on('click', '.ttms_print', function(e) {
             e.preventDefault();
             var ttms_id = $(this).val();

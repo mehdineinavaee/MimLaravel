@@ -269,12 +269,6 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href={{ route('warehouse-wastage-factor.index') }} class="nav-link">
-                                <i class="fa fa-circle-o nav-icon"></i>
-                                <p>فاکتور ضایعات</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href={{ route('warehouse-moves.index') }} class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                 <p>انتقال بین انبارها</p>

@@ -67,7 +67,8 @@ $(document).on("click", ".delete_btn", function (e) {
     type: "DELETE",
     url: url,
     success: function (response) {
-      $("#myData").html(response.output);
+      $("#myData").html(response.data);
+      $("#index_count").html(response.count);
       $("#pagination").html(response.pagination);
       // console.log(response);
       Swal.fire({
@@ -136,3 +137,64 @@ $(document).ready(function () {
   var im = new Inputmask("9999-9999-9999-9999");
   im.mask($(".inputMaskCartNumber"));
 });
+
+// Pagination
+function fetchDataAsPaginate(
+  search_element_id,
+  url,
+  page,
+  row,
+  count_element_id,
+  data_element_id,
+  pagination_element_id
+) {
+  $("#" + search_element_id).val("");
+  $.ajax({
+    type: "GET",
+    url: url + "?page=" + page,
+    data: {
+      row: row,
+    },
+    dataType: "json",
+    success: function (response) {
+      // console.log(response);
+      if (response.status == 404) {
+        Swal.fire({
+          icon: "error",
+          title: "خطا",
+          text: "متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید",
+        });
+      } else {
+        // console.log(response);
+        $("#" + count_element_id).html(response.count);
+        $("#" + data_element_id).html(response.data);
+        $("#" + pagination_element_id).html(response.pagination);
+      }
+    },
+  });
+}
+
+// Search
+function serach_data(value, row, url, data_element_id, pagination_element_id) {
+  $.ajax({
+    type: "GET",
+    url: url,
+    data: {
+      search: value,
+      row: row,
+    },
+    success: function (response) {
+      if (response.status == 404) {
+        Swal.fire({
+          icon: "error",
+          title: "خطا",
+          text: "متأسفانه خطایی رخ داده است، لطفاً چند لحظه دیگر امتحان کنید",
+        });
+      } else {
+        // console.log(response);
+        $("#" + data_element_id).html(response.data);
+        $("#" + pagination_element_id).html(response.pagination);
+      }
+    },
+  });
+}

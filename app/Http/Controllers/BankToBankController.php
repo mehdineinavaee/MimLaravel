@@ -7,6 +7,8 @@ use App\Models\BankAccount;
 use App\Models\BankToBank;
 use App\Models\BankType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class BankToBankController extends Controller
 {
@@ -15,10 +17,13 @@ class BankToBankController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_bank_to_bank($row, $status, $message)
     {
-        $output = '';
-        $data = BankToBank::orderBy('id', 'desc')->paginate();
+        $data = BankToBank::orderBy('id', 'desc')->paginate($row);
+
+        $bank_to_banks = '';
+
+        $count = DB::table('bank_to_banks')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -40,7 +45,7 @@ class BankToBankController extends Controller
                     $wage = '-';
                 }
 
-                $output .=
+                $bank_to_banks .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -68,11 +73,92 @@ class BankToBankController extends Controller
                 ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $bank_to_banks,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_bank_to_bank(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $bank_to_banks = BankToBank::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cash_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations1', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('deposit_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('wage', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('issue_tracking', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations2', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($bank_to_banks) {
+                foreach ($bank_to_banks as $index => $item) {
+                    if ($item->cash_amount != null) {
+                        $cash_amount = number_format($item->cash_amount);
+                    } else {
+                        $cash_amount = '-';
+                    }
+
+                    if ($item->deposit_amount != null) {
+                        $deposit_amount = number_format($item->deposit_amount);
+                    } else {
+                        $deposit_amount = '-';
+                    }
+
+                    if ($item->wage != null) {
+                        $wage = number_format($item->wage);
+                    } else {
+                        $wage = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->from_bank->bank_name . '</td>
+                            <td>' . $item->to_bank->bank_name . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $cash_amount . ' ریال</td>
+                            <td>' . $item->considerations1 . '</td>
+                            <td>' . $item->date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $deposit_amount . ' ریال</td>
+                            <td>' . $wage . ' ریال</td>
+                            <td>' . $item->issue_tracking . '</td>
+                            <td>' . $item->considerations2 . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_bank_to_bank btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/bank-to-bank/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$bank_to_banks->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -84,7 +170,8 @@ class BankToBankController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_bank_to_bank($row, 200, '');
         }
         $banks_types = BankType::all();
         $bank_accounts = BankAccount::all();
@@ -125,7 +212,8 @@ class BankToBankController extends Controller
         $bank_to_bank->to_bank()->associate($request->to_bank);
         $bank_to_bank->bank_account()->associate($request->bank_account_details);
         $bank_to_bank->save();
-        return self::fetchData(200, 'از بانک به بانک جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_bank_to_bank($row, 200, 'از بانک به بانک جدید ذخیره شد');
     }
 
     /**
@@ -185,7 +273,8 @@ class BankToBankController extends Controller
             $bank_to_bank->to_bank()->associate($request->to_bank);
             $bank_to_bank->bank_account()->associate($request->bank_account_details);
             $bank_to_bank->update();
-            return self::fetchData(200, 'از بانک به بانک ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_bank_to_bank($row, 200, 'از بانک به بانک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -204,6 +293,6 @@ class BankToBankController extends Controller
     {
         $bank_to_bank = BankToBank::find($id);
         $bank_to_bank->delete();
-        return self::fetchData(200, 'از بانک به بانک حذف شد');
+        return self::index_fetch_bank_to_bank(10, 200, 'از بانک به بانک حذف شد');
     }
 }

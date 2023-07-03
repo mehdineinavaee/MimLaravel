@@ -118,6 +118,16 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
+                    fetchDataAsPaginate
+                        (
+                            'index_search',
+                            '/banks-types',
+                            1,
+                            10,
+                            'index_count',
+                            'myData',
+                            'index_pagination'
+                        );
                     Swal.fire(
                             response.message,
                             response.status,

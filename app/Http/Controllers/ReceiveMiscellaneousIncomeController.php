@@ -7,6 +7,8 @@ use App\Models\BankAccount;
 use App\Models\Fund;
 use App\Models\ReceiveMiscellaneousIncome;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ReceiveMiscellaneousIncomeController extends Controller
 {
@@ -15,10 +17,13 @@ class ReceiveMiscellaneousIncomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_receive_miscellaneous_income($row, $status, $message)
     {
-        $output = '';
-        $data = ReceiveMiscellaneousIncome::orderBy('id', 'desc')->paginate();
+        $data = ReceiveMiscellaneousIncome::orderBy('id', 'desc')->paginate($row);
+
+        $receive_miscellaneous_incomes = '';
+
+        $count = DB::table('receive_miscellaneous_incomes')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -40,7 +45,7 @@ class ReceiveMiscellaneousIncomeController extends Controller
                     $wage = '-';
                 }
 
-                $output .=
+                $receive_miscellaneous_incomes .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -67,11 +72,91 @@ class ReceiveMiscellaneousIncomeController extends Controller
                 ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $receive_miscellaneous_incomes,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_receive_miscellaneous_income(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $receive_miscellaneous_incomes = ReceiveMiscellaneousIncome::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cash_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations1', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('deposit_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('wage', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('issue_tracking', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations2', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($receive_miscellaneous_incomes) {
+                foreach ($receive_miscellaneous_incomes as $index => $item) {
+                    if ($item->cash_amount != null) {
+                        $cash_amount = number_format($item->cash_amount);
+                    } else {
+                        $cash_amount = '-';
+                    }
+
+                    if ($item->deposit_amount != null) {
+                        $deposit_amount = number_format($item->deposit_amount);
+                    } else {
+                        $deposit_amount = '-';
+                    }
+
+                    if ($item->wage != null) {
+                        $wage = number_format($item->wage);
+                    } else {
+                        $wage = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->fund->daramad_name . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $cash_amount . ' ریال</td>
+                            <td>' . $item->considerations1 . '</td>
+                            <td>' . $item->date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $deposit_amount . ' ریال</td>
+                            <td>' . $wage . ' ریال</td>
+                            <td>' . $item->issue_tracking . '</td>
+                            <td>' . $item->considerations2 . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_receive_miscellaneous_income btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/receive-miscellaneous-income/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$receive_miscellaneous_incomes->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -83,7 +168,8 @@ class ReceiveMiscellaneousIncomeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_receive_miscellaneous_income($row, 200, '');
         }
         $funds = Fund::where('form_type', '=', 1)->orderBy('id', 'asc')->get();
         $bank_accounts = BankAccount::all();
@@ -123,7 +209,8 @@ class ReceiveMiscellaneousIncomeController extends Controller
         $receive_miscellaneous_income->fund()->associate($request->income_title);
         $receive_miscellaneous_income->bank_account()->associate($request->bank_account_details);
         $receive_miscellaneous_income->save();
-        return self::fetchData(200, 'دریافت درآمد متفرقه جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_receive_miscellaneous_income($row, 200, 'دریافت درآمد متفرقه جدید ذخیره شد');
     }
 
     /**
@@ -182,7 +269,8 @@ class ReceiveMiscellaneousIncomeController extends Controller
             $receive_miscellaneous_income->fund()->associate($request->income_title);
             $receive_miscellaneous_income->bank_account()->associate($request->bank_account_details);
             $receive_miscellaneous_income->update();
-            return self::fetchData(200, 'دریافت درآمد متفرقه ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_receive_miscellaneous_income($row, 200, 'دریافت درآمد متفرقه ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -201,6 +289,6 @@ class ReceiveMiscellaneousIncomeController extends Controller
     {
         $receive_miscellaneous_income = ReceiveMiscellaneousIncome::find($id);
         $receive_miscellaneous_income->delete();
-        return self::fetchData(200, 'دریافت درآمد متفرقه حذف شد');
+        return self::index_fetch_receive_miscellaneous_income(10, 200, 'دریافت درآمد متفرقه حذف شد');
     }
 }

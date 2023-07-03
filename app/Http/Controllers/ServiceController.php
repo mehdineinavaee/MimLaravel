@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ServiceRequest;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ServiceController extends Controller
 {
@@ -13,21 +15,23 @@ class ServiceController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_service($row, $status, $message)
     {
-        $output = '';
-        $data = Service::orderBy('id', 'desc')->paginate();
+        $data = Service::orderBy('id', 'desc')->paginate($row);
+
+        $services = '';
+
+        $count = DB::table('services')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-
                 if ($item->price != null) {
                     $price = number_format($item->price);
                 } else {
                     $price = '-';
                 }
 
-                $output .=
+                $services .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -48,11 +52,68 @@ class ServiceController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $services,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_service(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $services = Service::where('service_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('service_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('price', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('group', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($services) {
+                foreach ($services as $index => $item) {
+                    if ($item->price != null) {
+                        $price = number_format($item->price);
+                    } else {
+                        $price = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->service_code . '</td>
+                            <td>' . $item->service_name . '</td>
+                            <td>' . $price . ' ریال</td>
+                            <td>' . $item->group . '</td>
+                            <td>' . $item->chk_active . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_service btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/services/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$services->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -64,7 +125,8 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_service($row, 200, '');
         }
         return view('taarife-payeh/services.index');
     }
@@ -94,7 +156,8 @@ class ServiceController extends Controller
         $service->price = str_replace(",", "", $request->input('price'));
         $service->group = $request->input('group');
         $service->save();
-        return self::fetchData(200, 'خدمات جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_service($row, 200, 'خدمات جدید ذخیره شد');
     }
 
     /**
@@ -147,7 +210,8 @@ class ServiceController extends Controller
             $service->price = str_replace(",", "", $request->input('price'));
             $service->group = $request->input('group');
             $service->update();
-            return self::fetchData(200, 'خدمات ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_service($row, 200, 'خدمات ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -166,6 +230,6 @@ class ServiceController extends Controller
     {
         $service = Service::find($id);
         $service->delete();
-        return self::fetchData(200, 'خدمات حذف شد');
+        return self::index_fetch_service(10, 200, 'خدمات حذف شد');
     }
 }

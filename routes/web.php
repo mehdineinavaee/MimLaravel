@@ -12,6 +12,7 @@ use App\Http\Controllers\BankToFundController;
 use App\Http\Controllers\BankTypeController;
 use App\Http\Controllers\BenefitLossBillController;
 use App\Http\Controllers\BuyFactorController;
+use App\Http\Controllers\BuyFactorDetailController;
 use App\Http\Controllers\BuyReportController;
 use App\Http\Controllers\BuyStatisticsReportController;
 use App\Http\Controllers\CancelChequeController;
@@ -62,11 +63,15 @@ use App\Http\Controllers\ReceiveChequesReportController;
 use App\Http\Controllers\ReceiveFromTheAccountController;
 use App\Http\Controllers\ReceiveMiscellaneousIncomeController;
 use App\Http\Controllers\ReturnBuyFactorController;
+use App\Http\Controllers\ReturnBuyFactorDetailController;
 use App\Http\Controllers\ReturningChequeController;
 use App\Http\Controllers\ReturnSellFactorController;
+use App\Http\Controllers\ReturnSellFactorDetailController;
 use App\Http\Controllers\RialiReportController;
 use App\Http\Controllers\SellFactorAdvancedController;
+use App\Http\Controllers\SellFactorAdvancedDetailController;
 use App\Http\Controllers\SellFactorController;
+use App\Http\Controllers\SellFactorDetailController;
 use App\Http\Controllers\SellReportController;
 use App\Http\Controllers\SellStatisticsReportController;
 use App\Http\Controllers\ServiceController;
@@ -83,45 +88,94 @@ use App\Http\Controllers\TtmsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseMoveController;
+use App\Http\Controllers\WarehouseMoveDetailController;
 use App\Http\Controllers\WarehouseWastageFactorController;
 use App\Http\Controllers\WastageFactorController;
+use App\Http\Controllers\WastageFactorDetailController;
 use App\Http\Controllers\WithdrawalPartnerController;
 
 // Taarife Payeh
 Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::resource('account-group', AccountGroupController::class);
+Route::get('/index-search-account-group', [AccountGroupController::class, 'index_search_account_group'])->name('index_search_account_group');
 Route::resource('account-headings', AccountHeadingController::class);
+Route::get('/index-search-account-heading', [AccountHeadingController::class, 'index_search_account_heading'])->name('index_search_account_heading');
 Route::resource('kol', KolController::class);
 Route::resource('moein', MoeinController::class);
 Route::resource('tafsil', TafsilController::class);
 Route::resource('arzesh-afzoude-groups', ArzeshAfzoudeGroupController::class);
+Route::get('/index-search-arzesh-afzoude-group', [ArzeshAfzoudeGroupController::class, 'index_search_arzesh_afzoude_group'])->name('index_search_arzesh_afzoude_group');
 Route::resource('bank-accounts', BankAccountController::class);
+Route::get('/index-search-bank-account', [BankAccountController::class, 'index_search_bank_account'])->name('index_search_bank_account');
 Route::resource('banks-types', BankTypeController::class);
+Route::get('/index-search-bank-type', [BankTypeController::class, 'index_search_bank_type'])->name('index_search_bank_type');
 Route::resource('cities', CityController::class);
+Route::get('/index-search-city', [CityController::class, 'index_search_city'])->name('index_search_city');
 Route::resource('fund', FundController::class);
+Route::get('/index-search-fund', [FundController::class, 'index_search_fund'])->name('index_search_fund');
 Route::resource('product-farei-asli', ProductFareiAsliController::class);
 Route::resource('product-asli', ProductAsliController::class);
 Route::resource('product-farei', ProductFareiController::class);
 Route::resource('product-no-unit', ProductNoUnitController::class);
+Route::get('/index-search-product-no-unit', [ProductNoUnitController::class, 'index_search_product_no_unit'])->name('index_search_product_no_unit');
 Route::resource('products', ProductController::class);
+Route::get('/index-search-product', [ProductController::class, 'index_search_product'])->name('index_search_product');
 Route::resource('services', ServiceController::class);
+Route::get('/index-search-service', [ServiceController::class, 'index_search_service'])->name('index_search_service');
 Route::resource('warehouse', WarehouseController::class);
+Route::get('/index-search-warehouse', [WarehouseController::class, 'index_search_warehouse'])->name('index_search_warehouse');
 Route::resource('staff', StaffController::class);
+Route::get('/index-search-staff', [StaffController::class, 'index_search_staff'])->name('index_search_staff');
 Route::resource('taraf-hesab', TarafHesabController::class);
+Route::get('/index-search-taraf-hesab', [TarafHesabController::class, 'index_search_taraf_hesab'])->name('index_search_taraf_hesab');
 Route::resource('taraf-hesab-group', TarafHesabGroupController::class);
 
 // Buy Sell
 Route::resource('benefit-loss-bill', BenefitLossBillController::class);
+Route::get('/benefit-loss-bill-invoice', [BenefitLossBillController::class, 'benefit_loss_bill_invoice'])->name('benefit_loss_bill_invoice');
 Route::resource('buy-factor', BuyFactorController::class);
+Route::get('/fetch-buy-factor', [BuyFactorController::class, 'fetch_buy_factor'])->name('fetch_buy_factor');
+Route::get('/search-buy-factor', [BuyFactorController::class, 'search_buy_factor'])->name('search_buy_factor');
+Route::get('/index-search-buy-factors', [BuyFactorController::class, 'index_search_buy_factors'])->name('index_search_buy_factors');
+Route::resource('buy-factor-detail', BuyFactorDetailController::class);
+Route::put('update-buy-factor/{buy_factor_id}/{product_id}', [BuyFactorDetailController::class, 'update_buy_factor'])->name('update_buy_factor');
+Route::delete('destroy-buy-factor/{buy_factor_id}/{product_id}', [BuyFactorDetailController::class, 'destroy_buy_factor'])->name('destroy_buy_factor');
 Route::resource('return-buy-factor', ReturnBuyFactorController::class);
+Route::get('/fetch-return-buy-factor', [ReturnBuyFactorController::class, 'fetch_return_buy_factor'])->name('fetch_return_buy_factor');
+Route::get('/search-return-buy-factor', [ReturnBuyFactorController::class, 'search_return_buy_factor'])->name('search_return_buy_factor');
+Route::get('/index-search-return-buy-factors', [ReturnBuyFactorController::class, 'index_search_return_buy_factors'])->name('index_search_return_buy_factors');
+Route::resource('return-buy-factor-detail', ReturnBuyFactorDetailController::class);
+Route::put('update-return-buy-factor/{return_buy_factor_id}/{product_id}', [ReturnBuyFactorDetailController::class, 'update_return_buy_factor'])->name('update_return_buy_factor');
+Route::delete('destroy-return-buy-factor/{return_buy_factor_id}/{product_id}', [ReturnBuyFactorDetailController::class, 'destroy_return_buy_factor'])->name('destroy_return_buy_factor');
 Route::resource('return-sell-factor', ReturnSellFactorController::class);
+Route::get('/fetch-return-sell-factor', [ReturnSellFactorController::class, 'fetch_return_sell_factor'])->name('fetch_return_sell_factor');
+Route::get('/search-return-sell-factor', [ReturnSellFactorController::class, 'search_return_sell_factor'])->name('search_return_sell_factor');
+Route::get('/index-search-return-sell-factors', [ReturnSellFactorController::class, 'index_search_return_sell_factors'])->name('index_search_return_sell_factors');
+Route::resource('return-sell-factor-detail', ReturnSellFactorDetailController::class);
+Route::put('update-return-sell-factor/{return_sell_factor_id}/{product_id}', [ReturnSellFactorDetailController::class, 'update_return_sell_factor'])->name('update_return_sell_factor');
+Route::delete('destroy-return-sell-factor/{return_sell_factor_id}/{product_id}', [ReturnSellFactorDetailController::class, 'destroy_return_sell_factor'])->name('destroy_return_sell_factor');
 Route::resource('sell-factor', SellFactorController::class);
-Route::get('/fetch-products', [SellFactorController::class, 'fetch_products'])->name('fetch_products');
-Route::get('/search', [SellFactorController::class, 'search'])->name('sell-factor.search');
-Route::get('/fetch-sell-factor-id/{id}', [SellFactorController::class, 'fetch_sell_factor_id'])->name('fetch_sell_factor_details');
+Route::get('/add-fetch-products', [SellFactorController::class, 'add_fetch_products'])->name('add_fetch_products');
+Route::get('/add-search-products', [SellFactorController::class, 'add_search_products'])->name('add_search_products');
+Route::get('/index-search-factors', [SellFactorController::class, 'index_search_factors'])->name('index_search_factors');
+Route::resource('sell-factor-detail', SellFactorDetailController::class);
+Route::put('update-factor-items/{sell_factor_id}/{product_id}', [SellFactorDetailController::class, 'update_factor_items'])->name('update_factor_items');
+Route::delete('destroy-factor-items/{sell_factor_id}/{product_id}', [SellFactorDetailController::class, 'destroy_factor_items'])->name('destroy_factor_items');
 Route::resource('sell-factor-advanced', SellFactorAdvancedController::class);
+Route::get('/fetch-sell-factor-advanced', [SellFactorAdvancedController::class, 'fetch_sell_factor_advanced'])->name('fetch_sell_factor_advanced');
+Route::get('/search-sell-factor-advanced', [SellFactorAdvancedController::class, 'search_sell_factor_advanced'])->name('search_sell_factor_advanced');
+Route::get('/index-search-sell-factor-advanced', [SellFactorAdvancedController::class, 'index_search_sell_factor_advanced'])->name('index_search_sell_factor_advanced');
+Route::resource('sell-factor-advanced-detail', SellFactorAdvancedDetailController::class);
+Route::put('update-sell-factor-advanced/{sell_factor_advanced_id}/{product_id}', [SellFactorAdvancedDetailController::class, 'update_sell_factor_advanced'])->name('update_sell_factor_advanced');
+Route::delete('destroy-sell-factor-advanced/{sell_factor_advanced_id}/{product_id}', [SellFactorAdvancedDetailController::class, 'destroy_sell_factor_advanced'])->name('destroy_sell_factor_advanced');
 Route::resource('ttms', TtmsController::class);
 Route::resource('wastage-factor', WastageFactorController::class);
+Route::get('/fetch-wastage-factor', [WastageFactorController::class, 'fetch_wastage_factor'])->name('fetch_wastage_factor');
+Route::get('/search-wastage-factor', [WastageFactorController::class, 'search_wastage_factor'])->name('search_wastage_factor');
+Route::get('/index-search-wastage-factor', [WastageFactorController::class, 'index_search_wastage_factor'])->name('index_search_wastage_factor');
+Route::resource('wastage-factor-detail', WastageFactorDetailController::class);
+Route::put('update-wastage-factor/{wastage_factor_id}/{product_id}', [WastageFactorDetailController::class, 'update_wastage_factor'])->name('update_wastage_factor');
+Route::delete('destroy-wastage-factor/{wastage_factor_id}/{product_id}', [WastageFactorDetailController::class, 'destroy_wastage_factor'])->name('destroy_wastage_factor');
 
 // Buy Sell Reports
 Route::resource('buy-report', BuyReportController::class);
@@ -133,7 +187,6 @@ Route::resource('sell-statistics-report', SellStatisticsReportController::class)
 Route::resource('customer-report', CustomerReportController::class);
 Route::resource('taraf-hesab-buy-report', TarafHesabBuyReportController::class);
 
-
 // Benefit Report
 Route::resource('factors-benefit', FactorsBenefitController::class);
 Route::resource('products-benefit', ProductsBenefitController::class);
@@ -141,7 +194,11 @@ Route::resource('taraf-hesab-benefit', TarafHesabBenefitController::class);
 
 // Warehouse
 Route::resource('warehouse-moves', WarehouseMoveController::class);
-Route::resource('warehouse-wastage-factor', WarehouseWastageFactorController::class);
+Route::get('/index-search-warehouse-move', [WarehouseMoveController::class, 'index_search_warehouse_move'])->name('index_search_warehouse_move');
+Route::resource('warehouse-moves-detail', WarehouseMoveDetailController::class);
+Route::get('fetch-products-according-to-warehouses/{transmitter_id}', [WarehouseMoveDetailController::class, 'fetch_products_according_to_warehouses'])->name('fetch_products_according_to_warehouses');
+Route::get('/search-products-according-to-warehouses/{transmitter_id}', [WarehouseMoveDetailController::class, 'search_products_according_to_warehouses'])->name('search_products_according_to_warehouses');
+Route::get('/receiver-warehouse-item/{receiver_id}/{product_id}', [WarehouseMoveDetailController::class, 'receiver_warehouse_item'])->name('receiver_warehouse_item');
 
 // Product Warehouse Reports
 Route::resource('cardex', CardexController::class);
@@ -154,37 +211,55 @@ Route::resource('products-barcode', ProductsBarcodeController::class);
 // Financial Management
 Route::resource('accounting-documents', AccountingDocumentController::class);
 Route::resource('receive-from-the-account', ReceiveFromTheAccountController::class);
+Route::get('/index-search-receive-from-the-account', [ReceiveFromTheAccountController::class, 'index_search_receive_from_the_account'])->name('index_search_receive_from_the_account');
 Route::resource('payment-to-account', PaymentToAccountController::class);
+Route::get('/index-search-payment-to-account', [PaymentToAccountController::class, 'index_search_payment_to_account'])->name('index_search_payment_to_account');
 Route::resource('pay', PayController::class);
+Route::get('/index-search-pay', [PayController::class, 'index_search_pay'])->name('index_search_pay');
 Route::resource('fund-to-bank', FundToBankController::class);
+Route::get('/index-search-fund-to-bank', [FundToBankController::class, 'index_search_fund_to_bank'])->name('index_search_fund_to_bank');
 Route::resource('bank-to-fund', BankToFundController::class);
+Route::get('/index-search-bank-to-fund', [BankToFundController::class, 'index_search_bank_to_fund'])->name('index_search_bank_to_fund');
 Route::resource('bank-to-bank', BankToBankController::class);
+Route::get('/index-search-bank-to-bank', [BankToBankController::class, 'index_search_bank_to_bank'])->name('index_search_bank_to_bank');
 Route::resource('receive-miscellaneous-income', ReceiveMiscellaneousIncomeController::class);
+Route::get('/index-search-receive-miscellaneous-income', [ReceiveMiscellaneousIncomeController::class, 'index_search_receive_miscellaneous_income'])->name('index_search_receive_miscellaneous_income');
 Route::resource('withdrawal-partner', WithdrawalPartnerController::class);
+Route::get('/index-search-withdrawal-partner', [WithdrawalPartnerController::class, 'index_search_withdrawal_partner'])->name('index_search_withdrawal_partner');
 Route::resource('investment', InvestmentController::class);
+Route::get('/index-search-investment', [InvestmentController::class, 'index_search_investment'])->name('index_search_investment');
 Route::resource('transfer-person', TransferPersonController::class);
+Route::get('/index-search-transfer-person', [TransferPersonController::class, 'index_search_transfer_person'])->name('index_search_transfer_person');
 
 // First Period
 Route::resource('bank-accounts-period', BankAccountsPeriodController::class);
 Route::resource('fund-period', FundPeriodController::class);
 Route::resource('inventory-products-period', InventoryProductsPeriodController::class);
+Route::get('/index-fetch-inventory-products-period', [InventoryProductsPeriodController::class, 'index_fetch_inventory_products_period'])->name('index_fetch_inventory_products_period');
+Route::get('/index-search-inventory-products-period', [InventoryProductsPeriodController::class, 'index_search_inventory_products_period'])->name('index_search_inventory_products_period');
 Route::resource('pay-cheques', PayChequeController::class);
 Route::resource('receive-cheques', ReceiveChequeController::class);
 Route::resource('taraf-hesab-period', TarafHesabPeriodController::class);
 
 // Cheque Management
 Route::resource('cheque-book', ChequeBookController::class);
+Route::get('/index-search-cheque-book', [ChequeBookController::class, 'index_search_cheque_book'])->name('index_search_cheque_book');
 Route::resource('cheque-book-report', ChequeBookReportController::class);
 Route::resource('circulation-pay-cheque-report', CirculationPayChequeReportController::class);
 Route::resource('circulation-receive-cheque', CirculationReceiveChequeController::class);
 Route::resource('pay-cheques-report', PayChequesReportController::class);
 Route::resource('deposit', DepositController::class);
+Route::get('/index-search-deposit', [DepositController::class, 'index_search_deposit'])->name('index_search_deposit');
 Route::resource('notification', NotificationController::class);
+Route::get('/index-search-notification', [NotificationController::class, 'index_search_notification'])->name('index_search_notification');
 Route::resource('manual', ManualController::class);
 Route::resource('returning-cheque', ReturningChequeController::class);
+Route::get('/index-search-returning-cheque', [ReturningChequeController::class, 'index_search_returning_cheque'])->name('index_search_returning_cheque');
 Route::resource('cheque-return', ChequeReturnController::class);
 Route::resource('receipt-cheque', ReceiptChequeController::class);
+Route::get('/index-search-receipt-cheque', [ReceiptChequeController::class, 'index_search_receipt_cheque'])->name('index_search_receipt_cheque');
 Route::resource('pay-returning-cheque', PayReturningChequeController::class);
+Route::get('/index-search-pay-returning-cheque', [PayReturningChequeController::class, 'index_search_pay_returning_cheque'])->name('index_search_pay_returning_cheque');
 Route::resource('cashing-cheque', CashingChequeController::class);
 Route::resource('cancel-cheque', CancelChequeController::class);
 Route::resource('announcement', AnnouncementController::class);
@@ -193,12 +268,14 @@ Route::resource('receive-cheques-report', ReceiveChequesReportController::class)
 
 // Security
 Route::resource('users', UserController::class);
+Route::get('/index-search-user', [UserController::class, 'index_search_user'])->name('index_search_user');
 Route::resource('profile', ProfileController::class);
 Route::post('/ajaxUploadImg', [ProfileController::class, 'imgUploadPost']);
 Route::post('/update-password', [ProfileController::class, 'update_password'])->name('update_password');
 
 // Facilities
 Route::resource('phone-book', PhoneBookController::class);
+Route::get('/index-search-phone-book', [PhoneBookController::class, 'index_search_phone_book'])->name('index_search_phone_book');
 
 // PDF Report Routes
 Route::get('/address-print-pdf/{id}', [TarafHesabController::class, 'addressPrintPDF'])->name('addressPrintPDF');

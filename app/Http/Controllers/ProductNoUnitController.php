@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductNoUnitRequest;
 use App\Models\ProductNoUnit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ProductNoUnitController extends Controller
 {
@@ -13,14 +15,17 @@ class ProductNoUnitController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_product_no_unit($row, $status, $message)
     {
-        $output = '';
-        $data = ProductNoUnit::orderBy('id', 'desc')->paginate();
+        $data = ProductNoUnit::orderBy('title', 'asc')->paginate($row);
+
+        $product_no_units = '';
+
+        $count = DB::table('product_no_units')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-                $output .=
+                $product_no_units .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -39,11 +44,58 @@ class ProductNoUnitController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $product_no_units,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_product_no_unit(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $product_no_units = ProductNoUnit::where('code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('title', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('title', 'asc')->paginate($request->row);
+            }
+            if ($product_no_units) {
+                foreach ($product_no_units as $index => $item) {
+                    $search .=
+                        '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->code . '</td>
+                        <td>' . $item->title . '</td>
+                        <td>' . $item->chk_active . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_product_no_unit btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/product-no-unit/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$product_no_units->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -55,7 +107,8 @@ class ProductNoUnitController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_product_no_unit($row, 200, '');
         }
         return view('taarife-payeh/product-no-unit.index');
     }
@@ -83,7 +136,8 @@ class ProductNoUnitController extends Controller
         $product_no_unit->code = $request->input('code');
         $product_no_unit->title = $request->input('title');
         $product_no_unit->save();
-        return self::fetchData(200, 'واحد شمارش کالا جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_product_no_unit($row, 200, 'واحد شمارش کالا جدید ذخیره شد');
     }
 
     /**
@@ -134,7 +188,8 @@ class ProductNoUnitController extends Controller
             $product_no_unit->code = $request->input('code');
             $product_no_unit->title = $request->input('title');
             $product_no_unit->update();
-            return self::fetchData(200, 'واحد شمارش کالا ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_product_no_unit($row, 200, 'واحد شمارش کالا ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -153,6 +208,6 @@ class ProductNoUnitController extends Controller
     {
         $product_no_unit = ProductNoUnit::find($id);
         $product_no_unit->delete();
-        return self::fetchData(200, 'واحد شمارش کالا حذف شد');
+        return self::index_fetch_product_no_unit(10, 200, 'واحد شمارش کالا حذف شد');
     }
 }

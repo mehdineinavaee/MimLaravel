@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\OrderingProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class OrderingProductController extends Controller
 {

@@ -13,7 +13,7 @@ class WarehouseMoveRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class WarehouseMoveRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'remittance_no' => 'required',
+            'remittance_date' => 'required',
         ];
     }
 }

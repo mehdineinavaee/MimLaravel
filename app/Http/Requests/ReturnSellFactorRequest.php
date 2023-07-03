@@ -24,16 +24,16 @@ class ReturnSellFactorRequest extends FormRequest
     public function rules()
     {
         return [
+            'national_code' => 'nullable',
+            'viator' => 'nullable',
+            'tel' => 'nullable',
+            'address' => 'nullable',
             'customer_type' => 'required',
-            'buyer' => 'required',
+            'seller' => 'nullable',
             'factor_no' => 'required',
             'factor_date' => 'required',
             'broker' => 'nullable',
             'commission' => 'nullable',
-            'amount' => 'required',
-            'discount' => 'required',
-            'total' => 'required',
-            'warehouse_name' => 'required',
             'considerations' => 'nullable',
             'settlement_deadline' => 'nullable',
             'settlement_date' => 'nullable',

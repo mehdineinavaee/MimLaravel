@@ -6,6 +6,8 @@ use App\Http\Requests\ReturningChequeRequest;
 use App\Models\BankAccount;
 use App\Models\ReturningCheque;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ReturningChequeController extends Controller
 {
@@ -14,10 +16,13 @@ class ReturningChequeController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_returning_cheque($row, $status, $message)
     {
-        $output = '';
-        $data = ReturningCheque::orderBy('id', 'desc')->paginate();
+        $data = ReturningCheque::orderBy('id', 'desc')->paginate($row);
+
+        $returning_cheques = '';
+
+        $count = DB::table('returning_cheques')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -27,7 +32,7 @@ class ReturningChequeController extends Controller
                     $total = '-';
                 }
 
-                $output .=
+                $returning_cheques .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -52,11 +57,76 @@ class ReturningChequeController extends Controller
                 ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $returning_cheques,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_returning_cheque(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $returning_cheques = ReturningCheque::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('mark_back', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('serial_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('total', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('due_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('payer', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($returning_cheques) {
+                foreach ($returning_cheques as $index => $item) {
+                    if ($item->total != null) {
+                        $total = number_format($item->total);
+                    } else {
+                        $total = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $item->mark_back . '</td>
+                            <td>' . $item->serial_number . '</td>
+                            <td>' . $total . ' ریال</td>
+                            <td>' . $item->due_date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $item->payer . '</td>
+                            <td>' . $item->considerations . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_returning_cheque btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/returning-cheque/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$returning_cheques->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -68,7 +138,8 @@ class ReturningChequeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_returning_cheque($row, 200, '');
         }
         $bank_accounts = BankAccount::all();
         return view('cheque-management/returning-cheque.index')
@@ -104,7 +175,8 @@ class ReturningChequeController extends Controller
         $returning_cheque->considerations = $request->input('considerations');
         $returning_cheque->bank_account()->associate($request->bank_account_details);
         $returning_cheque->save();
-        return self::fetchData(200, 'برگشت چک ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_returning_cheque($row, 200, 'برگشت چک ذخیره شد');
     }
 
     /**
@@ -161,7 +233,8 @@ class ReturningChequeController extends Controller
             $returning_cheque->considerations = $request->input('considerations');
             $returning_cheque->bank_account()->associate($request->bank_account_details);
             $returning_cheque->update();
-            return self::fetchData(200, 'برگشت چک ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_returning_cheque($row, 200, 'برگشت چک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -180,6 +253,6 @@ class ReturningChequeController extends Controller
     {
         $returning_cheque = ReturningCheque::find($id);
         $returning_cheque->delete();
-        return self::fetchData(200, 'برگشت چک حذف شد');
+        return self::index_fetch_returning_cheque(10, 200, 'برگشت چک حذف شد');
     }
 }

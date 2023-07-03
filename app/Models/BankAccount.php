@@ -74,4 +74,9 @@ class BankAccount extends Model
     {
         return $this->hasMany(ChequeBook::class);
     }
+
+    public function investments()
+    {
+        return $this->hasMany(Investment::class);
+    }
 }

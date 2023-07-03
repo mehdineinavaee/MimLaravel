@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="createInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="createInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"style="min-width: 60%;">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createInfoLabel">خدمات جدید</h5>
@@ -21,7 +21,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_service_code">کد خدمات</label>
                             <input type="text" id="add_service_code" name="add_service_code" class="form-control"
@@ -29,7 +29,7 @@
                             <div id="add_service_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_service_name">نام خدمات</label>
                             <input type="text" id="add_service_name" name="add_service_name" class="form-control"
@@ -37,7 +37,7 @@
                             <div id="add_service_name_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_price">قیمت ارائه خدمات</label>
                             <input type="text" id="add_price" name="add_price" class="form-control"
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="add_group">گروه ارزش افزوده</label>
                             <input type="text" id="add_group" name="add_group" class="form-control"
@@ -101,8 +101,16 @@
                     dataType: "json",
 
                     success: function(response) {
-                        $('#myData').html(response.output);
-                        $('#pagination').html(response.pagination);
+                        fetchDataAsPaginate
+                            (
+                                'index_search',
+                                '/services',
+                                1,
+                                10,
+                                'index_count',
+                                'myData',
+                                'index_pagination'
+                            );
                         Swal.fire(
                                 response.message,
                                 response.status,

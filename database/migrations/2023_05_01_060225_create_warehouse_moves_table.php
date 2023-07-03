@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('warehouse_moves', function (Blueprint $table) {
             $table->id();
+            $table->string('remittance_no')->nullable(); // شماره سند
+            $table->string('remittance_date')->nullable(); // تاریخ
             $table->timestamps();
         });
     }

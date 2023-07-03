@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MoeinRequest;
 use App\Models\Moein;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class MoeinController extends Controller
 {

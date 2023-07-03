@@ -8,8 +8,9 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
-                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank">
-                    <i class="fa-lg fa fa-print" title="چاپ بارکد کالاها" data-toggle="tooltip"></i>
+                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank" title="چاپ بارکد کالاها"
+                    data-toggle="tooltip">
+                    <i class="fa-lg fa fa-print"></i>
                     <br />
                     چاپ بارکد کالاها
                 </a>

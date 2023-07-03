@@ -24,8 +24,12 @@ class SellFactorRequest extends FormRequest
     public function rules()
     {
         return [
+            'national_code' => 'nullable',
+            'viator' => 'nullable',
+            'tel' => 'nullable',
+            'address' => 'nullable',
             'customer_type' => 'required',
-            'buyer' => 'required',
+            'buyer' => 'nullable',
             'factor_no' => 'required',
             'factor_date' => 'required',
             'broker' => 'nullable',

@@ -7,6 +7,7 @@ use App\Models\City;
 use Illuminate\Http\Request;
 use App\Exports\CityExport;
 use Excel;
+use Illuminate\Support\Facades\DB;
 
 class CityController extends Controller
 {
@@ -20,14 +21,17 @@ class CityController extends Controller
         return Excel::download(new CityExport, 'citylist.xlsx');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_city($row, $status, $message)
     {
-        $output = '';
-        $data = City::orderBy('city_name', 'asc')->paginate();
+        $data = City::orderBy('city_name', 'asc')->paginate($row);
+
+        $cities = '';
+
+        $count = DB::table('cities')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
-                $output .=
+                $cities .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -45,11 +49,57 @@ class CityController extends Controller
                     ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $cities,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_city(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $cities = City::where('city_code', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('city_name', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('city_name', 'asc')->paginate($request->row);
+            }
+            if ($cities) {
+                foreach ($cities as $index => $item) {
+                    $search .=
+                        '
+                    <tr>
+                        <td>' . $index + 1 . '</td>
+                        <td>' . $item->city_code . '</td>
+                        <td>' . $item->city_name . '</td>
+                        <td>
+                            <button type="button" value=' . $item->id . ' class="edit_city btn btn-primary btn-sm">
+                                <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                            </button>
+                            <button type="button" value="/cities/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$cities->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -61,7 +111,8 @@ class CityController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_city($row, 200, '');
         }
         return view('taarife-payeh/cities.index');
     }
@@ -88,7 +139,8 @@ class CityController extends Controller
         $city->city_code = $request->input('city_code');
         $city->city_name = $request->input('city_name');
         $city->save();
-        return self::fetchData(200, 'شهر جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_city($row, 200, 'شهر جدید ذخیره شد');
     }
 
     /**
@@ -138,7 +190,8 @@ class CityController extends Controller
             $city->city_code = $request->input('city_code');
             $city->city_name = $request->input('city_name');
             $city->update();
-            return self::fetchData(200, 'شهر ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_city($row, 200, 'شهر ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -157,6 +210,6 @@ class CityController extends Controller
     {
         $city = City::find($id);
         $city->delete();
-        return self::fetchData(200, 'شهر حذف شد');
+        return self::index_fetch_city(10, 200, 'شهر حذف شد');
     }
 }

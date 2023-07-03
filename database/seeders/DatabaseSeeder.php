@@ -321,7 +321,7 @@ class DatabaseSeeder extends Seeder
 
         DB::table('products')->insert([
             [
-                'code' => '1',
+                'code' => 'SIM1',
                 'main_group' => '1',
                 'sub_group' => '1',
                 'product_unit_id' => 1,
@@ -339,7 +339,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '2',
+                'code' => 'DAS2',
                 'main_group' => '2',
                 'sub_group' => '2',
                 'product_unit_id' => 1,
@@ -357,7 +357,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '3',
+                'code' => 'ROK3',
                 'main_group' => '3',
                 'sub_group' => '3',
                 'product_unit_id' => 1,
@@ -375,7 +375,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '4',
+                'code' => 'SIMCH4',
                 'main_group' => '4',
                 'sub_group' => '4',
                 'product_unit_id' => 1,
@@ -393,7 +393,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '5',
+                'code' => 'ANB5',
                 'main_group' => '5',
                 'sub_group' => '5',
                 'product_unit_id' => 1,
@@ -411,7 +411,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '6',
+                'code' => 'DAM6',
                 'main_group' => '6',
                 'sub_group' => '6',
                 'product_unit_id' => 1,
@@ -429,7 +429,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '7',
+                'code' => 'ANBGH7',
                 'main_group' => '7',
                 'sub_group' => '7',
                 'product_unit_id' => 1,
@@ -447,7 +447,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '8',
+                'code' => 'CHE8',
                 'main_group' => '8',
                 'sub_group' => '8',
                 'product_unit_id' => 1,
@@ -465,7 +465,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '9',
+                'code' => 'DRA9',
                 'main_group' => '9',
                 'sub_group' => '9',
                 'product_unit_id' => 1,
@@ -483,7 +483,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '10',
+                'code' => 'LAM10',
                 'main_group' => '10',
                 'sub_group' => '10',
                 'product_unit_id' => 1,
@@ -501,7 +501,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             [
-                'code' => '11',
+                'code' => 'SAR11',
                 'main_group' => '11',
                 'sub_group' => '11',
                 'product_unit_id' => 1,
@@ -514,6 +514,206 @@ class DatabaseSeeder extends Seeder
                 'latest_buy_price' => '120000',
                 'main_barcode' => 'FISLS',
                 'order_point' => 'کالا',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+        ]);
+
+        DB::table('inventory_products_periods')->insert([
+            [
+                'warehouse_id' => 1,
+                'product_id' => 1,
+                'amount' => '5',
+                'buy_price' => '10000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 2,
+                'amount' => '6',
+                'buy_price' => '11000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 3,
+                'amount' => '7',
+                'buy_price' => '12000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 4,
+                'amount' => '8',
+                'buy_price' => '13000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 5,
+                'amount' => '9',
+                'buy_price' => '14000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 6,
+                'amount' => '10',
+                'buy_price' => '15000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 7,
+                'amount' => '11',
+                'buy_price' => '16000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 8,
+                'amount' => '12',
+                'buy_price' => '17000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 9,
+                'amount' => '13',
+                'buy_price' => '18000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 10,
+                'amount' => '14',
+                'buy_price' => '19000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 1,
+                'product_id' => 11,
+                'amount' => '15',
+                'buy_price' => '20000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 1,
+                'amount' => '15',
+                'buy_price' => '10000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 2,
+                'amount' => '14',
+                'buy_price' => '11000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 3,
+                'amount' => '13',
+                'buy_price' => '12000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 4,
+                'amount' => '12',
+                'buy_price' => '13000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 5,
+                'amount' => '11',
+                'buy_price' => '14000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 6,
+                'amount' => '10',
+                'buy_price' => '15000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 7,
+                'amount' => '9',
+                'buy_price' => '16000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 8,
+                'amount' => '8',
+                'buy_price' => '17000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 9,
+                'amount' => '7',
+                'buy_price' => '18000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 10,
+                'amount' => '6',
+                'buy_price' => '19000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'warehouse_id' => 2,
+                'product_id' => 11,
+                'amount' => '5',
+                'buy_price' => '20000',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],

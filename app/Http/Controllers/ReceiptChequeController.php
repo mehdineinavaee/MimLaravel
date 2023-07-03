@@ -6,6 +6,8 @@ use App\Http\Requests\ReceiptChequeRequest;
 use App\Models\BankAccount;
 use App\Models\ReceiptCheque;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ReceiptChequeController extends Controller
 {
@@ -14,10 +16,13 @@ class ReceiptChequeController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_receipt_cheque($row, $status, $message)
     {
-        $output = '';
-        $data = ReceiptCheque::orderBy('id', 'desc')->paginate();
+        $data = ReceiptCheque::orderBy('id', 'desc')->paginate($row);
+
+        $receipt_cheques = '';
+
+        $count = DB::table('receipt_cheques')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -27,7 +32,7 @@ class ReceiptChequeController extends Controller
                     $total = '-';
                 }
 
-                $output .=
+                $receipt_cheques .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -51,11 +56,74 @@ class ReceiptChequeController extends Controller
                 ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $receipt_cheques,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_receipt_cheque(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $receipt_cheques = ReceiptCheque::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('serial_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('total', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('due_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('receiver', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($receipt_cheques) {
+                foreach ($receipt_cheques as $index => $item) {
+                    if ($item->total != null) {
+                        $total = number_format($item->total);
+                    } else {
+                        $total = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $item->serial_number . '</td>
+                            <td>' . $total . ' ریال</td>
+                            <td>' . $item->due_date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $item->receiver . '</td>
+                            <td>' . $item->considerations . '</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_receipt_cheque btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/receipt-cheque/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$receipt_cheques->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -67,7 +135,8 @@ class ReceiptChequeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_receipt_cheque($row, 200, '');
         }
         $bank_accounts = BankAccount::all();
         return view('cheque-management/receipt-cheque.index')
@@ -102,7 +171,8 @@ class ReceiptChequeController extends Controller
         $receipt_cheque->considerations = $request->input('considerations');
         $receipt_cheque->bank_account()->associate($request->bank_account_details);
         $receipt_cheque->save();
-        return self::fetchData(200, 'اعلام وصول چک ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_receipt_cheque($row, 200, 'اعلام وصول چک ذخیره شد');
     }
 
     /**
@@ -158,7 +228,8 @@ class ReceiptChequeController extends Controller
             $receipt_cheque->considerations = $request->input('considerations');
             $receipt_cheque->bank_account()->associate($request->bank_account_details);
             $receipt_cheque->update();
-            return self::fetchData(200, 'اعلام وصول چک ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_receipt_cheque($row, 200, 'اعلام وصول چک ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -177,6 +248,6 @@ class ReceiptChequeController extends Controller
     {
         $receipt_cheque = ReceiptCheque::find($id);
         $receipt_cheque->delete();
-        return self::fetchData(200, 'اعلام وصول چک حذف شد');
+        return self::index_fetch_receipt_cheque(10, 200, 'اعلام وصول چک حذف شد');
     }
 }

@@ -7,6 +7,8 @@ use App\Models\BankAccount;
 use App\Models\Fund;
 use App\Models\Pay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class PayController extends Controller
 {
@@ -15,10 +17,13 @@ class PayController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_pay($row, $status, $message)
     {
-        $output = '';
-        $data = Pay::orderBy('id', 'desc')->paginate();
+        $data = Pay::orderBy('id', 'desc')->paginate($row);
+
+        $pays = '';
+
+        $count = DB::table('pays')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -46,7 +51,7 @@ class PayController extends Controller
                     $paid_discount = '-';
                 }
 
-                $output .=
+                $pays .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -74,11 +79,99 @@ class PayController extends Controller
                 ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $pays,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_pay(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $pays = Pay::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cash_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations1', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('deposit_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('wage', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('issue_tracking', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations2', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('paid_discount', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($pays) {
+                foreach ($pays as $index => $item) {
+                    if ($item->cash_amount != null) {
+                        $cash_amount = number_format($item->cash_amount);
+                    } else {
+                        $cash_amount = '-';
+                    }
+
+                    if ($item->deposit_amount != null) {
+                        $deposit_amount = number_format($item->deposit_amount);
+                    } else {
+                        $deposit_amount = '-';
+                    }
+
+                    if ($item->wage != null) {
+                        $wage = number_format($item->wage);
+                    } else {
+                        $wage = '-';
+                    }
+
+                    if ($item->paid_discount != null) {
+                        $paid_discount = number_format($item->paid_discount);
+                    } else {
+                        $paid_discount = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->fund->daramad_name . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $cash_amount . ' ریال</td>
+                            <td>' . $item->considerations1 . '</td>
+                            <td>' . $item->date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $deposit_amount . ' ریال</td>
+                            <td>' . $wage . ' ریال</td>
+                            <td>' . $item->issue_tracking . '</td>
+                            <td>' . $item->considerations2 . '</td>
+                            <td>' . $paid_discount . ' ریال</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_pay btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/pay/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$pays->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -90,7 +183,8 @@ class PayController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_pay($row, 200, '');
         }
         $funds = Fund::where('form_type', '=', 2)->orderBy('id', 'asc')->get();
         $bank_accounts = BankAccount::all();
@@ -131,7 +225,8 @@ class PayController extends Controller
         $pay->fund()->associate($request->cost_title);
         $pay->bank_account()->associate($request->bank_account_details);
         $pay->save();
-        return self::fetchData(200, 'پرداخت هزینه جدید ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_pay($row, 200, 'پرداخت هزینه جدید ذخیره شد');
     }
 
     /**
@@ -191,7 +286,8 @@ class PayController extends Controller
             $pay->fund()->associate($request->cost_title);
             $pay->bank_account()->associate($request->bank_account_details);
             $pay->update();
-            return self::fetchData(200, 'پرداخت هزینه ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_pay($row, 200, 'پرداخت هزینه ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -210,6 +306,6 @@ class PayController extends Controller
     {
         $pay = Pay::find($id);
         $pay->delete();
-        return self::fetchData(200, 'پرداخت هزینه حذف شد');
+        return self::index_fetch_pay(10, 200, 'پرداخت هزینه حذف شد');
     }
 }

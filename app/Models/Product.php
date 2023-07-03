@@ -27,4 +27,51 @@ class Product extends Model
             ->withPivot(['total', 'amount', 'discount', 'considerations'])
             ->withTimestamps();
     }
+
+    public function buy_factors()
+    {
+        return $this->belongsToMany(BuyFactor::class, 'buy_factor_product')
+            ->withPivot(['total', 'amount', 'discount', 'considerations'])
+            ->withTimestamps();
+    }
+
+    public function return_buy_factors()
+    {
+        return $this->belongsToMany(ReturnBuyFactor::class, 'product_return_buy_factor')
+            ->withPivot(['total', 'amount', 'discount', 'considerations'])
+            ->withTimestamps();
+    }
+
+    public function return_sell_factors()
+    {
+        return $this->belongsToMany(ReturnSellFactor::class, 'product_return_sell_factor')
+            ->withPivot(['total', 'amount', 'discount', 'considerations'])
+            ->withTimestamps();
+    }
+
+    public function sell_factor_advanceds()
+    {
+        return $this->belongsToMany(SellFactorAdvanced::class, 'product_sell_factor_advanced')
+            ->withPivot(['total', 'amount', 'discount', 'considerations'])
+            ->withTimestamps();
+    }
+
+    public function wastage_factors()
+    {
+        return $this->belongsToMany(WastageFactor::class, 'product_wastage_factor')
+            ->withPivot(['total', 'amount', 'discount', 'considerations'])
+            ->withTimestamps();
+    }
+
+    public function warehouse_moves()
+    {
+        return $this->belongsToMany(WarehouseMove::class, 'product_warehouse')
+            ->withPivot(['total', 'amount', 'discount', 'considerations'])
+            ->withTimestamps();
+    }
+
+    public function inventory_products_periods()
+    {
+        return $this->hasMany(InventoryProductsPeriod::class);
+    }
 }

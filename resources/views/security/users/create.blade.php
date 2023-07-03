@@ -218,8 +218,16 @@
                             })
                             add_clearErrors();
                         } else {
-                            $('#myData').html(response.output);
-                            $('#pagination').html(response.pagination);
+                            fetchDataAsPaginate
+                                (
+                                    'index_search',
+                                    '/users',
+                                    1,
+                                    10,
+                                    'index_count',
+                                    'myData',
+                                    'index_pagination'
+                                );
                             Swal.fire(
                                     response.message,
                                     response.status,

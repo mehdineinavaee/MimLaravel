@@ -83,7 +83,8 @@
                                         </div>
                                         <input type="text" id="index_from_date" name="index_from_date"
                                             class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                        <div id="index_from_date_error" class="invalid-feedback"></div>
+                                        <div id="index_from_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +97,8 @@
                                         </div>
                                         <input type="text" id="index_to_date" name="index_to_date"
                                             class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                        <div id="index_to_date_error" class="invalid-feedback"></div>
+                                        <div id="index_to_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -184,13 +186,17 @@
                     </fieldset>
                 </div>
                 <br />
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createInfo">
-                    <i class="fa-lg fa fa-search" title="جستجو" data-toggle="tooltip"></i>
-                    <br />
-                    نمایش در جدول
+                <button type="button" class="btn btn-success showInTable" data-toggle="modal"
+                    data-target="#createInfo">
+                    <span data-toggle="tooltip" title="جستجو">
+                        <i class="fa-lg fa fa-search"></i>
+                        <br />
+                        نمایش در جدول
+                    </span>
                 </button>
-                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank">
-                    <i class="fa-lg fa fa-print" title="گزارش گیری" data-toggle="tooltip"></i>
+                <a href={{ route('tarafHesabPDF') }} class="btn btn-info" target="_blank" title="گزارش گیری"
+                    data-toggle="tooltip">
+                    <i class="fa-lg fa fa-print"></i>
                     <br />
                     پیش نمایش و چاپ
                 </a>
@@ -348,35 +354,35 @@
                     $.each(response.sell_statistics_report, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                                                                                                                                                                                                                                    <td>" +
+                                                                                                                                                                                                                                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                                                                                                                                                                                                        <td>" +
+                                                                                                                                                                                                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                                                                                                                                                                                                        <td>" +
+                                                                                                                                                                                                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             "</td>\
-                                                                                                                                                                                                                                                                <td>" +
+                                                                                                                                                                                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                                                                                                                                                                                                    </tr>'
+                                                                                                                                                                                                                                                                                </tr>'
                         );
                     });
                 },

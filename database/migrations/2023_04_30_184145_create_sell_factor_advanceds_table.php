@@ -15,6 +15,16 @@ return new class extends Migration
     {
         Schema::create('sell_factor_advanceds', function (Blueprint $table) {
             $table->id();
+            $table->string('national_code')->nullable(); // کد ملی
+            $table->string('viator')->nullable(); // رهگذر
+            $table->string('tel')->nullable(); // تلفن
+            $table->string('address')->nullable(); // آدرس
+            $table->string('customer_type'); // نوع مشتری
+            $table->string('factor_no'); // شماره فاکتور
+            $table->string('factor_date'); // تاریخ فاکتور
+            $table->string('commission')->nullable(); // پورسانت
+            $table->string('settlement_deadline')->nullable(); // مهلت تسویه
+            $table->string('settlement_date')->nullable(); // تاریخ تسویه
             $table->timestamps();
         });
     }

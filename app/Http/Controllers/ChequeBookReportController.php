@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ChequeBookReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ChequeBookReportController extends Controller
 {

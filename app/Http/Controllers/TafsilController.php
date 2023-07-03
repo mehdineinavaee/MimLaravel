@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TafsilRequest;
 use App\Models\Tafsil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class TafsilController extends Controller
 {

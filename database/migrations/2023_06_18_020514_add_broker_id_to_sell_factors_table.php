@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('sell_factors', function (Blueprint $table) {
-            $table->foreignId('broker_id')->after('factor_date');
+            $table->foreignId('broker_id')->after('factor_date')->nullable();
             $table->foreign('broker_id')
                 ->references('id')
                 ->on('taraf_hesabs')

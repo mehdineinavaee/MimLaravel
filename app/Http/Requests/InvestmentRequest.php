@@ -13,7 +13,7 @@ class InvestmentRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,17 @@ class InvestmentRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'shareholder' => 'required',
+            'form_date' => 'required',
+            'cash_amount' => 'required',
+            'cash_register' => 'required',
+            'considerations1' => 'required',
+            'date' => 'required',
+            'bank_account_details' => 'required',
+            'deposit_amount' => 'required',
+            'wage' => 'required',
+            'issue_tracking' => 'required',
+            'considerations2' => 'required',
         ];
     }
 }

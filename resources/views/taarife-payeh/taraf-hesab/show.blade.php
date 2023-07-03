@@ -31,7 +31,8 @@
                                 </div>
                                 <input type="text" id="turnover_form_date" name="turnover_form_date"
                                     class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                <div id="turnover_form_date_error" class="invalid-feedback"></div>
+                                <div id="turnover_form_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -44,7 +45,8 @@
                                 </div>
                                 <input type="text" id="turnover_to_date" name="turnover_to_date"
                                     class="leftToRight rightAlign inputMaskDate form-control" autocomplete="off" />
-                                <div id="turnover_to_date_error" class="invalid-feedback"></div>
+                                <div id="turnover_to_date_error" class="invalid-feedback" style="margin-right:38px;">
+                                </div>
                             </div>
                         </div>
                     </div>

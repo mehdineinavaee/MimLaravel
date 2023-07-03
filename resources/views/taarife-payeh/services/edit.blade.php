@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="editInfo" data-backdrop="static" data-keyboard="false" aria-labelledby="editInfoLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"style="min-width: 60%;">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editInfoLabel">ویرایش خدمات</h5>
@@ -22,7 +22,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_service_code">کد خدمات</label>
                             <input type="text" id="edit_service_code" name="edit_service_code" class="form-control"
@@ -30,7 +30,7 @@
                             <div id="edit_service_code_error" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <div class="form-group mb-3">
                                 <label for="edit_service_name">نام خدمات</label>
@@ -40,7 +40,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_price">قیمت ارائه خدمات</label>
                             <input type="text" id="edit_price" name="edit_price" class="form-control"
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="form-group mb-3">
                             <label for="edit_group">گروه ارزش افزوده</label>
                             <input type="text" id="edit_group" name="edit_group" class="form-control"
@@ -139,8 +139,16 @@
                 dataType: "json",
                 success: function(response) {
                     // console.log(response);
-                    $('#myData').html(response.output);
-                    $('#pagination').html(response.pagination);
+                    fetchDataAsPaginate
+                        (
+                            'index_search',
+                            '/services',
+                            1,
+                            10,
+                            'index_count',
+                            'myData',
+                            'index_pagination'
+                        );
                     Swal.fire(
                             response.message,
                             response.status,

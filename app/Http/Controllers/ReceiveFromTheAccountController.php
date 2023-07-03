@@ -7,6 +7,8 @@ use App\Models\BankAccount;
 use App\Models\ReceiveFromTheAccount;
 use App\Models\TarafHesab;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ReceiveFromTheAccountController extends Controller
 {
@@ -15,10 +17,13 @@ class ReceiveFromTheAccountController extends Controller
         $this->middleware('auth');
     }
 
-    public function fetchData($status, $message)
+    public function index_fetch_receive_from_the_account($row, $status, $message)
     {
-        $output = '';
-        $data = ReceiveFromTheAccount::orderBy('id', 'desc')->paginate();
+        $data = ReceiveFromTheAccount::orderBy('id', 'desc')->paginate($row);
+
+        $receive_from_the_accounts = '';
+
+        $count = DB::table('receive_from_the_accounts')->count();
 
         if ($data) {
             foreach ($data as $index => $item) {
@@ -46,7 +51,7 @@ class ReceiveFromTheAccountController extends Controller
                     $paid_discount = '-';
                 }
 
-                $output .=
+                $receive_from_the_accounts .=
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
@@ -74,11 +79,99 @@ class ReceiveFromTheAccountController extends Controller
                 ';
             }
             return response()->json([
-                'output' => $output,
-                'pagination' => (string)$data->links(),
                 'status' => $status,
                 'message' => $message,
+                'count' => $count,
+                'data' => $receive_from_the_accounts,
+                'pagination' => (string)$data->links(),
             ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+            ]);
+        }
+    }
+
+    public function index_search_receive_from_the_account(Request $request)
+    {
+        if ($request->ajax()) {
+            $search = '';
+            if ($request->row != null) {
+                $receive_from_the_accounts = ReceiveFromTheAccount::where('form_date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cash_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations1', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('date', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('deposit_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('wage', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('issue_tracking', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('considerations2', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('paid_discount', 'LIKE', '%' . $request->search . '%')
+                    ->orderBy('id', 'desc')->paginate($request->row);
+            }
+            if ($receive_from_the_accounts) {
+                foreach ($receive_from_the_accounts as $index => $item) {
+                    if ($item->cash_amount != null) {
+                        $cash_amount = number_format($item->cash_amount);
+                    } else {
+                        $cash_amount = '-';
+                    }
+
+                    if ($item->deposit_amount != null) {
+                        $deposit_amount = number_format($item->deposit_amount);
+                    } else {
+                        $deposit_amount = '-';
+                    }
+
+                    if ($item->wage != null) {
+                        $wage = number_format($item->wage);
+                    } else {
+                        $wage = '-';
+                    }
+
+                    if ($item->paid_discount != null) {
+                        $paid_discount = number_format($item->paid_discount);
+                    } else {
+                        $paid_discount = '-';
+                    }
+
+                    $search .=
+                        '
+                        <tr>
+                            <td>' . $index + 1 . '</td>
+                            <td>' . $item->taraf_hesab->fullname . '</td>
+                            <td>' . $item->form_date . '</td>
+                            <td>' . $item->form_number . '</td>
+                            <td>' . $cash_amount . ' ریال</td>
+                            <td>' . $item->considerations1 . '</td>
+                            <td>' . $item->date . '</td>
+                            <td>' . $item->bank_account->account_number . '</td>
+                            <td>' . $deposit_amount . ' ریال</td>
+                            <td>' . $wage . ' ریال</td>
+                            <td>' . $item->issue_tracking . '</td>
+                            <td>' . $item->considerations2 . '</td>
+                            <td>' . $paid_discount . ' ریال</td>
+                            <td>
+                                <button type="button" value=' . $item->id . ' class="edit_receive_from_the_account btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                </button>
+                                <button type="button" value="/receive-from-the-account/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ';
+                }
+                return response()->json([
+                    'status' => 200,
+                    'data' => $search,
+                    'pagination' => (string)$receive_from_the_accounts->links(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         }
     }
 
@@ -90,7 +183,8 @@ class ReceiveFromTheAccountController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return self::fetchData(200, '');
+            $row = $request["row"];
+            return self::index_fetch_receive_from_the_account($row, 200, '');
         }
         $taraf_hesabs = TarafHesab::all();
         $bank_accounts = BankAccount::all();
@@ -131,7 +225,8 @@ class ReceiveFromTheAccountController extends Controller
         $receive_from_the_account->taraf_hesab()->associate($request->taraf_hesab_name);
         $receive_from_the_account->bank_account()->associate($request->bank_account_details);
         $receive_from_the_account->save();
-        return self::fetchData(200, 'دریافت جدید از طرف حساب ذخیره شد');
+        $row = $request["row"];
+        return self::index_fetch_receive_from_the_account($row, 200, 'دریافت جدید از طرف حساب ذخیره شد');
     }
 
     /**
@@ -191,7 +286,8 @@ class ReceiveFromTheAccountController extends Controller
             $receive_from_the_account->taraf_hesab()->associate($request->taraf_hesab_name);
             $receive_from_the_account->bank_account()->associate($request->bank_account_details);
             $receive_from_the_account->update();
-            return self::fetchData(200, 'دریافت از طرف حساب ویرایش شد');
+            $row = $request["row"];
+            return self::index_fetch_receive_from_the_account($row, 200, 'دریافت از طرف حساب ویرایش شد');
         } else {
             return response()->json([
                 'status' => 404,
@@ -210,6 +306,6 @@ class ReceiveFromTheAccountController extends Controller
     {
         $receive_from_the_account = ReceiveFromTheAccount::find($id);
         $receive_from_the_account->delete();
-        return self::fetchData(200, 'دریافت از طرف حساب حذف شد');
+        return self::index_fetch_receive_from_the_account(10, 200, 'دریافت از طرف حساب حذف شد');
     }
 }

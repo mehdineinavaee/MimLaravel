@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('inventory_products_periods', function (Blueprint $table) {
             $table->id();
+            $table->string('amount'); // مقدار
+            $table->string('buy_price'); // بهای واحد خرید
             $table->timestamps();
         });
     }
