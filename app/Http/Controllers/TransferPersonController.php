@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransferPersonRequest;
 use App\Models\TarafHesab;
 use App\Models\TransferPerson;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -127,13 +128,17 @@ class TransferPersonController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_transfer_person($row, 200, '');
+        if (Gate::allows('transfer_person')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_transfer_person($row, 200, '');
+            }
+            $taraf_hesabs = TarafHesab::all();
+            return view('financial-management/transfer-person.index')
+                ->with('taraf_hesabs', $taraf_hesabs);
+        } else {
+            return abort(401);
         }
-        $taraf_hesabs = TarafHesab::all();
-        return view('financial-management/transfer-person.index')
-            ->with('taraf_hesabs', $taraf_hesabs);
     }
 
     /**
@@ -154,16 +159,20 @@ class TransferPersonController extends Controller
      */
     public function store(TransferPersonRequest $request)
     {
-        $transfer_person = new TransferPerson();
-        $transfer_person->form_date = $request->input('form_date');
-        $transfer_person->form_number = $request->input('form_number');
-        $transfer_person->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-        $transfer_person->document = $request->input('document');
-        $transfer_person->from_taraf_hesab()->associate($request->from_taraf_hesab);
-        $transfer_person->to_taraf_hesab()->associate($request->to_taraf_hesab);
-        $transfer_person->save();
-        $row = $request["row"];
-        return self::index_fetch_transfer_person($row, 200, 'انتقال بین اشخاص جدید ذخیره شد');
+        if (Gate::allows('transfer_person')) {
+            $transfer_person = new TransferPerson();
+            $transfer_person->form_date = $request->input('form_date');
+            $transfer_person->form_number = $request->input('form_number');
+            $transfer_person->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+            $transfer_person->document = $request->input('document');
+            $transfer_person->from_taraf_hesab()->associate($request->from_taraf_hesab);
+            $transfer_person->to_taraf_hesab()->associate($request->to_taraf_hesab);
+            $transfer_person->save();
+            $row = $request["row"];
+            return self::index_fetch_transfer_person($row, 200, 'انتقال بین اشخاص جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -185,17 +194,21 @@ class TransferPersonController extends Controller
      */
     public function edit($id)
     {
-        $transfer_person = TransferPerson::find($id);
-        if ($transfer_person) {
-            return response()->json([
-                'status' => 200,
-                'transfer_person' => $transfer_person,
-            ]);
+        if (Gate::allows('transfer_person')) {
+            $transfer_person = TransferPerson::find($id);
+            if ($transfer_person) {
+                return response()->json([
+                    'status' => 200,
+                    'transfer_person' => $transfer_person,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'انتقال بین اشخاص یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'انتقال بین اشخاص یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -208,22 +221,26 @@ class TransferPersonController extends Controller
      */
     public function update(TransferPersonRequest $request, $id)
     {
-        $transfer_person = TransferPerson::find($id);
-        if ($transfer_person) {
-            $transfer_person->form_date = $request->input('form_date');
-            $transfer_person->form_number = $request->input('form_number');
-            $transfer_person->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-            $transfer_person->document = $request->input('document');
-            $transfer_person->from_taraf_hesab()->associate($request->from_taraf_hesab);
-            $transfer_person->to_taraf_hesab()->associate($request->to_taraf_hesab);
-            $transfer_person->update();
-            $row = $request["row"];
-            return self::index_fetch_transfer_person($row, 200, 'انتقال بین اشخاص ویرایش شد');
+        if (Gate::allows('transfer_person')) {
+            $transfer_person = TransferPerson::find($id);
+            if ($transfer_person) {
+                $transfer_person->form_date = $request->input('form_date');
+                $transfer_person->form_number = $request->input('form_number');
+                $transfer_person->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+                $transfer_person->document = $request->input('document');
+                $transfer_person->from_taraf_hesab()->associate($request->from_taraf_hesab);
+                $transfer_person->to_taraf_hesab()->associate($request->to_taraf_hesab);
+                $transfer_person->update();
+                $row = $request["row"];
+                return self::index_fetch_transfer_person($row, 200, 'انتقال بین اشخاص ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -235,8 +252,12 @@ class TransferPersonController extends Controller
      */
     public function destroy($id)
     {
-        $transfer_person = TransferPerson::find($id);
-        $transfer_person->delete();
-        return self::index_fetch_transfer_person(10, 200, 'انتقال بین اشخاص حذف شد');
+        if (Gate::allows('transfer_person')) {
+            $transfer_person = TransferPerson::find($id);
+            $transfer_person->delete();
+            return self::index_fetch_transfer_person(10, 200, 'انتقال بین اشخاص حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

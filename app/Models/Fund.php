@@ -19,4 +19,9 @@ class Fund extends Model
     {
         return $this->hasMany(ReceiveMiscellaneousIncome::class);
     }
+
+    public function fund_periods()
+    {
+        return $this->hasMany(FundPeriod::class);
+    }
 }

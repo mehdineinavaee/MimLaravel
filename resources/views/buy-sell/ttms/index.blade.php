@@ -66,26 +66,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div style="margin-right:2rem; !important">
-                                <div class="col-lg-12 col-md-12 col-sm-12">
-                                    <div class="form-group mb-3">
-                                        <label class="form-check-label" for="index_chk2">
-                                            <input class="form-check-input" type="checkbox" value="" id="index_chk2">
-                                            تجمیع معاملات کمتر از 10 درصد مبلغ حد نصاب
-                                        </label>
-                                    </div>
-                                </div>
+
+                        <div class="row col-lg-12 col-md-12 col-sm-12" style="padding: 1rem;">
+                            <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center">
+                                <label class="form-check-label" for="index_chk2">
+                                    <input class="form-check-input" type="radio" name="group1" id="index_chk2">
+                                    تجمیع معاملات کمتر از 10 درصد مبلغ حد نصاب
+                                </label>
+                                <div id="index_chk2_error" class="invalid-feedback"></div>
                             </div>
-                            <div style="margin-right:2rem; !important">
-                                <div class="col-lg-12 col-md-12 col-sm-12">
-                                    <div class="form-group mb-3">
-                                        <label class="form-check-label" for="index_chk3">
-                                            <input class="form-check-input" type="checkbox" value="" id="index_chk3">
-                                            تجمیع فاکتورهای هر طرف حساب در یک سطر
-                                        </label>
-                                    </div>
-                                </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center">
+                                <label class="form-check-label" for="index_chk3">
+                                    <input class="form-check-input" type="radio" name="group1" id="index_chk3">
+                                    تجمیع فاکتورهای هر طرف حساب در یک سطر
+                                </label>
+                                <div id="index_chk3_error" class="invalid-feedback"></div>
                             </div>
                         </div>
 

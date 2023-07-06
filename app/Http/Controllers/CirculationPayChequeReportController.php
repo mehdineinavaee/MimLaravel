@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CirculationPayChequeReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class CirculationPayChequeReportController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/circulation-pay-cheque-report.index');
+        if (Gate::allows('circulation_pay_cheque_report')) {
+            return view('cheque-management/circulation-pay-cheque-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PeriodReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class PeriodReportController extends Controller
      */
     public function index()
     {
-        return view('buy-sell-reports/period-report.index');
+        if (Gate::allows('period_report')) {
+            return view('buy-sell-reports/period-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

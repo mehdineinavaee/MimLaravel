@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AccountGroupRequest;
 use App\Models\AccountGroup;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -104,11 +105,15 @@ class AccountGroupController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_account_group($row, 200, '');
+        if (Gate::allows('account_group')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_account_group($row, 200, '');
+            }
+            return view('taarife-payeh/account-group.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/account-group.index');
     }
 
     /**
@@ -129,12 +134,16 @@ class AccountGroupController extends Controller
      */
     public function store(AccountGroupRequest $request)
     {
-        $account_group = new AccountGroup();
-        $account_group->code = $request->input('code');
-        $account_group->name = $request->input('name');
-        $account_group->save();
-        $row = $request["row"];
-        return self::index_fetch_account_group($row, 200, 'گروه حساب جدید ذخیره شد');
+        if (Gate::allows('account_group')) {
+            $account_group = new AccountGroup();
+            $account_group->code = $request->input('code');
+            $account_group->name = $request->input('name');
+            $account_group->save();
+            $row = $request["row"];
+            return self::index_fetch_account_group($row, 200, 'گروه حساب جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -156,17 +165,21 @@ class AccountGroupController extends Controller
      */
     public function edit($id)
     {
-        $account_group = AccountGroup::find($id);
-        if ($account_group) {
-            return response()->json([
-                'status' => 200,
-                'account_group' => $account_group,
-            ]);
+        if (Gate::allows('account_group')) {
+            $account_group = AccountGroup::find($id);
+            if ($account_group) {
+                return response()->json([
+                    'status' => 200,
+                    'account_group' => $account_group,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'گروه حساب یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'گروه حساب یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -179,18 +192,22 @@ class AccountGroupController extends Controller
      */
     public function update(AccountGroupRequest $request, $id)
     {
-        $account_group = AccountGroup::find($id);
-        if ($account_group) {
-            $account_group->code = $request->input('code');
-            $account_group->name = $request->input('name');
-            $account_group->update();
-            $row = $request["row"];
-            return self::index_fetch_account_group($row, 200, 'گروه حساب ویرایش شد');
+        if (Gate::allows('account_group')) {
+            $account_group = AccountGroup::find($id);
+            if ($account_group) {
+                $account_group->code = $request->input('code');
+                $account_group->name = $request->input('name');
+                $account_group->update();
+                $row = $request["row"];
+                return self::index_fetch_account_group($row, 200, 'گروه حساب ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -202,8 +219,12 @@ class AccountGroupController extends Controller
      */
     public function destroy($id)
     {
-        $account_group = AccountGroup::find($id);
-        $account_group->delete();
-        return self::index_fetch_account_group(10, 200, 'گروه حساب حذف شد');
+        if (Gate::allows('account_group')) {
+            $account_group = AccountGroup::find($id);
+            $account_group->delete();
+            return self::index_fetch_account_group(10, 200, 'گروه حساب حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

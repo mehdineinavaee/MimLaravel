@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TafsilRequest;
 use App\Models\Tafsil;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -51,17 +52,21 @@ class TafsilController extends Controller
      */
     public function store(TafsilRequest $request)
     {
-        $tafsil = new Tafsil();
-        $tafsil->kol_account_name = $request->input('kol_account_name');
-        $tafsil->moein_account_name = $request->input('moein_account_name');
-        $tafsil->account_code = $request->input('account_code');
-        $tafsil->account_name = $request->input('account_name');
-        $tafsil->active = $request->input('active');
-        $tafsil->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'تفصیل ذخیره شد',
-        ]);
+        if (Gate::allows('account_headings')) {
+            $tafsil = new Tafsil();
+            $tafsil->kol_account_name = $request->input('kol_account_name');
+            $tafsil->moein_account_name = $request->input('moein_account_name');
+            $tafsil->account_code = $request->input('account_code');
+            $tafsil->account_name = $request->input('account_name');
+            $tafsil->active = $request->input('active');
+            $tafsil->save();
+            return response()->json([
+                'status' => 200,
+                'message' => 'تفصیل ذخیره شد',
+            ]);
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -83,17 +88,21 @@ class TafsilController extends Controller
      */
     public function edit($id)
     {
-        $tafsil = Tafsil::find($id);
-        if ($tafsil) {
-            return response()->json([
-                'status' => 200,
-                'tafsil' => $tafsil,
-            ]);
+        if (Gate::allows('account_headings')) {
+            $tafsil = Tafsil::find($id);
+            if ($tafsil) {
+                return response()->json([
+                    'status' => 200,
+                    'tafsil' => $tafsil,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'تفصیل یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'تفصیل یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -106,23 +115,27 @@ class TafsilController extends Controller
      */
     public function update(TafsilRequest $request, $id)
     {
-        $tafsil = Tafsil::find($id);
-        if ($tafsil) {
-            $tafsil->kol_account_name = $request->input('kol_account_name');
-            $tafsil->moein_account_name = $request->input('moein_account_name');
-            $tafsil->account_code = $request->input('account_code');
-            $tafsil->account_name = $request->input('account_name');
-            $tafsil->active = $request->input('active');
-            $tafsil->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'تفصیل ویرایش شد',
-            ]);
+        if (Gate::allows('account_headings')) {
+            $tafsil = Tafsil::find($id);
+            if ($tafsil) {
+                $tafsil->kol_account_name = $request->input('kol_account_name');
+                $tafsil->moein_account_name = $request->input('moein_account_name');
+                $tafsil->account_code = $request->input('account_code');
+                $tafsil->account_name = $request->input('account_name');
+                $tafsil->active = $request->input('active');
+                $tafsil->update();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'تفصیل ویرایش شد',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -134,11 +147,15 @@ class TafsilController extends Controller
      */
     public function destroy($id)
     {
-        $tafsil = Tafsil::find($id);
-        $tafsil->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'تفصیل حذف شد',
-        ]);
+        if (Gate::allows('account_headings')) {
+            $tafsil = Tafsil::find($id);
+            $tafsil->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'تفصیل حذف شد',
+            ]);
+        } else {
+            return abort(401);
+        }
     }
 }

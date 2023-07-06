@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductsBenefit;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class ProductsBenefitController extends Controller
      */
     public function index()
     {
-        return view('benefit-report/products-benefit.index');
+        if (Gate::allows('products_benefit')) {
+            return view('benefit-report/products-benefit.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

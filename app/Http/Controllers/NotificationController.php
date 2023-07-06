@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NotificationRequest;
 use App\Models\BankAccount;
 use App\Models\Notification;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -137,13 +138,17 @@ class NotificationController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_notification($row, 200, '');
+        if (Gate::allows('notification')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_notification($row, 200, '');
+            }
+            $bank_accounts = BankAccount::all();
+            return view('cheque-management/notification.index')
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $bank_accounts = BankAccount::all();
-        return view('cheque-management/notification.index')
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -164,19 +169,23 @@ class NotificationController extends Controller
      */
     public function store(NotificationRequest $request)
     {
-        $notification = new Notification();
-        $notification->form_date = $request->input('form_date');
-        $notification->form_number = $request->input('form_number');
-        $notification->mark_back = $request->input('mark_back');
-        $notification->serial_number = $request->input('serial_number');
-        $notification->total = str_replace(",", "", $request->input('total'));
-        $notification->due_date = $request->input('due_date');
-        $notification->payer = $request->input('payer');
-        $notification->considerations = $request->input('considerations');
-        $notification->bank_account()->associate($request->bank_account_details);
-        $notification->save();
-        $row = $request["row"];
-        return self::index_fetch_notification($row, 200, 'اعلام وصول چک های خوابانده شده ذخیره شد');
+        if (Gate::allows('notification')) {
+            $notification = new Notification();
+            $notification->form_date = $request->input('form_date');
+            $notification->form_number = $request->input('form_number');
+            $notification->mark_back = $request->input('mark_back');
+            $notification->serial_number = $request->input('serial_number');
+            $notification->total = str_replace(",", "", $request->input('total'));
+            $notification->due_date = $request->input('due_date');
+            $notification->payer = $request->input('payer');
+            $notification->considerations = $request->input('considerations');
+            $notification->bank_account()->associate($request->bank_account_details);
+            $notification->save();
+            $row = $request["row"];
+            return self::index_fetch_notification($row, 200, 'اعلام وصول چک های خوابانده شده ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -198,17 +207,21 @@ class NotificationController extends Controller
      */
     public function edit($id)
     {
-        $notification = Notification::find($id);
-        if ($notification) {
-            return response()->json([
-                'status' => 200,
-                'notification' => $notification,
-            ]);
+        if (Gate::allows('notification')) {
+            $notification = Notification::find($id);
+            if ($notification) {
+                return response()->json([
+                    'status' => 200,
+                    'notification' => $notification,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اعلام وصول چک های خوابانده شده یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اعلام وصول چک های خوابانده شده یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -221,25 +234,29 @@ class NotificationController extends Controller
      */
     public function update(NotificationRequest $request, $id)
     {
-        $notification = Notification::find($id);
-        if ($notification) {
-            $notification->form_date = $request->input('form_date');
-            $notification->form_number = $request->input('form_number');
-            $notification->mark_back = $request->input('mark_back');
-            $notification->serial_number = $request->input('serial_number');
-            $notification->total = str_replace(",", "", $request->input('total'));
-            $notification->due_date = $request->input('due_date');
-            $notification->payer = $request->input('payer');
-            $notification->considerations = $request->input('considerations');
-            $notification->bank_account()->associate($request->bank_account_details);
-            $notification->update();
-            $row = $request["row"];
-            return self::index_fetch_notification($row, 200, 'اعلام وصول چک های خوابانده شده ویرایش شد');
+        if (Gate::allows('notification')) {
+            $notification = Notification::find($id);
+            if ($notification) {
+                $notification->form_date = $request->input('form_date');
+                $notification->form_number = $request->input('form_number');
+                $notification->mark_back = $request->input('mark_back');
+                $notification->serial_number = $request->input('serial_number');
+                $notification->total = str_replace(",", "", $request->input('total'));
+                $notification->due_date = $request->input('due_date');
+                $notification->payer = $request->input('payer');
+                $notification->considerations = $request->input('considerations');
+                $notification->bank_account()->associate($request->bank_account_details);
+                $notification->update();
+                $row = $request["row"];
+                return self::index_fetch_notification($row, 200, 'اعلام وصول چک های خوابانده شده ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -251,8 +268,12 @@ class NotificationController extends Controller
      */
     public function destroy($id)
     {
-        $notification = Notification::find($id);
-        $notification->delete();
-        return self::index_fetch_notification(10, 200, 'اعلام وصول چک های خوابانده شده حذف شد');
+        if (Gate::allows('notification')) {
+            $notification = Notification::find($id);
+            $notification->delete();
+            return self::index_fetch_notification(10, 200, 'اعلام وصول چک های خوابانده شده حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

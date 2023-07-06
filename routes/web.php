@@ -48,6 +48,7 @@ use App\Http\Controllers\PayController;
 use App\Http\Controllers\PaymentToAccountController;
 use App\Http\Controllers\PayReturningChequeController;
 use App\Http\Controllers\PeriodReportController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PhoneBookController;
 use App\Http\Controllers\ProductAsliController;
 use App\Http\Controllers\ProductController;
@@ -68,6 +69,7 @@ use App\Http\Controllers\ReturningChequeController;
 use App\Http\Controllers\ReturnSellFactorController;
 use App\Http\Controllers\ReturnSellFactorDetailController;
 use App\Http\Controllers\RialiReportController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SellFactorAdvancedController;
 use App\Http\Controllers\SellFactorAdvancedDetailController;
 use App\Http\Controllers\SellFactorController;
@@ -233,13 +235,18 @@ Route::get('/index-search-transfer-person', [TransferPersonController::class, 'i
 
 // First Period
 Route::resource('bank-accounts-period', BankAccountsPeriodController::class);
+Route::get('/index-search-bank-accounts-period', [BankAccountsPeriodController::class, 'index_search_bank_accounts_period'])->name('index_search_bank_accounts_period');
 Route::resource('fund-period', FundPeriodController::class);
+Route::get('/index-search-fund-period', [FundPeriodController::class, 'index_search_fund_period'])->name('index_search_fund_period');
 Route::resource('inventory-products-period', InventoryProductsPeriodController::class);
 Route::get('/index-fetch-inventory-products-period', [InventoryProductsPeriodController::class, 'index_fetch_inventory_products_period'])->name('index_fetch_inventory_products_period');
 Route::get('/index-search-inventory-products-period', [InventoryProductsPeriodController::class, 'index_search_inventory_products_period'])->name('index_search_inventory_products_period');
 Route::resource('pay-cheques', PayChequeController::class);
+Route::get('/index-search-pay-cheque', [PayChequeController::class, 'index_search_pay_cheque'])->name('index_search_pay_cheque');
 Route::resource('receive-cheques', ReceiveChequeController::class);
+Route::get('/index-search-receive-cheque', [ReceiveChequeController::class, 'index_search_receive_cheque'])->name('index_search_receive_cheque');
 Route::resource('taraf-hesab-period', TarafHesabPeriodController::class);
+Route::get('/index-search-taraf-hesab-period', [TarafHesabPeriodController::class, 'index_search_taraf_hesab_period'])->name('index_search_taraf_hesab_period');
 
 // Cheque Management
 Route::resource('cheque-book', ChequeBookController::class);
@@ -272,6 +279,10 @@ Route::get('/index-search-user', [UserController::class, 'index_search_user'])->
 Route::resource('profile', ProfileController::class);
 Route::post('/ajaxUploadImg', [ProfileController::class, 'imgUploadPost']);
 Route::post('/update-password', [ProfileController::class, 'update_password'])->name('update_password');
+Route::resource('roles', RoleController::class);
+Route::get('/index-search-roles', [RoleController::class, 'index_search_roles'])->name('index_search_roles');
+Route::resource('permissions', PermissionController::class);
+Route::get('/index-search-permissions', [PermissionController::class, 'index_search_permissions'])->name('index_search_permissions');
 
 // Facilities
 Route::resource('phone-book', PhoneBookController::class);

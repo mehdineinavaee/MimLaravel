@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\InvestmentRequest;
 use App\Models\BankAccount;
 use App\Models\Investment;
+use App\Models\TarafHesab;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -48,23 +50,22 @@ class InvestmentController extends Controller
                     '
                     <tr>
                         <td>' . $index + 1 . '</td>
-                        <td>' . $item->from_bank->bank_name . '</td>
-                        <td>' . $item->to_bank->bank_name . '</td>
+                        <td></td>
                         <td>' . $item->form_date . '</td>
-                        <td>' . $item->form_number . '</td>
+                        <td></td>
+                        <td>' . $item->investor->fullname . '</td>
+                        <td>' . $index + 1 . '</td>
+                        <td></td>
                         <td>' . $cash_amount . ' ریال</td>
-                        <td>' . $item->considerations1 . '</td>
-                        <td>' . $item->date . '</td>
                         <td>' . $item->bank_account->account_number . '</td>
-                        <td>' . $deposit_amount . ' ریال</td>
-                        <td>' . $wage . ' ریال</td>
                         <td>' . $item->issue_tracking . '</td>
-                        <td>' . $item->considerations2 . '</td>
+                        <td></td>
+                        <td></td>
                         <td>
-                            <button type="button" value=' . $item->id . ' class="edit_bank_to_bank btn btn-primary btn-sm">
+                            <button type="button" value=' . $item->id . ' class="edit_investment btn btn-primary btn-sm">
                                 <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
                             </button>
-                            <button type="button" value="/bank-to-bank/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                            <button type="button" value="/investment/' . $item->id . '" class="delete btn btn-danger btn-sm">
                                 <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
                             </button>
                         </td>
@@ -91,8 +92,8 @@ class InvestmentController extends Controller
             $search = '';
             if ($request->row != null) {
                 $investments = Investment::where('form_date', 'LIKE', '%' . $request->search . '%')
-                    ->orWhere('form_number', 'LIKE', '%' . $request->search . '%')
                     ->orWhere('cash_amount', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('cash_register', 'LIKE', '%' . $request->search . '%')
                     ->orWhere('considerations1', 'LIKE', '%' . $request->search . '%')
                     ->orWhere('date', 'LIKE', '%' . $request->search . '%')
                     ->orWhere('deposit_amount', 'LIKE', '%' . $request->search . '%')
@@ -123,30 +124,29 @@ class InvestmentController extends Controller
 
                     $search .=
                         '
-                        <tr>
-                            <td>' . $index + 1 . '</td>
-                            <td>' . $item->from_bank->bank_name . '</td>
-                            <td>' . $item->to_bank->bank_name . '</td>
-                            <td>' . $item->form_date . '</td>
-                            <td>' . $item->form_number . '</td>
-                            <td>' . $cash_amount . ' ریال</td>
-                            <td>' . $item->considerations1 . '</td>
-                            <td>' . $item->date . '</td>
-                            <td>' . $item->bank_account->account_number . '</td>
-                            <td>' . $deposit_amount . ' ریال</td>
-                            <td>' . $wage . ' ریال</td>
-                            <td>' . $item->issue_tracking . '</td>
-                            <td>' . $item->considerations2 . '</td>
-                            <td>
-                                <button type="button" value=' . $item->id . ' class="edit_bank_to_bank btn btn-primary btn-sm">
-                                    <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
-                                </button>
-                                <button type="button" value="/bank-to-bank/' . $item->id . '" class="delete btn btn-danger btn-sm">
-                                    <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    ';
+                            <tr>
+                                <td>' . $index + 1 . '</td>
+                                <td></td>
+                                <td>' . $item->form_date . '</td>
+                                <td></td>
+                                <td>' . $item->investor->fullname . '</td>
+                                <td>' . $index + 1 . '</td>
+                                <td></td>
+                                <td>' . $cash_amount . ' ریال</td>
+                                <td>' . $item->bank_account->account_number . '</td>
+                                <td>' . $item->issue_tracking . '</td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <button type="button" value=' . $item->id . ' class="edit_investment btn btn-primary btn-sm">
+                                        <i class="fa fa-pencil text-light" title="ویرایش" data-toggle="tooltip"></i>
+                                    </button>
+                                    <button type="button" value="/investment/' . $item->id . '" class="delete btn btn-danger btn-sm">
+                                        <i class="fa fa-trash" title="حذف" data-toggle="tooltip"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        ';
                 }
                 return response()->json([
                     'status' => 200,
@@ -168,13 +168,19 @@ class InvestmentController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_investment($row, 200, '');
+        if (Gate::allows('investment')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_investment($row, 200, '');
+            }
+            $investors = TarafHesab::where('chk_investor', '=', 'فعال')->get();
+            $bank_accounts = BankAccount::all();
+            return view('financial-management/investment.index')
+                ->with('investors', $investors)
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $bank_accounts = BankAccount::all();
-        return view('financial-management/investment.index')
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -195,20 +201,25 @@ class InvestmentController extends Controller
      */
     public function store(InvestmentRequest $request)
     {
-        $investment = new Investment();
-        $investment->form_date = $request->input('form_date');
-        $investment->form_number = $request->input('form_number');
-        $investment->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-        $investment->considerations1 = $request->input('considerations1');
-        $investment->date = $request->input('date');
-        $investment->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-        $investment->wage = str_replace(",", "", $request->input('wage'));
-        $investment->issue_tracking = $request->input('issue_tracking');
-        $investment->considerations2 = $request->input('considerations2');
-        $investment->bank_account()->associate($request->bank_account_details);
-        $investment->save();
-        $row = $request["row"];
-        return self::index_fetch_investment($row, 200, 'پرداخت شرکاء (سرمایه گذاری) ذخیره شد');
+        if (Gate::allows('investment')) {
+            $investment = new Investment();
+            $investment->form_date = $request->input('form_date');
+            $investment->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+            $investment->cash_register = $request->input('cash_register');
+            $investment->considerations1 = $request->input('considerations1');
+            $investment->date = $request->input('date');
+            $investment->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+            $investment->wage = str_replace(",", "", $request->input('wage'));
+            $investment->issue_tracking = $request->input('issue_tracking');
+            $investment->considerations2 = $request->input('considerations2');
+            $investment->investor()->associate($request->shareholder);
+            $investment->bank_account()->associate($request->bank_account_details);
+            $investment->save();
+            $row = $request["row"];
+            return self::index_fetch_investment($row, 200, 'پرداخت شرکاء (سرمایه گذاری) ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -230,17 +241,21 @@ class InvestmentController extends Controller
      */
     public function edit($id)
     {
-        $investment = Investment::find($id);
-        if ($investment) {
-            return response()->json([
-                'status' => 200,
-                'investment' => $investment,
-            ]);
+        if (Gate::allows('investment')) {
+            $investment = Investment::find($id);
+            if ($investment) {
+                return response()->json([
+                    'status' => 200,
+                    'investment' => $investment,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -253,28 +268,31 @@ class InvestmentController extends Controller
      */
     public function update(InvestmentRequest $request, $id)
     {
-        $investment = Investment::find($id);
-        if ($investment) {
-            $investment->form_date = $request->input('form_date');
-            $investment->form_number = $request->input('form_number');
-            $investment->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-            $investment->considerations1 = $request->input('considerations1');
-            $investment->date = $request->input('date');
-            $investment->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-            $investment->wage = str_replace(",", "", $request->input('wage'));
-            $investment->issue_tracking = $request->input('issue_tracking');
-            $investment->considerations2 = $request->input('considerations2');
-            $investment->from_bank()->associate($request->from_bank);
-            $investment->to_bank()->associate($request->to_bank);
-            $investment->bank_account()->associate($request->bank_account_details);
-            $investment->update();
-            $row = $request["row"];
-            return self::index_fetch_investment($row, 200, 'پرداخت شرکاء (سرمایه گذاری) ویرایش شد');
+        if (Gate::allows('investment')) {
+            $investment = Investment::find($id);
+            if ($investment) {
+                $investment->form_date = $request->input('form_date');
+                $investment->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+                $investment->cash_register = $request->input('cash_register');
+                $investment->considerations1 = $request->input('considerations1');
+                $investment->date = $request->input('date');
+                $investment->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+                $investment->wage = str_replace(",", "", $request->input('wage'));
+                $investment->issue_tracking = $request->input('issue_tracking');
+                $investment->considerations2 = $request->input('considerations2');
+                $investment->investor()->associate($request->shareholder);
+                $investment->bank_account()->associate($request->bank_account_details);
+                $investment->update();
+                $row = $request["row"];
+                return self::index_fetch_investment($row, 200, 'پرداخت شرکاء (سرمایه گذاری) ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -286,8 +304,12 @@ class InvestmentController extends Controller
      */
     public function destroy($id)
     {
-        $investment = Investment::find($id);
-        $investment->delete();
-        return self::index_fetch_investment(10, 200, 'پرداخت شرکاء (سرمایه گذاری) حذف شد');
+        if (Gate::allows('investment')) {
+            $investment = Investment::find($id);
+            $investment->delete();
+            return self::index_fetch_investment(10, 200, 'پرداخت شرکاء (سرمایه گذاری) حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

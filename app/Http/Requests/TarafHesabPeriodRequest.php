@@ -13,7 +13,7 @@ class TarafHesabPeriodRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class TarafHesabPeriodRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'taraf_hesab' => 'required',
+            'amount' => 'required',
+            'considerations' => 'required',
         ];
     }
 }

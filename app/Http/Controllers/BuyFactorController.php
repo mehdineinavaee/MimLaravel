@@ -7,6 +7,7 @@ use App\Models\BuyFactor;
 use App\Models\Product;
 use App\Models\TarafHesab;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -209,19 +210,23 @@ class BuyFactorController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_factors($row, 200, '');
+        if (Gate::allows('buy_factor')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, '');
+            }
+            $sellers = TarafHesab::where('chk_seller', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $products = Product::orderBy('product_name')->get();
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            return view('buy-sell/buy-factor.index')
+                ->with('sellers', $sellers)
+                ->with('brokers', $brokers)
+                ->with('products', $products)
+                ->with('warehouses', $warehouses);
+        } else {
+            return abort(401);
         }
-        $sellers = TarafHesab::where('chk_seller', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $products = Product::orderBy('product_name')->get();
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        return view('buy-sell/buy-factor.index')
-            ->with('sellers', $sellers)
-            ->with('brokers', $brokers)
-            ->with('products', $products)
-            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -242,92 +247,8 @@ class BuyFactorController extends Controller
      */
     public function store(BuyFactorRequest $request)
     {
-        $buy_factor = new BuyFactor();
-        if ($request->customer_type == 2) {
-            $buy_factor->national_code = $request->input('national_code');
-            $buy_factor->viator = $request->input('viator');
-            $buy_factor->tel = $request->input('tel');
-            $buy_factor->address = $request->input('address');
-        } else {
-            $buy_factor->national_code = null;
-            $buy_factor->viator = null;
-            $buy_factor->tel = null;
-            $buy_factor->address = null;
-            $request->validate([
-                'seller' => 'required',
-            ]);
-        }
-        $buy_factor->customer_type = $request->input('customer_type');
-        $buy_factor->factor_no = $request->input('factor_no');
-        $buy_factor->factor_date = $request->input('factor_date');
-        $buy_factor->commission = $request->input('commission');
-        $buy_factor->settlement_deadline = $request->input('settlement_deadline');
-        $buy_factor->settlement_date = $request->input('settlement_date');
-        $buy_factor->seller()->associate($request->seller);
-        $buy_factor->broker()->associate($request->broker);
-        $buy_factor->save();
-
-        foreach ($request->factor_items as $factor_item) {
-            DB::table('buy_factor_product')->insert([
-                'product_id' => $factor_item['product_id'],
-                'buy_factor_id' => $buy_factor->id,
-                'total' => $factor_item['total'],
-                'amount' => $factor_item['amount'],
-                'discount' => $factor_item['discount'],
-                'considerations' => $factor_item['considerations'],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-        $row = $request["row"];
-        return self::index_fetch_factors($row, 200, 'فاکتور خرید ذخیره شد');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\BuyFactor  $buyFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function show(BuyFactor $buyFactor)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\BuyFactor  $buyFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $buy_factor = BuyFactor::find($id);
-        if ($buy_factor) {
-            return response()->json([
-                'status' => 200,
-                'buy_factor' => $buy_factor,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'فاکتور خرید یافت نشد',
-            ]);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\BuyFactor  $buyFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function update(BuyFactorRequest $request, $id)
-    {
-        $buy_factor = BuyFactor::find($id);
-        if ($buy_factor) {
+        if (Gate::allows('buy_factor')) {
+            $buy_factor = new BuyFactor();
             if ($request->customer_type == 2) {
                 $buy_factor->national_code = $request->input('national_code');
                 $buy_factor->viator = $request->input('viator');
@@ -350,15 +271,111 @@ class BuyFactorController extends Controller
             $buy_factor->settlement_date = $request->input('settlement_date');
             $buy_factor->seller()->associate($request->seller);
             $buy_factor->broker()->associate($request->broker);
-            $buy_factor->update();
-            $buy_factor->products()->attach($request->products);
+            $buy_factor->save();
+
+            foreach ($request->factor_items as $factor_item) {
+                DB::table('buy_factor_product')->insert([
+                    'product_id' => $factor_item['product_id'],
+                    'buy_factor_id' => $buy_factor->id,
+                    'total' => $factor_item['total'],
+                    'amount' => $factor_item['amount'],
+                    'discount' => $factor_item['discount'],
+                    'considerations' => $factor_item['considerations'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+
             $row = $request["row"];
-            return self::index_fetch_factors($row, 200, 'فاکتور خرید ویرایش شد');
+            return self::index_fetch_factors($row, 200, 'فاکتور خرید ذخیره شد');
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\BuyFactor  $buyFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function show(BuyFactor $buyFactor)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\BuyFactor  $buyFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        if (Gate::allows('buy_factor')) {
+            $buy_factor = BuyFactor::find($id);
+            if ($buy_factor) {
+                return response()->json([
+                    'status' => 200,
+                    'buy_factor' => $buy_factor,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'فاکتور خرید یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\BuyFactor  $buyFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function update(BuyFactorRequest $request, $id)
+    {
+        if (Gate::allows('buy_factor')) {
+            $buy_factor = BuyFactor::find($id);
+            if ($buy_factor) {
+                if ($request->customer_type == 2) {
+                    $buy_factor->national_code = $request->input('national_code');
+                    $buy_factor->viator = $request->input('viator');
+                    $buy_factor->tel = $request->input('tel');
+                    $buy_factor->address = $request->input('address');
+                } else {
+                    $buy_factor->national_code = null;
+                    $buy_factor->viator = null;
+                    $buy_factor->tel = null;
+                    $buy_factor->address = null;
+                    $request->validate([
+                        'seller' => 'required',
+                    ]);
+                }
+                $buy_factor->customer_type = $request->input('customer_type');
+                $buy_factor->factor_no = $request->input('factor_no');
+                $buy_factor->factor_date = $request->input('factor_date');
+                $buy_factor->commission = $request->input('commission');
+                $buy_factor->settlement_deadline = $request->input('settlement_deadline');
+                $buy_factor->settlement_date = $request->input('settlement_date');
+                $buy_factor->seller()->associate($request->seller);
+                $buy_factor->broker()->associate($request->broker);
+                $buy_factor->update();
+                $buy_factor->products()->attach($request->products);
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, 'فاکتور خرید ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
         }
     }
 
@@ -370,8 +387,12 @@ class BuyFactorController extends Controller
      */
     public function destroy($id)
     {
-        $buy_factor = BuyFactor::find($id);
-        $buy_factor->delete();
-        return self::index_fetch_factors(10, 200, 'فاکتور خرید حذف شد');
+        if (Gate::allows('buy_factor')) {
+            $buy_factor = BuyFactor::find($id);
+            $buy_factor->delete();
+            return self::index_fetch_factors(10, 200, 'فاکتور خرید حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

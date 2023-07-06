@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BenefitLossBillRequest;
 use App\Models\BenefitLossBill;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -88,7 +89,11 @@ class BenefitLossBillController extends Controller
      */
     public function index()
     {
-        return view('buy-sell/benefit-loss-bill.index');
+        if (Gate::allows('benefit_loss_bill')) {
+            return view('buy-sell/benefit-loss-bill.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

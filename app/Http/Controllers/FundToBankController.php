@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FundToBankRequest;
 use App\Models\BankType;
 use App\Models\FundToBank;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -125,13 +126,17 @@ class FundToBankController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_fund_to_bank($row, 200, '');
+        if (Gate::allows('fund_to_bank')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_fund_to_bank($row, 200, '');
+            }
+            $bank_types = BankType::all();
+            return view('financial-management/fund-to-bank.index')
+                ->with('bank_types', $bank_types);
+        } else {
+            return abort(401);
         }
-        $bank_types = BankType::all();
-        return view('financial-management/fund-to-bank.index')
-            ->with('bank_types', $bank_types);
     }
 
     /**
@@ -152,15 +157,19 @@ class FundToBankController extends Controller
      */
     public function store(FundToBankRequest $request)
     {
-        $fund_to_bank = new FundToBank();
-        $fund_to_bank->form_date = $request->input('form_date');
-        $fund_to_bank->form_number = $request->input('form_number');
-        $fund_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-        $fund_to_bank->considerations = $request->input('considerations');
-        $fund_to_bank->bank_type()->associate($request->bank);
-        $fund_to_bank->save();
-        $row = $request["row"];
-        return self::index_fetch_fund_to_bank($row, 200, 'از صندوق به بانک جدید ذخیره شد');
+        if (Gate::allows('fund_to_bank')) {
+            $fund_to_bank = new FundToBank();
+            $fund_to_bank->form_date = $request->input('form_date');
+            $fund_to_bank->form_number = $request->input('form_number');
+            $fund_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+            $fund_to_bank->considerations = $request->input('considerations');
+            $fund_to_bank->bank_type()->associate($request->bank);
+            $fund_to_bank->save();
+            $row = $request["row"];
+            return self::index_fetch_fund_to_bank($row, 200, 'از صندوق به بانک جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -182,17 +191,21 @@ class FundToBankController extends Controller
      */
     public function edit($id)
     {
-        $fund_to_bank = FundToBank::find($id);
-        if ($fund_to_bank) {
-            return response()->json([
-                'status' => 200,
-                'fund_to_bank' => $fund_to_bank,
-            ]);
+        if (Gate::allows('fund_to_bank')) {
+            $fund_to_bank = FundToBank::find($id);
+            if ($fund_to_bank) {
+                return response()->json([
+                    'status' => 200,
+                    'fund_to_bank' => $fund_to_bank,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'از صندوق به بانک یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'از صندوق به بانک یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -205,21 +218,25 @@ class FundToBankController extends Controller
      */
     public function update(FundToBankRequest $request, $id)
     {
-        $fund_to_bank = FundToBank::find($id);
-        if ($fund_to_bank) {
-            $fund_to_bank->form_date = $request->input('form_date');
-            $fund_to_bank->form_number = $request->input('form_number');
-            $fund_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-            $fund_to_bank->considerations = $request->input('considerations');
-            $fund_to_bank->bank_type()->associate($request->bank);
-            $fund_to_bank->update();
-            $row = $request["row"];
-            return self::index_fetch_fund_to_bank($row, 200, 'از صندوق به بانک ویرایش شد');
+        if (Gate::allows('fund_to_bank')) {
+            $fund_to_bank = FundToBank::find($id);
+            if ($fund_to_bank) {
+                $fund_to_bank->form_date = $request->input('form_date');
+                $fund_to_bank->form_number = $request->input('form_number');
+                $fund_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+                $fund_to_bank->considerations = $request->input('considerations');
+                $fund_to_bank->bank_type()->associate($request->bank);
+                $fund_to_bank->update();
+                $row = $request["row"];
+                return self::index_fetch_fund_to_bank($row, 200, 'از صندوق به بانک ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -231,8 +248,12 @@ class FundToBankController extends Controller
      */
     public function destroy($id)
     {
-        $fund_to_bank = FundToBank::find($id);
-        $fund_to_bank->delete();
-        return self::index_fetch_fund_to_bank(10, 200, 'از صندوق به بانک حذف شد');
+        if (Gate::allows('fund_to_bank')) {
+            $fund_to_bank = FundToBank::find($id);
+            $fund_to_bank->delete();
+            return self::index_fetch_fund_to_bank(10, 200, 'از صندوق به بانک حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CirculationReceiveCheque;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class CirculationReceiveChequeController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/circulation-receive-cheque.index');
+        if (Gate::allows('circulation_receive_cheque')) {
+            return view('cheque-management/circulation-receive-cheque.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

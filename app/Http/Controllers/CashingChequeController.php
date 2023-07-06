@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CashingCheque;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class CashingChequeController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/cashing-cheque.index');
+        if (Gate::allows('cashing_cheque')) {
+            return view('cheque-management/cashing-cheque.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\FactorsTypesReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -17,16 +18,20 @@ class FactorsTypesReportController extends Controller
 
     public function factorsTypesReportPDF()
     {
-        $cities = City::get();
+        if (Gate::allows('factors_types_report')) {
+            $cities = City::get();
 
-        $data = [
-            'title' => 'به پی دی اف من خوش آمدید',
-            'date' => date('m/d/Y'),
-            'cities' => $cities
-        ];
+            $data = [
+                'title' => 'به پی دی اف من خوش آمدید',
+                'date' => date('m/d/Y'),
+                'cities' => $cities
+            ];
 
-        $pdf = PDF::loadView('buy-sell-reports/factors-types-report.myPDF', $data);
-        return $pdf->stream('document.pdf');
+            $pdf = PDF::loadView('buy-sell-reports/factors-types-report.myPDF', $data);
+            return $pdf->stream('document.pdf');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -36,7 +41,11 @@ class FactorsTypesReportController extends Controller
      */
     public function index()
     {
-        return view('buy-sell-reports/factors-types-report.index');
+        if (Gate::allows('factors_types_report')) {
+            return view('buy-sell-reports/factors-types-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

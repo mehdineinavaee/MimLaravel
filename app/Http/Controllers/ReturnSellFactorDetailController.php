@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ReturnSellFactor;
 use App\Models\ReturnSellFactorDetail;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -70,21 +71,25 @@ class ReturnSellFactorDetailController extends Controller
 
     public function update_return_sell_factor(Request $request, $return_sell_factor_id, $product_id)
     {
-        $return_sell_factor_item = ReturnSellFactor::findOrFail($return_sell_factor_id)->products()->having('pivot_product_id', '=', $product_id)->get();
-        if ($return_sell_factor_item) {
-            foreach ($return_sell_factor_item as $product) {
-                $product->pivot->total = $request->invoice_total;
-                $product->pivot->amount = $request->input('invoice_amount');
-                $product->pivot->discount = $request->input('invoice_discount');
-                $product->pivot->considerations = $request->input('invoice_considerations');
-                $product->pivot->update();
-                return self::fetch_return_sell_factor_id($return_sell_factor_id, 200, 'آیتم فاکتور برگشت از فروش ویرایش شد');
+        if (Gate::allows('return_sell_factor')) {
+            $return_sell_factor_item = ReturnSellFactor::findOrFail($return_sell_factor_id)->products()->having('pivot_product_id', '=', $product_id)->get();
+            if ($return_sell_factor_item) {
+                foreach ($return_sell_factor_item as $product) {
+                    $product->pivot->total = $request->invoice_total;
+                    $product->pivot->amount = $request->input('invoice_amount');
+                    $product->pivot->discount = $request->input('invoice_discount');
+                    $product->pivot->considerations = $request->input('invoice_considerations');
+                    $product->pivot->update();
+                    return self::fetch_return_sell_factor_id($return_sell_factor_id, 200, 'آیتم فاکتور برگشت از فروش ویرایش شد');
+                }
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
             }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -138,7 +143,11 @@ class ReturnSellFactorDetailController extends Controller
      */
     public function edit($id)
     {
-        return self::fetch_return_sell_factor_id($id, 200, '');
+        if (Gate::allows('return_sell_factor')) {
+            return self::fetch_return_sell_factor_id($id, 200, '');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -161,17 +170,21 @@ class ReturnSellFactorDetailController extends Controller
      */
     public function destroy_return_sell_factor($return_sell_factor_id, $product_id)
     {
-        $return_sell_factor_item = ReturnSellFactor::findOrFail($return_sell_factor_id)->products()->having('pivot_product_id', '=', $product_id)->get();
-        if ($return_sell_factor_item) {
-            foreach ($return_sell_factor_item as $product) {
-                $product->pivot->delete();
-                return self::fetch_return_sell_factor_id($return_sell_factor_id, 200, 'آیتم فاکتور برگشت از فروش حذف شد');
+        if (Gate::allows('return_sell_factor')) {
+            $return_sell_factor_item = ReturnSellFactor::findOrFail($return_sell_factor_id)->products()->having('pivot_product_id', '=', $product_id)->get();
+            if ($return_sell_factor_item) {
+                foreach ($return_sell_factor_item as $product) {
+                    $product->pivot->delete();
+                    return self::fetch_return_sell_factor_id($return_sell_factor_id, 200, 'آیتم فاکتور برگشت از فروش حذف شد');
+                }
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
             }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class AnnouncementController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/announcement.index');
+        if (Gate::allows('announcement')) {
+            return view('cheque-management/announcement.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

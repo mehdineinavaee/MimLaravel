@@ -6,6 +6,7 @@ use App\Http\Requests\InventoryProductsPeriodRequest;
 use App\Models\InventoryProductsPeriod;
 use App\Models\Product;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -130,15 +131,19 @@ class InventoryProductsPeriodController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_inventory_products_period($row, 200, '');
+        if (Gate::allows('inventory_products_period')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_inventory_products_period($row, 200, '');
+            }
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            $products = Product::orderBy('product_name', 'asc')->get();
+            return view('first-period/inventory-products-period.index')
+                ->with('warehouses', $warehouses)
+                ->with('products', $products);
+        } else {
+            return abort(401);
         }
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        $products = Product::orderBy('product_name', 'asc')->get();
-        return view('first-period/inventory-products-period.index')
-            ->with('warehouses', $warehouses)
-            ->with('products', $products);
     }
 
     /**
@@ -159,14 +164,18 @@ class InventoryProductsPeriodController extends Controller
      */
     public function store(InventoryProductsPeriodRequest $request)
     {
-        $inventory_products_period = new InventoryProductsPeriod();
-        $inventory_products_period->amount = $request->input('amount');
-        $inventory_products_period->buy_price = str_replace(",", "", $request->input('buy_price'));
-        $inventory_products_period->warehouse()->associate($request->warehouse);
-        $inventory_products_period->product()->associate($request->product);
-        $inventory_products_period->save();
-        $row = $request["row"];
-        return self::index_fetch_inventory_products_period($row, 200, 'موجودی اول دوره کالا ذخیره شد');
+        if (Gate::allows('inventory_products_period')) {
+            $inventory_products_period = new InventoryProductsPeriod();
+            $inventory_products_period->amount = $request->input('amount');
+            $inventory_products_period->buy_price = str_replace(",", "", $request->input('buy_price'));
+            $inventory_products_period->warehouse()->associate($request->warehouse);
+            $inventory_products_period->product()->associate($request->product);
+            $inventory_products_period->save();
+            $row = $request["row"];
+            return self::index_fetch_inventory_products_period($row, 200, 'موجودی اول دوره کالا ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -188,17 +197,21 @@ class InventoryProductsPeriodController extends Controller
      */
     public function edit($id)
     {
-        $inventory_products_period = InventoryProductsPeriod::find($id);
-        if ($inventory_products_period) {
-            return response()->json([
-                'status' => 200,
-                'inventory_products_period' => $inventory_products_period,
-            ]);
+        if (Gate::allows('inventory_products_period')) {
+            $inventory_products_period = InventoryProductsPeriod::find($id);
+            if ($inventory_products_period) {
+                return response()->json([
+                    'status' => 200,
+                    'inventory_products_period' => $inventory_products_period,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'کالا یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'کالا یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -211,20 +224,24 @@ class InventoryProductsPeriodController extends Controller
      */
     public function update(InventoryProductsPeriodRequest $request, $id)
     {
-        $inventory_products_period = InventoryProductsPeriod::find($id);
-        if ($inventory_products_period) {
-            $inventory_products_period->amount = $request->input('amount');
-            $inventory_products_period->buy_price = str_replace(",", "", $request->input('buy_price'));
-            $inventory_products_period->warehouse()->associate($request->warehouse);
-            $inventory_products_period->product()->associate($request->product);
-            $inventory_products_period->update();
-            $row = $request["row"];
-            return self::index_fetch_inventory_products_period($row, 200, 'اول دوره ویرایش شد');
+        if (Gate::allows('inventory_products_period')) {
+            $inventory_products_period = InventoryProductsPeriod::find($id);
+            if ($inventory_products_period) {
+                $inventory_products_period->amount = $request->input('amount');
+                $inventory_products_period->buy_price = str_replace(",", "", $request->input('buy_price'));
+                $inventory_products_period->warehouse()->associate($request->warehouse);
+                $inventory_products_period->product()->associate($request->product);
+                $inventory_products_period->update();
+                $row = $request["row"];
+                return self::index_fetch_inventory_products_period($row, 200, 'اول دوره ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -236,8 +253,12 @@ class InventoryProductsPeriodController extends Controller
      */
     public function destroy($id)
     {
-        $inventory_products_period = InventoryProductsPeriod::find($id);
-        $inventory_products_period->delete();
-        return self::index_fetch_inventory_products_period(10, 200, 'اول دوره حذف شد');
+        if (Gate::allows('inventory_products_period')) {
+            $inventory_products_period = InventoryProductsPeriod::find($id);
+            $inventory_products_period->delete();
+            return self::index_fetch_inventory_products_period(10, 200, 'اول دوره حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

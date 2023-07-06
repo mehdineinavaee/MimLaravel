@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PayReturningChequeRequest;
 use App\Models\BankAccount;
 use App\Models\PayReturningCheque;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -149,13 +150,17 @@ class PayReturningChequeController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_pay_returning_cheque($row, 200, '');
+        if (Gate::allows('pay_returning_cheque')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_pay_returning_cheque($row, 200, '');
+            }
+            $bank_accounts = BankAccount::all();
+            return view('cheque-management/pay-returning-cheque.index')
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $bank_accounts = BankAccount::all();
-        return view('cheque-management/pay-returning-cheque.index')
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -176,19 +181,23 @@ class PayReturningChequeController extends Controller
      */
     public function store(PayReturningChequeRequest $request)
     {
-        $pay_returning_cheque = new PayReturningCheque();
-        $pay_returning_cheque->form_date = $request->input('form_date');
-        $pay_returning_cheque->form_number = $request->input('form_number');
-        $pay_returning_cheque->serial_number = $request->input('serial_number');
-        $pay_returning_cheque->total = str_replace(",", "", $request->input('total'));
-        $pay_returning_cheque->wage = str_replace(",", "", $request->input('wage'));
-        $pay_returning_cheque->due_date = $request->input('due_date');
-        $pay_returning_cheque->receiver = $request->input('receiver');
-        $pay_returning_cheque->considerations = $request->input('considerations');
-        $pay_returning_cheque->bank_account()->associate($request->bank_account_details);
-        $pay_returning_cheque->save();
-        $row = $request["row"];
-        return self::index_fetch_pay_returning_cheque($row, 200, 'برگشت چک ذخیره شد');
+        if (Gate::allows('pay_returning_cheque')) {
+            $pay_returning_cheque = new PayReturningCheque();
+            $pay_returning_cheque->form_date = $request->input('form_date');
+            $pay_returning_cheque->form_number = $request->input('form_number');
+            $pay_returning_cheque->serial_number = $request->input('serial_number');
+            $pay_returning_cheque->total = str_replace(",", "", $request->input('total'));
+            $pay_returning_cheque->wage = str_replace(",", "", $request->input('wage'));
+            $pay_returning_cheque->due_date = $request->input('due_date');
+            $pay_returning_cheque->receiver = $request->input('receiver');
+            $pay_returning_cheque->considerations = $request->input('considerations');
+            $pay_returning_cheque->bank_account()->associate($request->bank_account_details);
+            $pay_returning_cheque->save();
+            $row = $request["row"];
+            return self::index_fetch_pay_returning_cheque($row, 200, 'برگشت چک ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -210,17 +219,21 @@ class PayReturningChequeController extends Controller
      */
     public function edit($id)
     {
-        $pay_returning_cheque = PayReturningCheque::find($id);
-        if ($pay_returning_cheque) {
-            return response()->json([
-                'status' => 200,
-                'pay_returning_cheque' => $pay_returning_cheque,
-            ]);
+        if (Gate::allows('pay_returning_cheque')) {
+            $pay_returning_cheque = PayReturningCheque::find($id);
+            if ($pay_returning_cheque) {
+                return response()->json([
+                    'status' => 200,
+                    'pay_returning_cheque' => $pay_returning_cheque,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'برگشت چک یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'برگشت چک یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -233,25 +246,29 @@ class PayReturningChequeController extends Controller
      */
     public function update(PayReturningChequeRequest $request, $id)
     {
-        $pay_returning_cheque = PayReturningCheque::find($id);
-        if ($pay_returning_cheque) {
-            $pay_returning_cheque->form_date = $request->input('form_date');
-            $pay_returning_cheque->form_number = $request->input('form_number');
-            $pay_returning_cheque->serial_number = $request->input('serial_number');
-            $pay_returning_cheque->total = str_replace(",", "", $request->input('total'));
-            $pay_returning_cheque->wage = str_replace(",", "", $request->input('wage'));
-            $pay_returning_cheque->due_date = $request->input('due_date');
-            $pay_returning_cheque->receiver = $request->input('receiver');
-            $pay_returning_cheque->considerations = $request->input('considerations');
-            $pay_returning_cheque->bank_account()->associate($request->bank_account_details);
-            $pay_returning_cheque->update();
-            $row = $request["row"];
-            return self::index_fetch_pay_returning_cheque($row, 200, 'برگشت چک ویرایش شد');
+        if (Gate::allows('pay_returning_cheque')) {
+            $pay_returning_cheque = PayReturningCheque::find($id);
+            if ($pay_returning_cheque) {
+                $pay_returning_cheque->form_date = $request->input('form_date');
+                $pay_returning_cheque->form_number = $request->input('form_number');
+                $pay_returning_cheque->serial_number = $request->input('serial_number');
+                $pay_returning_cheque->total = str_replace(",", "", $request->input('total'));
+                $pay_returning_cheque->wage = str_replace(",", "", $request->input('wage'));
+                $pay_returning_cheque->due_date = $request->input('due_date');
+                $pay_returning_cheque->receiver = $request->input('receiver');
+                $pay_returning_cheque->considerations = $request->input('considerations');
+                $pay_returning_cheque->bank_account()->associate($request->bank_account_details);
+                $pay_returning_cheque->update();
+                $row = $request["row"];
+                return self::index_fetch_pay_returning_cheque($row, 200, 'برگشت چک ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -263,8 +280,12 @@ class PayReturningChequeController extends Controller
      */
     public function destroy($id)
     {
-        $pay_returning_cheque = PayReturningCheque::find($id);
-        $pay_returning_cheque->delete();
-        return self::index_fetch_pay_returning_cheque(10, 200, 'برگشت چک حذف شد');
+        if (Gate::allows('pay_returning_cheque')) {
+            $pay_returning_cheque = PayReturningCheque::find($id);
+            $pay_returning_cheque->delete();
+            return self::index_fetch_pay_returning_cheque(10, 200, 'برگشت چک حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

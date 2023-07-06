@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ReceiptChequeRequest;
 use App\Models\BankAccount;
 use App\Models\ReceiptCheque;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -134,13 +135,17 @@ class ReceiptChequeController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_receipt_cheque($row, 200, '');
+        if (Gate::allows('receipt_cheque')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_receipt_cheque($row, 200, '');
+            }
+            $bank_accounts = BankAccount::all();
+            return view('cheque-management/receipt-cheque.index')
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $bank_accounts = BankAccount::all();
-        return view('cheque-management/receipt-cheque.index')
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -161,18 +166,22 @@ class ReceiptChequeController extends Controller
      */
     public function store(ReceiptChequeRequest $request)
     {
-        $receipt_cheque = new ReceiptCheque();
-        $receipt_cheque->form_date = $request->input('form_date');
-        $receipt_cheque->form_number = $request->input('form_number');
-        $receipt_cheque->serial_number = $request->input('serial_number');
-        $receipt_cheque->total = str_replace(",", "", $request->input('total'));
-        $receipt_cheque->due_date = $request->input('due_date');
-        $receipt_cheque->receiver = $request->input('receiver');
-        $receipt_cheque->considerations = $request->input('considerations');
-        $receipt_cheque->bank_account()->associate($request->bank_account_details);
-        $receipt_cheque->save();
-        $row = $request["row"];
-        return self::index_fetch_receipt_cheque($row, 200, 'اعلام وصول چک ذخیره شد');
+        if (Gate::allows('receipt_cheque')) {
+            $receipt_cheque = new ReceiptCheque();
+            $receipt_cheque->form_date = $request->input('form_date');
+            $receipt_cheque->form_number = $request->input('form_number');
+            $receipt_cheque->serial_number = $request->input('serial_number');
+            $receipt_cheque->total = str_replace(",", "", $request->input('total'));
+            $receipt_cheque->due_date = $request->input('due_date');
+            $receipt_cheque->receiver = $request->input('receiver');
+            $receipt_cheque->considerations = $request->input('considerations');
+            $receipt_cheque->bank_account()->associate($request->bank_account_details);
+            $receipt_cheque->save();
+            $row = $request["row"];
+            return self::index_fetch_receipt_cheque($row, 200, 'اعلام وصول چک ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -194,17 +203,21 @@ class ReceiptChequeController extends Controller
      */
     public function edit($id)
     {
-        $receipt_cheque = ReceiptCheque::find($id);
-        if ($receipt_cheque) {
-            return response()->json([
-                'status' => 200,
-                'receipt_cheque' => $receipt_cheque,
-            ]);
+        if (Gate::allows('receipt_cheque')) {
+            $receipt_cheque = ReceiptCheque::find($id);
+            if ($receipt_cheque) {
+                return response()->json([
+                    'status' => 200,
+                    'receipt_cheque' => $receipt_cheque,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اعلام وصول چک یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اعلام وصول چک یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -217,24 +230,28 @@ class ReceiptChequeController extends Controller
      */
     public function update(ReceiptChequeRequest $request, $id)
     {
-        $receipt_cheque = ReceiptCheque::find($id);
-        if ($receipt_cheque) {
-            $receipt_cheque->form_date = $request->input('form_date');
-            $receipt_cheque->form_number = $request->input('form_number');
-            $receipt_cheque->serial_number = $request->input('serial_number');
-            $receipt_cheque->total = str_replace(",", "", $request->input('total'));
-            $receipt_cheque->due_date = $request->input('due_date');
-            $receipt_cheque->receiver = $request->input('receiver');
-            $receipt_cheque->considerations = $request->input('considerations');
-            $receipt_cheque->bank_account()->associate($request->bank_account_details);
-            $receipt_cheque->update();
-            $row = $request["row"];
-            return self::index_fetch_receipt_cheque($row, 200, 'اعلام وصول چک ویرایش شد');
+        if (Gate::allows('receipt_cheque')) {
+            $receipt_cheque = ReceiptCheque::find($id);
+            if ($receipt_cheque) {
+                $receipt_cheque->form_date = $request->input('form_date');
+                $receipt_cheque->form_number = $request->input('form_number');
+                $receipt_cheque->serial_number = $request->input('serial_number');
+                $receipt_cheque->total = str_replace(",", "", $request->input('total'));
+                $receipt_cheque->due_date = $request->input('due_date');
+                $receipt_cheque->receiver = $request->input('receiver');
+                $receipt_cheque->considerations = $request->input('considerations');
+                $receipt_cheque->bank_account()->associate($request->bank_account_details);
+                $receipt_cheque->update();
+                $row = $request["row"];
+                return self::index_fetch_receipt_cheque($row, 200, 'اعلام وصول چک ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -246,8 +263,12 @@ class ReceiptChequeController extends Controller
      */
     public function destroy($id)
     {
-        $receipt_cheque = ReceiptCheque::find($id);
-        $receipt_cheque->delete();
-        return self::index_fetch_receipt_cheque(10, 200, 'اعلام وصول چک حذف شد');
+        if (Gate::allows('receipt_cheque')) {
+            $receipt_cheque = ReceiptCheque::find($id);
+            $receipt_cheque->delete();
+            return self::index_fetch_receipt_cheque(10, 200, 'اعلام وصول چک حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\SellFactor;
 use App\Models\TarafHesab;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -208,19 +209,23 @@ class SellFactorController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_factors($row, 200, '');
+        if (Gate::allows('sell_factor')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, '');
+            }
+            $buyers = TarafHesab::where('chk_buyer', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $products = Product::orderBy('product_name')->get();
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            return view('buy-sell/sell-factor.index')
+                ->with('buyers', $buyers)
+                ->with('brokers', $brokers)
+                ->with('products', $products)
+                ->with('warehouses', $warehouses);
+        } else {
+            return abort(401);
         }
-        $buyers = TarafHesab::where('chk_buyer', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $products = Product::orderBy('product_name')->get();
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        return view('buy-sell/sell-factor.index')
-            ->with('buyers', $buyers)
-            ->with('brokers', $brokers)
-            ->with('products', $products)
-            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -241,92 +246,8 @@ class SellFactorController extends Controller
      */
     public function store(SellFactorRequest $request)
     {
-        $sell_factor = new SellFactor();
-        if ($request->customer_type == 2) {
-            $sell_factor->national_code = $request->input('national_code');
-            $sell_factor->viator = $request->input('viator');
-            $sell_factor->tel = $request->input('tel');
-            $sell_factor->address = $request->input('address');
-        } else {
-            $sell_factor->national_code = null;
-            $sell_factor->viator = null;
-            $sell_factor->tel = null;
-            $sell_factor->address = null;
-            $request->validate([
-                'buyer' => 'required',
-            ]);
-        }
-        $sell_factor->customer_type = $request->input('customer_type');
-        $sell_factor->factor_no = $request->input('factor_no');
-        $sell_factor->factor_date = $request->input('factor_date');
-        $sell_factor->commission = $request->input('commission');
-        $sell_factor->settlement_deadline = $request->input('settlement_deadline');
-        $sell_factor->settlement_date = $request->input('settlement_date');
-        $sell_factor->buyer()->associate($request->buyer);
-        $sell_factor->broker()->associate($request->broker);
-        $sell_factor->save();
-
-        foreach ($request->factor_items as $factor_item) {
-            DB::table('product_sell_factor')->insert([
-                'product_id' => $factor_item['product_id'],
-                'sell_factor_id' => $sell_factor->id,
-                'total' => $factor_item['total'],
-                'amount' => $factor_item['amount'],
-                'discount' => $factor_item['discount'],
-                'considerations' => $factor_item['considerations'],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-        $row = $request["row"];
-        return self::index_fetch_factors($row, 200, 'فاکتور فروش ذخیره شد');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\SellFactor  $sellFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function show(SellFactor $sellFactor)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\SellFactor  $sellFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $sell_factor = SellFactor::find($id);
-        if ($sell_factor) {
-            return response()->json([
-                'status' => 200,
-                'sell_factor' => $sell_factor,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'فاکتور فروش یافت نشد',
-            ]);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SellFactor  $sellFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function update(SellFactorRequest $request, $id)
-    {
-        $sell_factor = SellFactor::find($id);
-        if ($sell_factor) {
+        if (Gate::allows('sell_factor')) {
+            $sell_factor = new SellFactor();
             if ($request->customer_type == 2) {
                 $sell_factor->national_code = $request->input('national_code');
                 $sell_factor->viator = $request->input('viator');
@@ -349,15 +270,111 @@ class SellFactorController extends Controller
             $sell_factor->settlement_date = $request->input('settlement_date');
             $sell_factor->buyer()->associate($request->buyer);
             $sell_factor->broker()->associate($request->broker);
-            $sell_factor->update();
-            $sell_factor->products()->attach($request->products);
+            $sell_factor->save();
+
+            foreach ($request->factor_items as $factor_item) {
+                DB::table('product_sell_factor')->insert([
+                    'product_id' => $factor_item['product_id'],
+                    'sell_factor_id' => $sell_factor->id,
+                    'total' => $factor_item['total'],
+                    'amount' => $factor_item['amount'],
+                    'discount' => $factor_item['discount'],
+                    'considerations' => $factor_item['considerations'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+
             $row = $request["row"];
-            return self::index_fetch_factors($row, 200, 'فاکتور فروش ویرایش شد');
+            return self::index_fetch_factors($row, 200, 'فاکتور فروش ذخیره شد');
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\SellFactor  $sellFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function show(SellFactor $sellFactor)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\SellFactor  $sellFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        if (Gate::allows('sell_factor')) {
+            $sell_factor = SellFactor::find($id);
+            if ($sell_factor) {
+                return response()->json([
+                    'status' => 200,
+                    'sell_factor' => $sell_factor,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'فاکتور فروش یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\SellFactor  $sellFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function update(SellFactorRequest $request, $id)
+    {
+        if (Gate::allows('sell_factor')) {
+            $sell_factor = SellFactor::find($id);
+            if ($sell_factor) {
+                if ($request->customer_type == 2) {
+                    $sell_factor->national_code = $request->input('national_code');
+                    $sell_factor->viator = $request->input('viator');
+                    $sell_factor->tel = $request->input('tel');
+                    $sell_factor->address = $request->input('address');
+                } else {
+                    $sell_factor->national_code = null;
+                    $sell_factor->viator = null;
+                    $sell_factor->tel = null;
+                    $sell_factor->address = null;
+                    $request->validate([
+                        'buyer' => 'required',
+                    ]);
+                }
+                $sell_factor->customer_type = $request->input('customer_type');
+                $sell_factor->factor_no = $request->input('factor_no');
+                $sell_factor->factor_date = $request->input('factor_date');
+                $sell_factor->commission = $request->input('commission');
+                $sell_factor->settlement_deadline = $request->input('settlement_deadline');
+                $sell_factor->settlement_date = $request->input('settlement_date');
+                $sell_factor->buyer()->associate($request->buyer);
+                $sell_factor->broker()->associate($request->broker);
+                $sell_factor->update();
+                $sell_factor->products()->attach($request->products);
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, 'فاکتور فروش ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
         }
     }
 
@@ -369,8 +386,12 @@ class SellFactorController extends Controller
      */
     public function destroy($id)
     {
-        $sell_factor = SellFactor::find($id);
-        $sell_factor->delete();
-        return self::index_fetch_factors(10, 200, 'فاکتور فروش حذف شد');
+        if (Gate::allows('sell_factor')) {
+            $sell_factor = SellFactor::find($id);
+            $sell_factor->delete();
+            return self::index_fetch_factors(10, 200, 'فاکتور فروش حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

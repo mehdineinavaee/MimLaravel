@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductFareiAsli;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,10 +22,14 @@ class ProductFareiAsliController extends Controller
      */
     public function index()
     {
-        // $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
-        // $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
-        // return view('taarife-payeh/product-farei-asli.index', compact('categories', 'allCategories'));
-        return view('taarife-payeh/product-farei-asli.index');
+        if (Gate::allows('product_farei_asli')) {
+            // $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
+            // $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
+            // return view('taarife-payeh/product-farei-asli.index', compact('categories', 'allCategories'));
+            return view('taarife-payeh/product-farei-asli.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

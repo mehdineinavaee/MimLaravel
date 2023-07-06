@@ -6,6 +6,7 @@ use App\Models\AccountGroup;
 use App\Models\AccountHeading;
 use App\Models\Kol;
 use App\Models\Moein;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -106,17 +107,21 @@ class AccountHeadingController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_account_heading($row, 200, '');
+        if (Gate::allows('account_headings')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_account_heading($row, 200, '');
+            }
+            $account_groups = AccountGroup::all();
+            $kols = Kol::all();
+            $moeins = Moein::all();
+            return view('taarife-payeh/account-headings.index')
+                ->with('account_groups', $account_groups)
+                ->with('kols', $kols)
+                ->with('moeins', $moeins);
+        } else {
+            return abort(401);
         }
-        $account_groups = AccountGroup::all();
-        $kols = Kol::all();
-        $moeins = Moein::all();
-        return view('taarife-payeh/account-headings.index')
-            ->with('account_groups', $account_groups)
-            ->with('kols', $kols)
-            ->with('moeins', $moeins);
     }
 
     /**

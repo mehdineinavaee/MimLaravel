@@ -6,6 +6,7 @@ use App\Http\Requests\WarehouseMoveRequest;
 use App\Models\InventoryProductsPeriod;
 use App\Models\Warehouse;
 use App\Models\WarehouseMove;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -123,15 +124,19 @@ class WarehouseMoveController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_warehouse_moves($row, 200, '');
+        if (Gate::allows('warehouse_moves')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_warehouse_moves($row, 200, '');
+            }
+            $products = InventoryProductsPeriod::orderBy('product_id')->get();
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            return view('warehouse/warehouse-moves.index')
+                ->with('products', $products)
+                ->with('warehouses', $warehouses);
+        } else {
+            return abort(401);
         }
-        $products = InventoryProductsPeriod::orderBy('product_id')->get();
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        return view('warehouse/warehouse-moves.index')
-            ->with('products', $products)
-            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -152,44 +157,48 @@ class WarehouseMoveController extends Controller
      */
     public function store(WarehouseMoveRequest $request)
     {
-        $warehouse_move = new WarehouseMove();
-        $warehouse_move->remittance_no = $request->input('remittance_no');
-        $warehouse_move->remittance_date = $request->input('remittance_date');
-        $warehouse_move->transmitter()->associate($request->transmitter);
-        $warehouse_move->receiver()->associate($request->receiver);
-        $warehouse_move->save();
+        if (Gate::allows('warehouse_moves')) {
+            $warehouse_move = new WarehouseMove();
+            $warehouse_move->remittance_no = $request->input('remittance_no');
+            $warehouse_move->remittance_date = $request->input('remittance_date');
+            $warehouse_move->transmitter()->associate($request->transmitter);
+            $warehouse_move->receiver()->associate($request->receiver);
+            $warehouse_move->save();
 
-        foreach ($request->products as $product_item) {
-            $transmitter = InventoryProductsPeriod::where('warehouse_id', '=', $request->transmitter)
-                ->where('product_id', '=', $product_item['product_id'])->first();
-            $receiver = InventoryProductsPeriod::where('warehouse_id', '=', $request->receiver)
-                ->where('product_id', '=', $product_item['product_id'])->first();
-            if (!empty($transmitter) && !empty($receiver)) {
-                $transmitter->amount = $product_item['next_transmitter'];
-                $receiver->amount = $product_item['next_receiver'];
-                $transmitter->save();
-                $receiver->save();
-                DB::table('product_warehouse_move')->insert([
-                    'product_id' => $product_item['product_id'],
-                    'warehouse_move_id' => $warehouse_move->id,
-                    'amount' => $product_item['amount'],
-                    'pre_transmitter' => $product_item['pre_transmitter'],
-                    'next_transmitter' => $product_item['next_transmitter'],
-                    'pre_receiver' => $product_item['pre_receiver'],
-                    'next_receiver' => $product_item['next_receiver'],
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'اطلاعاتی یافت نشد',
-                ]);
+            foreach ($request->products as $product_item) {
+                $transmitter = InventoryProductsPeriod::where('warehouse_id', '=', $request->transmitter)
+                    ->where('product_id', '=', $product_item['product_id'])->first();
+                $receiver = InventoryProductsPeriod::where('warehouse_id', '=', $request->receiver)
+                    ->where('product_id', '=', $product_item['product_id'])->first();
+                if (!empty($transmitter) && !empty($receiver)) {
+                    $transmitter->amount = $product_item['next_transmitter'];
+                    $receiver->amount = $product_item['next_receiver'];
+                    $transmitter->save();
+                    $receiver->save();
+                    DB::table('product_warehouse_move')->insert([
+                        'product_id' => $product_item['product_id'],
+                        'warehouse_move_id' => $warehouse_move->id,
+                        'amount' => $product_item['amount'],
+                        'pre_transmitter' => $product_item['pre_transmitter'],
+                        'next_transmitter' => $product_item['next_transmitter'],
+                        'pre_receiver' => $product_item['pre_receiver'],
+                        'next_receiver' => $product_item['next_receiver'],
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 404,
+                        'message' => 'اطلاعاتی یافت نشد',
+                    ]);
+                }
             }
-        }
 
-        $row = $request["row"];
-        return self::index_fetch_warehouse_moves($row, 200, 'حواله انتقالی ذخیره شد');
+            $row = $request["row"];
+            return self::index_fetch_warehouse_moves($row, 200, 'حواله انتقالی ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -211,17 +220,21 @@ class WarehouseMoveController extends Controller
      */
     public function edit($id)
     {
-        $warehouse_move = WarehouseMove::find($id);
-        if ($warehouse_move) {
-            return response()->json([
-                'status' => 200,
-                'warehouse_move' => $warehouse_move,
-            ]);
+        if (Gate::allows('warehouse_moves')) {
+            $warehouse_move = WarehouseMove::find($id);
+            if ($warehouse_move) {
+                return response()->json([
+                    'status' => 200,
+                    'warehouse_move' => $warehouse_move,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'حواله انتقالی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'حواله انتقالی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -234,18 +247,22 @@ class WarehouseMoveController extends Controller
      */
     public function update(WarehouseMoveRequest $request, $id)
     {
-        $warehouse_move = WarehouseMove::find($id);
-        if ($warehouse_move) {
-            $warehouse_move->remittance_no = $request->input('remittance_no');
-            $warehouse_move->remittance_date = $request->input('remittance_date');
-            $warehouse_move->update();
-            $row = $request["row"];
-            return self::index_fetch_warehouse_moves($row, 200, 'حواله انتقالی ویرایش شد');
+        if (Gate::allows('warehouse_moves')) {
+            $warehouse_move = WarehouseMove::find($id);
+            if ($warehouse_move) {
+                $warehouse_move->remittance_no = $request->input('remittance_no');
+                $warehouse_move->remittance_date = $request->input('remittance_date');
+                $warehouse_move->update();
+                $row = $request["row"];
+                return self::index_fetch_warehouse_moves($row, 200, 'حواله انتقالی ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -257,8 +274,12 @@ class WarehouseMoveController extends Controller
      */
     public function destroy($id)
     {
-        $warehouse_move = WarehouseMove::find($id);
-        $warehouse_move->delete();
-        return self::index_fetch_warehouse_moves(10, 200, 'حواله انتقالی حذف شد');
+        if (Gate::allows('warehouse_moves')) {
+            $warehouse_move = WarehouseMove::find($id);
+            $warehouse_move->delete();
+            return self::index_fetch_warehouse_moves(10, 200, 'حواله انتقالی حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

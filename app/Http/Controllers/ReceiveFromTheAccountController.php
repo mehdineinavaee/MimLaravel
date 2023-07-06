@@ -6,6 +6,7 @@ use App\Http\Requests\ReceiveFromTheAccountRequest;
 use App\Models\BankAccount;
 use App\Models\ReceiveFromTheAccount;
 use App\Models\TarafHesab;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -182,15 +183,19 @@ class ReceiveFromTheAccountController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_receive_from_the_account($row, 200, '');
+        if (Gate::allows('receive_from_the_account')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_receive_from_the_account($row, 200, '');
+            }
+            $taraf_hesabs = TarafHesab::all();
+            $bank_accounts = BankAccount::all();
+            return view('financial-management/receive-from-the-account.index')
+                ->with('taraf_hesabs', $taraf_hesabs)
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $taraf_hesabs = TarafHesab::all();
-        $bank_accounts = BankAccount::all();
-        return view('financial-management/receive-from-the-account.index')
-            ->with('taraf_hesabs', $taraf_hesabs)
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -211,22 +216,26 @@ class ReceiveFromTheAccountController extends Controller
      */
     public function store(ReceiveFromTheAccountRequest $request)
     {
-        $receive_from_the_account = new ReceiveFromTheAccount();
-        $receive_from_the_account->form_date = $request->input('form_date');
-        $receive_from_the_account->form_number = $request->input('form_number');
-        $receive_from_the_account->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-        $receive_from_the_account->considerations1 = $request->input('considerations1');
-        $receive_from_the_account->date = $request->input('date');
-        $receive_from_the_account->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-        $receive_from_the_account->wage = str_replace(",", "", $request->input('wage'));
-        $receive_from_the_account->issue_tracking = $request->input('issue_tracking');
-        $receive_from_the_account->considerations2 = $request->input('considerations2');
-        $receive_from_the_account->paid_discount = str_replace(",", "", $request->input('paid_discount'));
-        $receive_from_the_account->taraf_hesab()->associate($request->taraf_hesab_name);
-        $receive_from_the_account->bank_account()->associate($request->bank_account_details);
-        $receive_from_the_account->save();
-        $row = $request["row"];
-        return self::index_fetch_receive_from_the_account($row, 200, 'دریافت جدید از طرف حساب ذخیره شد');
+        if (Gate::allows('receive_from_the_account')) {
+            $receive_from_the_account = new ReceiveFromTheAccount();
+            $receive_from_the_account->form_date = $request->input('form_date');
+            $receive_from_the_account->form_number = $request->input('form_number');
+            $receive_from_the_account->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+            $receive_from_the_account->considerations1 = $request->input('considerations1');
+            $receive_from_the_account->date = $request->input('date');
+            $receive_from_the_account->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+            $receive_from_the_account->wage = str_replace(",", "", $request->input('wage'));
+            $receive_from_the_account->issue_tracking = $request->input('issue_tracking');
+            $receive_from_the_account->considerations2 = $request->input('considerations2');
+            $receive_from_the_account->paid_discount = str_replace(",", "", $request->input('paid_discount'));
+            $receive_from_the_account->taraf_hesab()->associate($request->taraf_hesab_name);
+            $receive_from_the_account->bank_account()->associate($request->bank_account_details);
+            $receive_from_the_account->save();
+            $row = $request["row"];
+            return self::index_fetch_receive_from_the_account($row, 200, 'دریافت جدید از طرف حساب ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -248,17 +257,21 @@ class ReceiveFromTheAccountController extends Controller
      */
     public function edit($id)
     {
-        $receive_from_the_account = ReceiveFromTheAccount::find($id);
-        if ($receive_from_the_account) {
-            return response()->json([
-                'status' => 200,
-                'receive_from_the_account' => $receive_from_the_account,
-            ]);
+        if (Gate::allows('receive_from_the_account')) {
+            $receive_from_the_account = ReceiveFromTheAccount::find($id);
+            if ($receive_from_the_account) {
+                return response()->json([
+                    'status' => 200,
+                    'receive_from_the_account' => $receive_from_the_account,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'دریافت از طرف حساب یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'دریافت از طرف حساب یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -271,28 +284,32 @@ class ReceiveFromTheAccountController extends Controller
      */
     public function update(ReceiveFromTheAccountRequest $request, $id)
     {
-        $receive_from_the_account = ReceiveFromTheAccount::find($id);
-        if ($receive_from_the_account) {
-            $receive_from_the_account->form_date = $request->input('form_date');
-            $receive_from_the_account->form_number = $request->input('form_number');
-            $receive_from_the_account->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-            $receive_from_the_account->considerations1 = $request->input('considerations1');
-            $receive_from_the_account->date = $request->input('date');
-            $receive_from_the_account->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-            $receive_from_the_account->wage = str_replace(",", "", $request->input('wage'));
-            $receive_from_the_account->issue_tracking = $request->input('issue_tracking');
-            $receive_from_the_account->considerations2 = $request->input('considerations2');
-            $receive_from_the_account->paid_discount = str_replace(",", "", $request->input('paid_discount'));
-            $receive_from_the_account->taraf_hesab()->associate($request->taraf_hesab_name);
-            $receive_from_the_account->bank_account()->associate($request->bank_account_details);
-            $receive_from_the_account->update();
-            $row = $request["row"];
-            return self::index_fetch_receive_from_the_account($row, 200, 'دریافت از طرف حساب ویرایش شد');
+        if (Gate::allows('receive_from_the_account')) {
+            $receive_from_the_account = ReceiveFromTheAccount::find($id);
+            if ($receive_from_the_account) {
+                $receive_from_the_account->form_date = $request->input('form_date');
+                $receive_from_the_account->form_number = $request->input('form_number');
+                $receive_from_the_account->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+                $receive_from_the_account->considerations1 = $request->input('considerations1');
+                $receive_from_the_account->date = $request->input('date');
+                $receive_from_the_account->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+                $receive_from_the_account->wage = str_replace(",", "", $request->input('wage'));
+                $receive_from_the_account->issue_tracking = $request->input('issue_tracking');
+                $receive_from_the_account->considerations2 = $request->input('considerations2');
+                $receive_from_the_account->paid_discount = str_replace(",", "", $request->input('paid_discount'));
+                $receive_from_the_account->taraf_hesab()->associate($request->taraf_hesab_name);
+                $receive_from_the_account->bank_account()->associate($request->bank_account_details);
+                $receive_from_the_account->update();
+                $row = $request["row"];
+                return self::index_fetch_receive_from_the_account($row, 200, 'دریافت از طرف حساب ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -304,8 +321,12 @@ class ReceiveFromTheAccountController extends Controller
      */
     public function destroy($id)
     {
-        $receive_from_the_account = ReceiveFromTheAccount::find($id);
-        $receive_from_the_account->delete();
-        return self::index_fetch_receive_from_the_account(10, 200, 'دریافت از طرف حساب حذف شد');
+        if (Gate::allows('receive_from_the_account')) {
+            $receive_from_the_account = ReceiveFromTheAccount::find($id);
+            $receive_from_the_account->delete();
+            return self::index_fetch_receive_from_the_account(10, 200, 'دریافت از طرف حساب حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

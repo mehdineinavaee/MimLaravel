@@ -250,5 +250,11 @@ return [
         'remittance_no' => 'شماره سند',
         'remittance_date' => 'تاریخ سند',
         'shareholder' => 'سهام دار',
+        'cash_register' => 'صندوق',
+        'fund' => 'صندوق',
+        'bank_account' => 'حساب بانکی',
+        'taraf_hesab' => 'طرف حساب',
+        'issue_date' => 'تاریخ صدور',
+        'role_name' => 'نقش',
     ],
 ];

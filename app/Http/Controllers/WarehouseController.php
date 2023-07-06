@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WarehouseRequest;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -106,11 +107,15 @@ class WarehouseController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_warehouse($row, 200, '');
+        if (Gate::allows('warehouse')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_warehouse($row, 200, '');
+            }
+            return view('taarife-payeh/warehouse.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/warehouse.index');
     }
 
     /**
@@ -131,13 +136,17 @@ class WarehouseController extends Controller
      */
     public function store(WarehouseRequest $request)
     {
-        $warehouse = new Warehouse();
-        $warehouse->chk_active = $request->chk_active;
-        $warehouse->code = $request->input('code');
-        $warehouse->title = $request->input('title');
-        $warehouse->save();
-        $row = $request["row"];
-        return self::index_fetch_warehouse($row, 200, 'انبار جدید ذخیره شد');
+        if (Gate::allows('warehouse')) {
+            $warehouse = new Warehouse();
+            $warehouse->chk_active = $request->chk_active;
+            $warehouse->code = $request->input('code');
+            $warehouse->title = $request->input('title');
+            $warehouse->save();
+            $row = $request["row"];
+            return self::index_fetch_warehouse($row, 200, 'انبار جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -159,17 +168,21 @@ class WarehouseController extends Controller
      */
     public function edit($id)
     {
-        $warehouse = Warehouse::find($id);
-        if ($warehouse) {
-            return response()->json([
-                'status' => 200,
-                'warehouse' => $warehouse,
-            ]);
+        if (Gate::allows('warehouse')) {
+            $warehouse = Warehouse::find($id);
+            if ($warehouse) {
+                return response()->json([
+                    'status' => 200,
+                    'warehouse' => $warehouse,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'انبار یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'انبار یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -182,19 +195,23 @@ class WarehouseController extends Controller
      */
     public function update(WarehouseRequest $request, $id)
     {
-        $warehouse = Warehouse::find($id);
-        if ($warehouse) {
-            $warehouse->chk_active = $request->chk_active;
-            $warehouse->code = $request->input('code');
-            $warehouse->title = $request->input('title');
-            $warehouse->update();
-            $row = $request["row"];
-            return self::index_fetch_warehouse($row, 200, 'انبار ویرایش شد');
+        if (Gate::allows('warehouse')) {
+            $warehouse = Warehouse::find($id);
+            if ($warehouse) {
+                $warehouse->chk_active = $request->chk_active;
+                $warehouse->code = $request->input('code');
+                $warehouse->title = $request->input('title');
+                $warehouse->update();
+                $row = $request["row"];
+                return self::index_fetch_warehouse($row, 200, 'انبار ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -206,8 +223,12 @@ class WarehouseController extends Controller
      */
     public function destroy($id)
     {
-        $warehouse = Warehouse::find($id);
-        $warehouse->delete();
-        return self::index_fetch_warehouse(10, 200, 'انبار حذف شد');
+        if (Gate::allows('warehouse')) {
+            $warehouse = Warehouse::find($id);
+            $warehouse->delete();
+            return self::index_fetch_warehouse(10, 200, 'انبار حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

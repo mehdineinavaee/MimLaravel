@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileRequest;
 use App\Models\Profile;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -50,28 +51,32 @@ class ProfileController extends Controller
 
     public function imgUploadPost(Request $request)
     {
-        if ($request->ajax()) {
-            $data = $request->file('file');
-            $current_user = auth()->user();
+        if (Gate::allows('profile')) {
+            if ($request->ajax()) {
+                $data = $request->file('file');
+                $current_user = auth()->user();
 
-            $fileName = $current_user->cover;
-            if (Storage::exists('public/users/' . $fileName)) {
-                Storage::delete('public/users/' . $fileName);
-                /*
+                $fileName = $current_user->cover;
+                if (Storage::exists('public/users/' . $fileName)) {
+                    Storage::delete('public/users/' . $fileName);
+                    /*
                      Delete Multiple File like this way
                      Storage::delete(['courses/test.png', 'courses/test2.png']);
                  */
+                }
+                $path = $request->file->store('public/users');
+                $current_user->cover = basename($path);
+
+                DB::table('users')->where('email', $current_user->email)->update(['cover' => $current_user->cover]);
+                $upload_success = $data->move($path, $current_user->cover);
+
+                return response()->json([
+                    'success' => 'done',
+                    'valueimg' => $data
+                ]);
             }
-            $path = $request->file->store('public/users');
-            $current_user->cover = basename($path);
-
-            DB::table('users')->where('email', $current_user->email)->update(['cover' => $current_user->cover]);
-            $upload_success = $data->move($path, $current_user->cover);
-
-            return response()->json([
-                'success' => 'done',
-                'valueimg' => $data
-            ]);
+        } else {
+            return abort(401);
         }
     }
 
@@ -94,9 +99,13 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
-        $user = User::find($id);
-        return view('security/profile.edit')
-            ->with('user', $user);
+        if (Gate::allows('profile')) {
+            $user = User::find($id);
+            return view('security/profile.edit')
+                ->with('user', $user);
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -108,43 +117,51 @@ class ProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $current_user = User::find($id);
+        if (Gate::allows('profile')) {
+            $current_user = User::find($id);
 
-        if ($current_user) {
-            $current_user->national_code = $request->input('national_code');
-            $current_user->father = $request->input('father');
-            $current_user->birthdate = $request->input('birthdate');
-            $current_user->occupation = $request->input('occupation');
-            $current_user->update();
+            if ($current_user) {
+                $current_user->national_code = $request->input('national_code');
+                $current_user->father = $request->input('father');
+                $current_user->birthdate = $request->input('birthdate');
+                $current_user->occupation = $request->input('occupation');
+                $current_user->update();
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'اطلاعات با موفقیت ثبت شد',
-            ]);
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'اطلاعات با موفقیت ثبت شد',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
     public function update_password(ProfileRequest $request)
     {
-        $current_user = auth()->user();
-        if (Hash::check($request->old_password, $current_user->password)) {
-            $current_user->update([
-                'password' => bcrypt($request->password)
-            ]);
-            return response()->json([
-                'status' => 200,
-                'message' => 'رمز عبور تغییر کرد',
-            ]);
+        if (Gate::allows('profile')) {
+            $current_user = auth()->user();
+            if (Hash::check($request->old_password, $current_user->password)) {
+                $current_user->update([
+                    'password' => bcrypt($request->password)
+                ]);
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'رمز عبور تغییر کرد',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'رمز عبور فعلی اشتباه می باشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'رمز عبور فعلی اشتباه می باشد',
-            ]);
+            return abort(401);
         }
     }
 

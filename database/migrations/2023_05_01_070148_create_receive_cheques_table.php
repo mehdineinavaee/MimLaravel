@@ -15,6 +15,13 @@ return new class extends Migration
     {
         Schema::create('receive_cheques', function (Blueprint $table) {
             $table->id();
+            $table->string('amount')->nullable(); // مبلغ چک
+            $table->string('issue_date')->nullable(); // تاریخ صدور
+            $table->string('due_date')->nullable(); // تاریخ سر رسید
+            $table->string('serial_number')->nullable(); // شماره سریال چک
+            $table->string('bank_name')->nullable(); // نام بانک و شعبه
+            $table->string('account_number')->nullable(); // شماره حساب
+            $table->string('considerations')->nullable(); // ملاحظات
             $table->timestamps();
         });
     }

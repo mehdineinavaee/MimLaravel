@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DepositRequest;
 use App\Models\BankAccount;
 use App\Models\Deposit;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -137,13 +138,17 @@ class DepositController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_deposit($row, 200, '');
+        if (Gate::allows('deposit')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_deposit($row, 200, '');
+            }
+            $bank_accounts = BankAccount::all();
+            return view('cheque-management/deposit.index')
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $bank_accounts = BankAccount::all();
-        return view('cheque-management/deposit.index')
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -164,19 +169,23 @@ class DepositController extends Controller
      */
     public function store(DepositRequest $request)
     {
-        $deposit = new Deposit();
-        $deposit->form_number = $request->input('form_number');
-        $deposit->form_date = $request->input('form_date');
-        $deposit->place = $request->input('place');
-        $deposit->mark_back = $request->input('mark_back');
-        $deposit->serial_number = $request->input('serial_number');
-        $deposit->total = str_replace(",", "", $request->input('total'));
-        $deposit->due_date = $request->input('due_date');
-        $deposit->payer = $request->input('payer');
-        $deposit->bank_account()->associate($request->bank_account_details);
-        $deposit->save();
-        $row = $request["row"];
-        return self::index_fetch_deposit($row, 200, 'خواباندن چک به حساب ذخیره شد');
+        if (Gate::allows('deposit')) {
+            $deposit = new Deposit();
+            $deposit->form_number = $request->input('form_number');
+            $deposit->form_date = $request->input('form_date');
+            $deposit->place = $request->input('place');
+            $deposit->mark_back = $request->input('mark_back');
+            $deposit->serial_number = $request->input('serial_number');
+            $deposit->total = str_replace(",", "", $request->input('total'));
+            $deposit->due_date = $request->input('due_date');
+            $deposit->payer = $request->input('payer');
+            $deposit->bank_account()->associate($request->bank_account_details);
+            $deposit->save();
+            $row = $request["row"];
+            return self::index_fetch_deposit($row, 200, 'خواباندن چک به حساب ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -198,17 +207,21 @@ class DepositController extends Controller
      */
     public function edit($id)
     {
-        $deposit = Deposit::find($id);
-        if ($deposit) {
-            return response()->json([
-                'status' => 200,
-                'deposit' => $deposit,
-            ]);
+        if (Gate::allows('deposit')) {
+            $deposit = Deposit::find($id);
+            if ($deposit) {
+                return response()->json([
+                    'status' => 200,
+                    'deposit' => $deposit,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'خواباندن چک به حساب یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'خواباندن چک به حساب یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -221,25 +234,29 @@ class DepositController extends Controller
      */
     public function update(DepositRequest $request, $id)
     {
-        $deposit = Deposit::find($id);
-        if ($deposit) {
-            $deposit->form_number = $request->input('form_number');
-            $deposit->form_date = $request->input('form_date');
-            $deposit->place = $request->input('place');
-            $deposit->mark_back = $request->input('mark_back');
-            $deposit->serial_number = $request->input('serial_number');
-            $deposit->total = str_replace(",", "", $request->input('total'));
-            $deposit->due_date = $request->input('due_date');
-            $deposit->payer = $request->input('payer');
-            $deposit->bank_account()->associate($request->bank_account_details);
-            $deposit->update();
-            $row = $request["row"];
-            return self::index_fetch_deposit($row, 200, 'خواباندن چک به حساب ویرایش شد');
+        if (Gate::allows('deposit')) {
+            $deposit = Deposit::find($id);
+            if ($deposit) {
+                $deposit->form_number = $request->input('form_number');
+                $deposit->form_date = $request->input('form_date');
+                $deposit->place = $request->input('place');
+                $deposit->mark_back = $request->input('mark_back');
+                $deposit->serial_number = $request->input('serial_number');
+                $deposit->total = str_replace(",", "", $request->input('total'));
+                $deposit->due_date = $request->input('due_date');
+                $deposit->payer = $request->input('payer');
+                $deposit->bank_account()->associate($request->bank_account_details);
+                $deposit->update();
+                $row = $request["row"];
+                return self::index_fetch_deposit($row, 200, 'خواباندن چک به حساب ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -251,8 +268,12 @@ class DepositController extends Controller
      */
     public function destroy($id)
     {
-        $deposit = Deposit::find($id);
-        $deposit->delete();
-        return self::index_fetch_deposit(10, 200, 'خواباندن چک به حساب حذف شد');
+        if (Gate::allows('deposit')) {
+            $deposit = Deposit::find($id);
+            $deposit->delete();
+            return self::index_fetch_deposit(10, 200, 'خواباندن چک به حساب حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

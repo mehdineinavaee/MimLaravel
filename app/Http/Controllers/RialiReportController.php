@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RialiReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class RialiReportController extends Controller
      */
     public function index()
     {
-        return view('product-warehouse-reports/riali-report.index');
+        if (Gate::allows('riali_report')) {
+            return view('product-warehouse-reports/riali-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

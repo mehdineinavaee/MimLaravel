@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0 border-0">
+            <div class="modal-header row d-flex justify-content-start mx-1 mx-sm-3 mb-0 pb-0 border-0">
                 <div class="tabs active" id="edit_tab01">
                     <h6 class="font-weight-bold">نقد</h6>
                 </div>

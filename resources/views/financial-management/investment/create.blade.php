@@ -18,9 +18,9 @@
                         <select id="add_shareholder" name="add_shareholder" class="form-control select2"
                             style="width: 100%;">
                             <option value="" selected>سهام دار را انتخاب کنید</option>
-                            @foreach ($banks_types as $banks_type)
-                                <option value={{ $banks_type->id }}>
-                                    {{ $banks_type->bank_name }}
+                            @foreach ($investors as $investor)
+                                <option value={{ $investor->id }}>
+                                    {{ $investor->fullname }}
                                 </option>
                             @endforeach
                         </select>
@@ -42,8 +42,8 @@
                 </div>
             </div>
 
-            <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0 border-0">
-                <div class="tabs active" id="add_tab01">
+            <div class="modal-header row d-flex justify-content-start mx-1 mx-sm-3 mb-0 pb-0 border-0">
+                <div class="tabs active" id="add_tab01" style="margin-right: 0px;">
                     <h6 class="font-weight-bold">نقد</h6>
                 </div>
                 <div class="tabs" id="add_tab02">

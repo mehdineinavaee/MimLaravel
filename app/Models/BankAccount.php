@@ -79,4 +79,14 @@ class BankAccount extends Model
     {
         return $this->hasMany(Investment::class);
     }
+
+    public function bank_accounts_periods()
+    {
+        return $this->hasMany(BankAccountsPeriod::class);
+    }
+
+    public function pay_cheques()
+    {
+        return $this->hasMany(PayCheque::class);
+    }
 }

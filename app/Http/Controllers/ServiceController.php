@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ServiceRequest;
 use App\Models\Service;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -124,11 +125,15 @@ class ServiceController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_service($row, 200, '');
+        if (Gate::allows('services')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_service($row, 200, '');
+            }
+            return view('taarife-payeh/services.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/services.index');
     }
 
     /**
@@ -149,15 +154,19 @@ class ServiceController extends Controller
      */
     public function store(ServiceRequest $request)
     {
-        $service = new Service();
-        $service->chk_active = $request->input('chk_active');
-        $service->service_code = $request->input('service_code');
-        $service->service_name = $request->input('service_name');
-        $service->price = str_replace(",", "", $request->input('price'));
-        $service->group = $request->input('group');
-        $service->save();
-        $row = $request["row"];
-        return self::index_fetch_service($row, 200, 'خدمات جدید ذخیره شد');
+        if (Gate::allows('services')) {
+            $service = new Service();
+            $service->chk_active = $request->input('chk_active');
+            $service->service_code = $request->input('service_code');
+            $service->service_name = $request->input('service_name');
+            $service->price = str_replace(",", "", $request->input('price'));
+            $service->group = $request->input('group');
+            $service->save();
+            $row = $request["row"];
+            return self::index_fetch_service($row, 200, 'خدمات جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -179,17 +188,21 @@ class ServiceController extends Controller
      */
     public function edit($id)
     {
-        $service = Service::find($id);
-        if ($service) {
-            return response()->json([
-                'status' => 200,
-                'service' => $service,
-            ]);
+        if (Gate::allows('services')) {
+            $service = Service::find($id);
+            if ($service) {
+                return response()->json([
+                    'status' => 200,
+                    'service' => $service,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'خدمات یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'خدمات یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -202,21 +215,25 @@ class ServiceController extends Controller
      */
     public function update(ServiceRequest $request, $id)
     {
-        $service = Service::find($id);
-        if ($service) {
-            $service->chk_active = $request->input('chk_active');
-            $service->service_code = $request->input('service_code');
-            $service->service_name = $request->input('service_name');
-            $service->price = str_replace(",", "", $request->input('price'));
-            $service->group = $request->input('group');
-            $service->update();
-            $row = $request["row"];
-            return self::index_fetch_service($row, 200, 'خدمات ویرایش شد');
+        if (Gate::allows('services')) {
+            $service = Service::find($id);
+            if ($service) {
+                $service->chk_active = $request->input('chk_active');
+                $service->service_code = $request->input('service_code');
+                $service->service_name = $request->input('service_name');
+                $service->price = str_replace(",", "", $request->input('price'));
+                $service->group = $request->input('group');
+                $service->update();
+                $row = $request["row"];
+                return self::index_fetch_service($row, 200, 'خدمات ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -228,8 +245,12 @@ class ServiceController extends Controller
      */
     public function destroy($id)
     {
-        $service = Service::find($id);
-        $service->delete();
-        return self::index_fetch_service(10, 200, 'خدمات حذف شد');
+        if (Gate::allows('services')) {
+            $service = Service::find($id);
+            $service->delete();
+            return self::index_fetch_service(10, 200, 'خدمات حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

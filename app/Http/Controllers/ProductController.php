@@ -6,6 +6,7 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Models\ProductNoUnit;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -157,15 +158,19 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_product($row, 200, '');
+        if (Gate::allows('products')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_product($row, 200, '');
+            }
+            $product_unit = ProductNoUnit::orderBy('title', 'asc')->get();
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            return view('taarife-payeh/products.index')
+                ->with('product_unit', $product_unit)
+                ->with('warehouses', $warehouses);
+        } else {
+            return abort(401);
         }
-        $product_unit = ProductNoUnit::orderBy('title', 'asc')->get();
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        return view('taarife-payeh/products.index')
-            ->with('product_unit', $product_unit)
-            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -186,23 +191,27 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        $product = new Product();
-        $product->code = $request->input('code');
-        $product->main_group = $request->input('main_group');
-        $product->sub_group = $request->input('sub_group');
-        $product->product_name = $request->input('product_name');
-        $product->sell_price = str_replace(",", "", $request->input('sell_price'));
-        $product->value_added_group = $request->input('value_added_group');
-        $product->chk_active = $request->input('chk_active');
-        $product->introduce_date = $request->input('introduce_date');
-        $product->latest_buy_price = str_replace(",", "", $request->input('latest_buy_price'));
-        $product->main_barcode = $request->input('main_barcode');
-        $product->order_point = $request->input('order_point');
-        $product->product_unit()->associate($request->product_unit);
-        $product->warehouse()->associate($request->warehouse_name);
-        $product->save();
-        $row = $request["row"];
-        return self::index_fetch_product($row, 200, 'کالای جدید ذخیره شد');
+        if (Gate::allows('products')) {
+            $product = new Product();
+            $product->code = $request->input('code');
+            $product->main_group = $request->input('main_group');
+            $product->sub_group = $request->input('sub_group');
+            $product->product_name = $request->input('product_name');
+            $product->sell_price = str_replace(",", "", $request->input('sell_price'));
+            $product->value_added_group = $request->input('value_added_group');
+            $product->chk_active = $request->input('chk_active');
+            $product->introduce_date = $request->input('introduce_date');
+            $product->latest_buy_price = str_replace(",", "", $request->input('latest_buy_price'));
+            $product->main_barcode = $request->input('main_barcode');
+            $product->order_point = $request->input('order_point');
+            $product->product_unit()->associate($request->product_unit);
+            $product->warehouse()->associate($request->warehouse_name);
+            $product->save();
+            $row = $request["row"];
+            return self::index_fetch_product($row, 200, 'کالای جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -224,17 +233,21 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product = Product::find($id);
-        if ($product) {
-            return response()->json([
-                'status' => 200,
-                'product' => $product,
-            ]);
+        if (Gate::allows('products')) {
+            $product = Product::find($id);
+            if ($product) {
+                return response()->json([
+                    'status' => 200,
+                    'product' => $product,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'کالا یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'کالا یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -247,29 +260,33 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, $id)
     {
-        $product = Product::find($id);
-        if ($product) {
-            $product->code = $request->input('code');
-            $product->main_group = $request->input('main_group');
-            $product->sub_group = $request->input('sub_group');
-            $product->product_name = $request->input('product_name');
-            $product->sell_price = str_replace(",", "", $request->input('sell_price'));
-            $product->value_added_group = $request->input('value_added_group');
-            $product->chk_active = $request->input('chk_active');
-            $product->introduce_date = $request->input('introduce_date');
-            $product->latest_buy_price = str_replace(",", "", $request->input('latest_buy_price'));
-            $product->main_barcode = $request->input('main_barcode');
-            $product->order_point = $request->input('order_point');
-            $product->product_unit()->associate($request->product_unit);
-            $product->warehouse()->associate($request->warehouse_name);
-            $product->update();
-            $row = $request["row"];
-            return self::index_fetch_product($row, 200, 'کالا ویرایش شد');
+        if (Gate::allows('products')) {
+            $product = Product::find($id);
+            if ($product) {
+                $product->code = $request->input('code');
+                $product->main_group = $request->input('main_group');
+                $product->sub_group = $request->input('sub_group');
+                $product->product_name = $request->input('product_name');
+                $product->sell_price = str_replace(",", "", $request->input('sell_price'));
+                $product->value_added_group = $request->input('value_added_group');
+                $product->chk_active = $request->input('chk_active');
+                $product->introduce_date = $request->input('introduce_date');
+                $product->latest_buy_price = str_replace(",", "", $request->input('latest_buy_price'));
+                $product->main_barcode = $request->input('main_barcode');
+                $product->order_point = $request->input('order_point');
+                $product->product_unit()->associate($request->product_unit);
+                $product->warehouse()->associate($request->warehouse_name);
+                $product->update();
+                $row = $request["row"];
+                return self::index_fetch_product($row, 200, 'کالا ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -281,8 +298,12 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::find($id);
-        $product->delete();
-        return self::index_fetch_product(10, 200, 'کالا حذف شد');
+        if (Gate::allows('products')) {
+            $product = Product::find($id);
+            $product->delete();
+            return self::index_fetch_product(10, 200, 'کالا حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

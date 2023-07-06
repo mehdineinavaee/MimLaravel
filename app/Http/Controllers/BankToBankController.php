@@ -6,6 +6,7 @@ use App\Http\Requests\BankToBankRequest;
 use App\Models\BankAccount;
 use App\Models\BankToBank;
 use App\Models\BankType;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -169,15 +170,19 @@ class BankToBankController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_bank_to_bank($row, 200, '');
+        if (Gate::allows('bank_to_bank')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_bank_to_bank($row, 200, '');
+            }
+            $banks_types = BankType::all();
+            $bank_accounts = BankAccount::all();
+            return view('financial-management/bank-to-bank.index')
+                ->with('banks_types', $banks_types)
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $banks_types = BankType::all();
-        $bank_accounts = BankAccount::all();
-        return view('financial-management/bank-to-bank.index')
-            ->with('banks_types', $banks_types)
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -198,22 +203,26 @@ class BankToBankController extends Controller
      */
     public function store(BankToBankRequest $request)
     {
-        $bank_to_bank = new BankToBank();
-        $bank_to_bank->form_date = $request->input('form_date');
-        $bank_to_bank->form_number = $request->input('form_number');
-        $bank_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-        $bank_to_bank->considerations1 = $request->input('considerations1');
-        $bank_to_bank->date = $request->input('date');
-        $bank_to_bank->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-        $bank_to_bank->wage = str_replace(",", "", $request->input('wage'));
-        $bank_to_bank->issue_tracking = $request->input('issue_tracking');
-        $bank_to_bank->considerations2 = $request->input('considerations2');
-        $bank_to_bank->from_bank()->associate($request->from_bank);
-        $bank_to_bank->to_bank()->associate($request->to_bank);
-        $bank_to_bank->bank_account()->associate($request->bank_account_details);
-        $bank_to_bank->save();
-        $row = $request["row"];
-        return self::index_fetch_bank_to_bank($row, 200, 'از بانک به بانک جدید ذخیره شد');
+        if (Gate::allows('bank_to_bank')) {
+            $bank_to_bank = new BankToBank();
+            $bank_to_bank->form_date = $request->input('form_date');
+            $bank_to_bank->form_number = $request->input('form_number');
+            $bank_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+            $bank_to_bank->considerations1 = $request->input('considerations1');
+            $bank_to_bank->date = $request->input('date');
+            $bank_to_bank->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+            $bank_to_bank->wage = str_replace(",", "", $request->input('wage'));
+            $bank_to_bank->issue_tracking = $request->input('issue_tracking');
+            $bank_to_bank->considerations2 = $request->input('considerations2');
+            $bank_to_bank->from_bank()->associate($request->from_bank);
+            $bank_to_bank->to_bank()->associate($request->to_bank);
+            $bank_to_bank->bank_account()->associate($request->bank_account_details);
+            $bank_to_bank->save();
+            $row = $request["row"];
+            return self::index_fetch_bank_to_bank($row, 200, 'از بانک به بانک جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -235,17 +244,21 @@ class BankToBankController extends Controller
      */
     public function edit($id)
     {
-        $bank_to_bank = BankToBank::find($id);
-        if ($bank_to_bank) {
-            return response()->json([
-                'status' => 200,
-                'bank_to_bank' => $bank_to_bank,
-            ]);
+        if (Gate::allows('bank_to_bank')) {
+            $bank_to_bank = BankToBank::find($id);
+            if ($bank_to_bank) {
+                return response()->json([
+                    'status' => 200,
+                    'bank_to_bank' => $bank_to_bank,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'از بانک به بانک یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'از بانک به بانک یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -258,28 +271,32 @@ class BankToBankController extends Controller
      */
     public function update(BankToBankRequest $request, $id)
     {
-        $bank_to_bank = BankToBank::find($id);
-        if ($bank_to_bank) {
-            $bank_to_bank->form_date = $request->input('form_date');
-            $bank_to_bank->form_number = $request->input('form_number');
-            $bank_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-            $bank_to_bank->considerations1 = $request->input('considerations1');
-            $bank_to_bank->date = $request->input('date');
-            $bank_to_bank->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-            $bank_to_bank->wage = str_replace(",", "", $request->input('wage'));
-            $bank_to_bank->issue_tracking = $request->input('issue_tracking');
-            $bank_to_bank->considerations2 = $request->input('considerations2');
-            $bank_to_bank->from_bank()->associate($request->from_bank);
-            $bank_to_bank->to_bank()->associate($request->to_bank);
-            $bank_to_bank->bank_account()->associate($request->bank_account_details);
-            $bank_to_bank->update();
-            $row = $request["row"];
-            return self::index_fetch_bank_to_bank($row, 200, 'از بانک به بانک ویرایش شد');
+        if (Gate::allows('bank_to_bank')) {
+            $bank_to_bank = BankToBank::find($id);
+            if ($bank_to_bank) {
+                $bank_to_bank->form_date = $request->input('form_date');
+                $bank_to_bank->form_number = $request->input('form_number');
+                $bank_to_bank->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+                $bank_to_bank->considerations1 = $request->input('considerations1');
+                $bank_to_bank->date = $request->input('date');
+                $bank_to_bank->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+                $bank_to_bank->wage = str_replace(",", "", $request->input('wage'));
+                $bank_to_bank->issue_tracking = $request->input('issue_tracking');
+                $bank_to_bank->considerations2 = $request->input('considerations2');
+                $bank_to_bank->from_bank()->associate($request->from_bank);
+                $bank_to_bank->to_bank()->associate($request->to_bank);
+                $bank_to_bank->bank_account()->associate($request->bank_account_details);
+                $bank_to_bank->update();
+                $row = $request["row"];
+                return self::index_fetch_bank_to_bank($row, 200, 'از بانک به بانک ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -291,8 +308,12 @@ class BankToBankController extends Controller
      */
     public function destroy($id)
     {
-        $bank_to_bank = BankToBank::find($id);
-        $bank_to_bank->delete();
-        return self::index_fetch_bank_to_bank(10, 200, 'از بانک به بانک حذف شد');
+        if (Gate::allows('bank_to_bank')) {
+            $bank_to_bank = BankToBank::find($id);
+            $bank_to_bank->delete();
+            return self::index_fetch_bank_to_bank(10, 200, 'از بانک به بانک حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\KolRequest;
 use App\Models\Kol;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -51,17 +52,21 @@ class KolController extends Controller
      */
     public function store(KolRequest $request)
     {
-        $kol = new Kol();
-        $kol->account_code = $request->input('account_code');
-        $kol->account_name = $request->input('account_name');
-        $kol->account_nature = $request->input('account_nature');
-        $kol->active = $request->input('active');
-        $kol->account_group()->associate($request->account_group);
-        $kol->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'کل ذخیره شد',
-        ]);
+        if (Gate::allows('account_headings')) {
+            $kol = new Kol();
+            $kol->account_code = $request->input('account_code');
+            $kol->account_name = $request->input('account_name');
+            $kol->account_nature = $request->input('account_nature');
+            $kol->active = $request->input('active');
+            $kol->account_group()->associate($request->account_group);
+            $kol->save();
+            return response()->json([
+                'status' => 200,
+                'message' => 'کل ذخیره شد',
+            ]);
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -83,17 +88,21 @@ class KolController extends Controller
      */
     public function edit($id)
     {
-        $kol = Kol::find($id);
-        if ($kol) {
-            return response()->json([
-                'status' => 200,
-                'kol' => $kol,
-            ]);
+        if (Gate::allows('account_headings')) {
+            $kol = Kol::find($id);
+            if ($kol) {
+                return response()->json([
+                    'status' => 200,
+                    'kol' => $kol,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'کل یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'کل یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -106,23 +115,27 @@ class KolController extends Controller
      */
     public function update(KolRequest $request, $id)
     {
-        $kol = Kol::find($id);
-        if ($kol) {
-            $kol->account_code = $request->input('account_code');
-            $kol->account_name = $request->input('account_name');
-            $kol->account_nature = $request->input('account_nature');
-            $kol->active = $request->input('active');
-            $kol->account_group()->associate($request->account_group);
-            $kol->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'کل ویرایش شد',
-            ]);
+        if (Gate::allows('account_headings')) {
+            $kol = Kol::find($id);
+            if ($kol) {
+                $kol->account_code = $request->input('account_code');
+                $kol->account_name = $request->input('account_name');
+                $kol->account_nature = $request->input('account_nature');
+                $kol->active = $request->input('active');
+                $kol->account_group()->associate($request->account_group);
+                $kol->update();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'کل ویرایش شد',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -134,11 +147,15 @@ class KolController extends Controller
      */
     public function destroy($id)
     {
-        $kol = Kol::find($id);
-        $kol->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'کل حذف شد',
-        ]);
+        if (Gate::allows('account_headings')) {
+            $kol = Kol::find($id);
+            $kol->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'کل حذف شد',
+            ]);
+        } else {
+            return abort(401);
+        }
     }
 }

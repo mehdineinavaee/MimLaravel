@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('bank_accounts_periods', function (Blueprint $table) {
             $table->id();
+            $table->string('amount')->nullable(); // مبلغ
+            $table->string('considerations')->nullable(); // ملاحظات
             $table->timestamps();
         });
     }

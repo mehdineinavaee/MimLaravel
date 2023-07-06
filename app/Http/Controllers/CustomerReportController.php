@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomerReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class CustomerReportController extends Controller
      */
     public function index()
     {
-        return view('buy-sell-reports/customer-report.index');
+        if (Gate::allows('customer_report')) {
+            return view('buy-sell-reports/customer-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

@@ -13,7 +13,7 @@ class ReceiveChequeRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,14 @@ class ReceiveChequeRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'amount' => 'required',
+            'issue_date' => 'required',
+            'due_date' => 'required',
+            'serial_number' => 'required',
+            'bank_name' => 'required',
+            'account_number' => 'required',
+            'payer' => 'required',
+            'considerations' => 'required',
         ];
     }
 }

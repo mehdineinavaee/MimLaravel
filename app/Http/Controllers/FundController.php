@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FundRequest;
 use App\Models\Fund;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -140,11 +141,15 @@ class FundController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_fund($row, 200, '');
+        if (Gate::allows('fund')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_fund($row, 200, '');
+            }
+            return view('taarife-payeh/fund.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/fund.index');
     }
 
     /**
@@ -165,15 +170,19 @@ class FundController extends Controller
      */
     public function store(FundRequest $request)
     {
-        $fund = new Fund();
-        $fund->chk_system = $request->chk_system;
-        $fund->chk_active = $request->chk_active;
-        $fund->form_type = $request->input('form_type');
-        $fund->daramad_code = $request->input('daramad_code');
-        $fund->daramad_name = $request->input('daramad_name');
-        $fund->save();
-        $row = $request["row"];
-        return self::index_fetch_fund($row, 200, 'درآمد، هزینه، صندوق جدید ذخیره شد');
+        if (Gate::allows('fund')) {
+            $fund = new Fund();
+            $fund->chk_system = $request->chk_system;
+            $fund->chk_active = $request->chk_active;
+            $fund->form_type = $request->input('form_type');
+            $fund->daramad_code = $request->input('daramad_code');
+            $fund->daramad_name = $request->input('daramad_name');
+            $fund->save();
+            $row = $request["row"];
+            return self::index_fetch_fund($row, 200, 'درآمد، هزینه، صندوق جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -195,17 +204,21 @@ class FundController extends Controller
      */
     public function edit($id)
     {
-        $fund = Fund::find($id);
-        if ($fund) {
-            return response()->json([
-                'status' => 200,
-                'fund' => $fund,
-            ]);
+        if (Gate::allows('fund')) {
+            $fund = Fund::find($id);
+            if ($fund) {
+                return response()->json([
+                    'status' => 200,
+                    'fund' => $fund,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'درآمد، هزینه، صندوق یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'درآمد، هزینه، صندوق یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -218,21 +231,25 @@ class FundController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $fund = Fund::find($id);
-        if ($fund) {
-            $fund->chk_system = $request->chk_system;
-            $fund->chk_active = $request->chk_active;
-            $fund->form_type = $request->input('form_type');
-            $fund->daramad_code = $request->input('daramad_code');
-            $fund->daramad_name = $request->input('daramad_name');
-            $fund->update();
-            $row = $request["row"];
-            return self::index_fetch_fund($row, 200, 'درآمد، هزینه، صندوق ویرایش شد');
+        if (Gate::allows('fund')) {
+            $fund = Fund::find($id);
+            if ($fund) {
+                $fund->chk_system = $request->chk_system;
+                $fund->chk_active = $request->chk_active;
+                $fund->form_type = $request->input('form_type');
+                $fund->daramad_code = $request->input('daramad_code');
+                $fund->daramad_name = $request->input('daramad_name');
+                $fund->update();
+                $row = $request["row"];
+                return self::index_fetch_fund($row, 200, 'درآمد، هزینه، صندوق ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -244,8 +261,12 @@ class FundController extends Controller
      */
     public function destroy($id)
     {
-        $fund = Fund::find($id);
-        $fund->delete();
-        return self::index_fetch_fund(10, 200, 'درآمد، هزینه، صندوق حذف شد');
+        if (Gate::allows('fund')) {
+            $fund = Fund::find($id);
+            $fund->delete();
+            return self::index_fetch_fund(10, 200, 'درآمد، هزینه، صندوق حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

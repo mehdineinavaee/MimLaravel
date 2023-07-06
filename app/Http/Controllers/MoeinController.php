@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MoeinRequest;
 use App\Models\Moein;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -51,17 +52,21 @@ class MoeinController extends Controller
      */
     public function store(MoeinRequest $request)
     {
-        $moein = new Moein();
-        $moein->kol_account_name = $request->input('kol_account_name');
-        $moein->account_code = $request->input('account_code');
-        $moein->account_name = $request->input('account_name');
-        $moein->shenavar_tafsil = $request->input('shenavar_tafsil');
-        $moein->active = $request->input('active');
-        $moein->save();
-        return response()->json([
-            'status' => 200,
-            'message' => 'معین ذخیره شد',
-        ]);
+        if (Gate::allows('account_headings')) {
+            $moein = new Moein();
+            $moein->kol_account_name = $request->input('kol_account_name');
+            $moein->account_code = $request->input('account_code');
+            $moein->account_name = $request->input('account_name');
+            $moein->shenavar_tafsil = $request->input('shenavar_tafsil');
+            $moein->active = $request->input('active');
+            $moein->save();
+            return response()->json([
+                'status' => 200,
+                'message' => 'معین ذخیره شد',
+            ]);
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -83,17 +88,21 @@ class MoeinController extends Controller
      */
     public function edit($id)
     {
-        $moein = Moein::find($id);
-        if ($moein) {
-            return response()->json([
-                'status' => 200,
-                'moein' => $moein,
-            ]);
+        if (Gate::allows('account_headings')) {
+            $moein = Moein::find($id);
+            if ($moein) {
+                return response()->json([
+                    'status' => 200,
+                    'moein' => $moein,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'معین یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'معین یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -106,23 +115,27 @@ class MoeinController extends Controller
      */
     public function update(MoeinRequest $request, $id)
     {
-        $moein = Moein::find($id);
-        if ($moein) {
-            $moein->kol_account_name = $request->input('kol_account_name');
-            $moein->account_code = $request->input('account_code');
-            $moein->account_name = $request->input('account_name');
-            $moein->shenavar_tafsil = $request->input('shenavar_tafsil');
-            $moein->active = $request->input('active');
-            $moein->update();
-            return response()->json([
-                'status' => 200,
-                'message' => 'معین ویرایش شد',
-            ]);
+        if (Gate::allows('account_headings')) {
+            $moein = Moein::find($id);
+            if ($moein) {
+                $moein->kol_account_name = $request->input('kol_account_name');
+                $moein->account_code = $request->input('account_code');
+                $moein->account_name = $request->input('account_name');
+                $moein->shenavar_tafsil = $request->input('shenavar_tafsil');
+                $moein->active = $request->input('active');
+                $moein->update();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'معین ویرایش شد',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -134,11 +147,15 @@ class MoeinController extends Controller
      */
     public function destroy($id)
     {
-        $moein = Moein::find($id);
-        $moein->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'معین حذف شد',
-        ]);
+        if (Gate::allows('account_headings')) {
+            $moein = Moein::find($id);
+            $moein->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'معین حذف شد',
+            ]);
+        } else {
+            return abort(401);
+        }
     }
 }

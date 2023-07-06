@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ArzeshAfzoudeGroupRequest;
 use App\Models\ArzeshAfzoudeGroup;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -147,11 +148,15 @@ class ArzeshAfzoudeGroupController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_arzesh_afzoude_group($row, 200, '');
+        if (Gate::allows('arzesh_afzoude_groups')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_arzesh_afzoude_group($row, 200, '');
+            }
+            return view('taarife-payeh/arzesh-afzoude-groups.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/arzesh-afzoude-groups.index');
     }
 
     /**
@@ -172,15 +177,19 @@ class ArzeshAfzoudeGroupController extends Controller
      */
     public function store(ArzeshAfzoudeGroupRequest $request)
     {
-        $arzesh_afzoude_group = new ArzeshAfzoudeGroup();
-        $arzesh_afzoude_group->group_name = $request->input('group_name');
-        $arzesh_afzoude_group->financial_year = $request->input('financial_year');
-        $arzesh_afzoude_group->avarez = str_replace(",", "", $request->input('avarez'));
-        $arzesh_afzoude_group->maliyat = str_replace(",", "", $request->input('maliyat'));
-        $arzesh_afzoude_group->saghfe_moamelat = str_replace(",", "", $request->input('saghfe_moamelat'));
-        $arzesh_afzoude_group->save();
-        $row = $request["row"];
-        return self::index_fetch_arzesh_afzoude_group($row, 200, 'گروه ارزش افزوده جدید ذخیره شد');
+        if (Gate::allows('arzesh_afzoude_groups')) {
+            $arzesh_afzoude_group = new ArzeshAfzoudeGroup();
+            $arzesh_afzoude_group->group_name = $request->input('group_name');
+            $arzesh_afzoude_group->financial_year = $request->input('financial_year');
+            $arzesh_afzoude_group->avarez = str_replace(",", "", $request->input('avarez'));
+            $arzesh_afzoude_group->maliyat = str_replace(",", "", $request->input('maliyat'));
+            $arzesh_afzoude_group->saghfe_moamelat = str_replace(",", "", $request->input('saghfe_moamelat'));
+            $arzesh_afzoude_group->save();
+            $row = $request["row"];
+            return self::index_fetch_arzesh_afzoude_group($row, 200, 'گروه ارزش افزوده جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -202,17 +211,21 @@ class ArzeshAfzoudeGroupController extends Controller
      */
     public function edit($id)
     {
-        $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
-        if ($arzesh_afzoude_group) {
-            return response()->json([
-                'status' => 200,
-                'arzesh_afzoude_group' => $arzesh_afzoude_group,
-            ]);
+        if (Gate::allows('arzesh_afzoude_groups')) {
+            $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
+            if ($arzesh_afzoude_group) {
+                return response()->json([
+                    'status' => 200,
+                    'arzesh_afzoude_group' => $arzesh_afzoude_group,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'گروه ارزش افزوده یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'گروه ارزش افزوده یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -225,21 +238,25 @@ class ArzeshAfzoudeGroupController extends Controller
      */
     public function update(ArzeshAfzoudeGroupRequest $request, $id)
     {
-        $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
-        if ($arzesh_afzoude_group) {
-            $arzesh_afzoude_group->group_name = $request->input('group_name');
-            $arzesh_afzoude_group->financial_year = $request->input('financial_year');
-            $arzesh_afzoude_group->avarez = str_replace(",", "", $request->input('avarez'));
-            $arzesh_afzoude_group->maliyat = str_replace(",", "", $request->input('maliyat'));
-            $arzesh_afzoude_group->saghfe_moamelat = str_replace(",", "", $request->input('saghfe_moamelat'));
-            $arzesh_afzoude_group->update();
-            $row = $request["row"];
-            return self::index_fetch_arzesh_afzoude_group($row, 200, 'گروه ارزش افزوده ویرایش شد');
+        if (Gate::allows('arzesh_afzoude_groups')) {
+            $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
+            if ($arzesh_afzoude_group) {
+                $arzesh_afzoude_group->group_name = $request->input('group_name');
+                $arzesh_afzoude_group->financial_year = $request->input('financial_year');
+                $arzesh_afzoude_group->avarez = str_replace(",", "", $request->input('avarez'));
+                $arzesh_afzoude_group->maliyat = str_replace(",", "", $request->input('maliyat'));
+                $arzesh_afzoude_group->saghfe_moamelat = str_replace(",", "", $request->input('saghfe_moamelat'));
+                $arzesh_afzoude_group->update();
+                $row = $request["row"];
+                return self::index_fetch_arzesh_afzoude_group($row, 200, 'گروه ارزش افزوده ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -251,8 +268,12 @@ class ArzeshAfzoudeGroupController extends Controller
      */
     public function destroy($id)
     {
-        $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
-        $arzesh_afzoude_group->delete();
-        return self::index_fetch_arzesh_afzoude_group(10, 200, 'گروه ارزش افزوده حذف شد');
+        if (Gate::allows('arzesh_afzoude_groups')) {
+            $arzesh_afzoude_group = ArzeshAfzoudeGroup::find($id);
+            $arzesh_afzoude_group->delete();
+            return self::index_fetch_arzesh_afzoude_group(10, 200, 'گروه ارزش افزوده حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

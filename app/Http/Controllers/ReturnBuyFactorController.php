@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ReturnBuyFactor;
 use App\Models\TarafHesab;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -208,19 +209,23 @@ class ReturnBuyFactorController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_factors($row, 200, '');
+        if (Gate::allows('return_buy_factor')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, '');
+            }
+            $sellers = TarafHesab::where('chk_seller', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $products = Product::orderBy('product_name')->get();
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            return view('buy-sell/return-buy-factor.index')
+                ->with('sellers', $sellers)
+                ->with('brokers', $brokers)
+                ->with('products', $products)
+                ->with('warehouses', $warehouses);
+        } else {
+            return abort(401);
         }
-        $sellers = TarafHesab::where('chk_seller', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $products = Product::orderBy('product_name')->get();
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        return view('buy-sell/return-buy-factor.index')
-            ->with('sellers', $sellers)
-            ->with('brokers', $brokers)
-            ->with('products', $products)
-            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -241,92 +246,8 @@ class ReturnBuyFactorController extends Controller
      */
     public function store(ReturnBuyFactorRequest $request)
     {
-        $return_buy_factor = new ReturnBuyFactor();
-        if ($request->customer_type == 2) {
-            $return_buy_factor->national_code = $request->input('national_code');
-            $return_buy_factor->viator = $request->input('viator');
-            $return_buy_factor->tel = $request->input('tel');
-            $return_buy_factor->address = $request->input('address');
-        } else {
-            $return_buy_factor->national_code = null;
-            $return_buy_factor->viator = null;
-            $return_buy_factor->tel = null;
-            $return_buy_factor->address = null;
-            $request->validate([
-                'seller' => 'required',
-            ]);
-        }
-        $return_buy_factor->customer_type = $request->input('customer_type');
-        $return_buy_factor->factor_no = $request->input('factor_no');
-        $return_buy_factor->factor_date = $request->input('factor_date');
-        $return_buy_factor->commission = $request->input('commission');
-        $return_buy_factor->settlement_deadline = $request->input('settlement_deadline');
-        $return_buy_factor->settlement_date = $request->input('settlement_date');
-        $return_buy_factor->seller()->associate($request->seller);
-        $return_buy_factor->broker()->associate($request->broker);
-        $return_buy_factor->save();
-
-        foreach ($request->factor_items as $factor_item) {
-            DB::table('product_return_buy_factor')->insert([
-                'product_id' => $factor_item['product_id'],
-                'return_buy_factor_id' => $return_buy_factor->id,
-                'total' => $factor_item['total'],
-                'amount' => $factor_item['amount'],
-                'discount' => $factor_item['discount'],
-                'considerations' => $factor_item['considerations'],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-        $row = $request["row"];
-        return self::index_fetch_factors($row, 200, 'فاکتور برگشت از خرید ذخیره شد');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ReturnBuyFactor  $returnBuyFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ReturnBuyFactor $returnBuyFactor)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ReturnBuyFactor  $returnBuyFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $return_buy_fator = ReturnBuyFactor::find($id);
-        if ($return_buy_fator) {
-            return response()->json([
-                'status' => 200,
-                'return_buy_factor' => $return_buy_fator,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'فاکتور برگشت از خرید یافت نشد',
-            ]);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ReturnBuyFactor  $returnBuyFactor
-     * @return \Illuminate\Http\Response
-     */
-    public function update(ReturnBuyFactorRequest $request, $id)
-    {
-        $return_buy_factor = ReturnBuyFactor::find($id);
-        if ($return_buy_factor) {
+        if (Gate::allows('return_buy_factor')) {
+            $return_buy_factor = new ReturnBuyFactor();
             if ($request->customer_type == 2) {
                 $return_buy_factor->national_code = $request->input('national_code');
                 $return_buy_factor->viator = $request->input('viator');
@@ -349,15 +270,111 @@ class ReturnBuyFactorController extends Controller
             $return_buy_factor->settlement_date = $request->input('settlement_date');
             $return_buy_factor->seller()->associate($request->seller);
             $return_buy_factor->broker()->associate($request->broker);
-            $return_buy_factor->update();
-            $return_buy_factor->products()->attach($request->products);
+            $return_buy_factor->save();
+
+            foreach ($request->factor_items as $factor_item) {
+                DB::table('product_return_buy_factor')->insert([
+                    'product_id' => $factor_item['product_id'],
+                    'return_buy_factor_id' => $return_buy_factor->id,
+                    'total' => $factor_item['total'],
+                    'amount' => $factor_item['amount'],
+                    'discount' => $factor_item['discount'],
+                    'considerations' => $factor_item['considerations'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+
             $row = $request["row"];
-            return self::index_fetch_factors($row, 200, 'فاکتور برگشت از خرید ویرایش شد');
+            return self::index_fetch_factors($row, 200, 'فاکتور برگشت از خرید ذخیره شد');
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\ReturnBuyFactor  $returnBuyFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function show(ReturnBuyFactor $returnBuyFactor)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\ReturnBuyFactor  $returnBuyFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        if (Gate::allows('return_buy_factor')) {
+            $return_buy_fator = ReturnBuyFactor::find($id);
+            if ($return_buy_fator) {
+                return response()->json([
+                    'status' => 200,
+                    'return_buy_factor' => $return_buy_fator,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'فاکتور برگشت از خرید یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\ReturnBuyFactor  $returnBuyFactor
+     * @return \Illuminate\Http\Response
+     */
+    public function update(ReturnBuyFactorRequest $request, $id)
+    {
+        if (Gate::allows('return_buy_factor')) {
+            $return_buy_factor = ReturnBuyFactor::find($id);
+            if ($return_buy_factor) {
+                if ($request->customer_type == 2) {
+                    $return_buy_factor->national_code = $request->input('national_code');
+                    $return_buy_factor->viator = $request->input('viator');
+                    $return_buy_factor->tel = $request->input('tel');
+                    $return_buy_factor->address = $request->input('address');
+                } else {
+                    $return_buy_factor->national_code = null;
+                    $return_buy_factor->viator = null;
+                    $return_buy_factor->tel = null;
+                    $return_buy_factor->address = null;
+                    $request->validate([
+                        'seller' => 'required',
+                    ]);
+                }
+                $return_buy_factor->customer_type = $request->input('customer_type');
+                $return_buy_factor->factor_no = $request->input('factor_no');
+                $return_buy_factor->factor_date = $request->input('factor_date');
+                $return_buy_factor->commission = $request->input('commission');
+                $return_buy_factor->settlement_deadline = $request->input('settlement_deadline');
+                $return_buy_factor->settlement_date = $request->input('settlement_date');
+                $return_buy_factor->seller()->associate($request->seller);
+                $return_buy_factor->broker()->associate($request->broker);
+                $return_buy_factor->update();
+                $return_buy_factor->products()->attach($request->products);
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, 'فاکتور برگشت از خرید ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
         }
     }
 
@@ -369,8 +386,12 @@ class ReturnBuyFactorController extends Controller
      */
     public function destroy($id)
     {
-        $return_buy_factor = ReturnBuyFactor::find($id);
-        $return_buy_factor->delete();
-        return self::index_fetch_factors(10, 200, 'فاکتور برگشت از خرید حذف شد');
+        if (Gate::allows('return_buy_factor')) {
+            $return_buy_factor = ReturnBuyFactor::find($id);
+            $return_buy_factor->delete();
+            return self::index_fetch_factors(10, 200, 'فاکتور برگشت از خرید حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

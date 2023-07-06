@@ -13,7 +13,7 @@ class PayChequeRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,13 @@ class PayChequeRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'amount' => 'required',
+            'issue_date' => 'required',
+            'due_date' => 'required',
+            'serial_number' => 'required',
+            'bank_account_details' => 'required',
+            'receiver' => 'required',
+            'considerations' => 'required',
         ];
     }
 }

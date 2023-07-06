@@ -15,6 +15,11 @@ return new class extends Migration
     {
         Schema::create('pay_cheques', function (Blueprint $table) {
             $table->id();
+            $table->string('amount')->nullable(); // مبلغ چک
+            $table->string('issue_date')->nullable(); // تاریخ صدور
+            $table->string('due_date')->nullable(); // تاریخ سر رسید
+            $table->string('serial_number')->nullable(); // شماره سریال چک
+            $table->string('considerations')->nullable(); // ملاحظات
             $table->timestamps();
         });
     }

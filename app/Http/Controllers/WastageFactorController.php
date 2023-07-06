@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\TarafHesab;
 use App\Models\Warehouse;
 use App\Models\WastageFactor;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -225,19 +226,23 @@ class WastageFactorController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_factors($row, 200, '');
+        if (Gate::allows('wastage_factor')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, '');
+            }
+            $buyers = TarafHesab::where('chk_buyer', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $products = Product::orderBy('product_name')->get();
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            return view('buy-sell/wastage-factor.index')
+                ->with('buyers', $buyers)
+                ->with('brokers', $brokers)
+                ->with('products', $products)
+                ->with('warehouses', $warehouses);
+        } else {
+            return abort(401);
         }
-        $buyers = TarafHesab::where('chk_buyer', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $products = Product::orderBy('product_name')->get();
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        return view('buy-sell/wastage-factor.index')
-            ->with('buyers', $buyers)
-            ->with('brokers', $brokers)
-            ->with('products', $products)
-            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -258,51 +263,55 @@ class WastageFactorController extends Controller
      */
     public function store(WastageFactorRequest $request)
     {
-        $wastage_factor = new WastageFactor();
-        if ($request->wastage_type == 2) {
-            $request->validate([
-                'customer_type' => 'required',
-            ]);
-            if ($request->customer_type == 2) {
-                $wastage_factor->national_code = $request->input('national_code');
-                $wastage_factor->viator = $request->input('viator');
-                $wastage_factor->tel = $request->input('tel');
-                $wastage_factor->address = $request->input('address');
-            } else {
-                $wastage_factor->national_code = null;
-                $wastage_factor->viator = null;
-                $wastage_factor->tel = null;
-                $wastage_factor->address = null;
+        if (Gate::allows('wastage_factor')) {
+            $wastage_factor = new WastageFactor();
+            if ($request->wastage_type == 2) {
                 $request->validate([
-                    'buyer' => 'required',
+                    'customer_type' => 'required',
+                ]);
+                if ($request->customer_type == 2) {
+                    $wastage_factor->national_code = $request->input('national_code');
+                    $wastage_factor->viator = $request->input('viator');
+                    $wastage_factor->tel = $request->input('tel');
+                    $wastage_factor->address = $request->input('address');
+                } else {
+                    $wastage_factor->national_code = null;
+                    $wastage_factor->viator = null;
+                    $wastage_factor->tel = null;
+                    $wastage_factor->address = null;
+                    $request->validate([
+                        'buyer' => 'required',
+                    ]);
+                }
+            }
+
+            $wastage_factor->customer_type = $request->input('customer_type');
+            $wastage_factor->wastage_type = $request->input('wastage_type');
+            $wastage_factor->factor_no = $request->input('factor_no');
+            $wastage_factor->factor_date = $request->input('factor_date');
+            $wastage_factor->settlement_deadline = $request->input('settlement_deadline');
+            $wastage_factor->settlement_date = $request->input('settlement_date');
+            $wastage_factor->buyer()->associate($request->buyer);
+            $wastage_factor->save();
+
+            foreach ($request->factor_items as $factor_item) {
+                DB::table('product_wastage_factor')->insert([
+                    'product_id' => $factor_item['product_id'],
+                    'wastage_factor_id' => $wastage_factor->id,
+                    'total' => $factor_item['total'],
+                    'amount' => $factor_item['amount'],
+                    'discount' => $factor_item['discount'],
+                    'considerations' => $factor_item['considerations'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ]);
             }
+
+            $row = $request["row"];
+            return self::index_fetch_factors($row, 200, 'فاکتور ضایعات ذخیره شد');
+        } else {
+            return abort(401);
         }
-
-        $wastage_factor->customer_type = $request->input('customer_type');
-        $wastage_factor->wastage_type = $request->input('wastage_type');
-        $wastage_factor->factor_no = $request->input('factor_no');
-        $wastage_factor->factor_date = $request->input('factor_date');
-        $wastage_factor->settlement_deadline = $request->input('settlement_deadline');
-        $wastage_factor->settlement_date = $request->input('settlement_date');
-        $wastage_factor->buyer()->associate($request->buyer);
-        $wastage_factor->save();
-
-        foreach ($request->factor_items as $factor_item) {
-            DB::table('product_wastage_factor')->insert([
-                'product_id' => $factor_item['product_id'],
-                'wastage_factor_id' => $wastage_factor->id,
-                'total' => $factor_item['total'],
-                'amount' => $factor_item['amount'],
-                'discount' => $factor_item['discount'],
-                'considerations' => $factor_item['considerations'],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-        $row = $request["row"];
-        return self::index_fetch_factors($row, 200, 'فاکتور ضایعات ذخیره شد');
     }
 
     /**
@@ -324,17 +333,21 @@ class WastageFactorController extends Controller
      */
     public function edit($id)
     {
-        $wastage_factor = WastageFactor::find($id);
-        if ($wastage_factor) {
-            return response()->json([
-                'status' => 200,
-                'wastage_factor' => $wastage_factor,
-            ]);
+        if (Gate::allows('wastage_factor')) {
+            $wastage_factor = WastageFactor::find($id);
+            if ($wastage_factor) {
+                return response()->json([
+                    'status' => 200,
+                    'wastage_factor' => $wastage_factor,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'فاکتور ضایعات یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'فاکتور ضایعات یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -347,43 +360,47 @@ class WastageFactorController extends Controller
      */
     public function update(WastageFactorRequest $request, $id)
     {
-        $wastage_factor = WastageFactor::find($id);
-        if ($wastage_factor) {
-            if ($request->wastage_type == 2) {
-                $request->validate([
-                    'customer_type' => 'required',
-                ]);
-                if ($request->customer_type == 2) {
-                    $wastage_factor->national_code = $request->input('national_code');
-                    $wastage_factor->viator = $request->input('viator');
-                    $wastage_factor->tel = $request->input('tel');
-                    $wastage_factor->address = $request->input('address');
-                } else {
-                    $wastage_factor->national_code = null;
-                    $wastage_factor->viator = null;
-                    $wastage_factor->tel = null;
-                    $wastage_factor->address = null;
+        if (Gate::allows('wastage_factor')) {
+            $wastage_factor = WastageFactor::find($id);
+            if ($wastage_factor) {
+                if ($request->wastage_type == 2) {
                     $request->validate([
-                        'buyer' => 'required',
+                        'customer_type' => 'required',
                     ]);
+                    if ($request->customer_type == 2) {
+                        $wastage_factor->national_code = $request->input('national_code');
+                        $wastage_factor->viator = $request->input('viator');
+                        $wastage_factor->tel = $request->input('tel');
+                        $wastage_factor->address = $request->input('address');
+                    } else {
+                        $wastage_factor->national_code = null;
+                        $wastage_factor->viator = null;
+                        $wastage_factor->tel = null;
+                        $wastage_factor->address = null;
+                        $request->validate([
+                            'buyer' => 'required',
+                        ]);
+                    }
                 }
+                $wastage_factor->customer_type = $request->input('customer_type');
+                $wastage_factor->wastage_type = $request->input('wastage_type');
+                $wastage_factor->factor_no = $request->input('factor_no');
+                $wastage_factor->factor_date = $request->input('factor_date');
+                $wastage_factor->settlement_deadline = $request->input('settlement_deadline');
+                $wastage_factor->settlement_date = $request->input('settlement_date');
+                $wastage_factor->buyer()->associate($request->buyer);
+                $wastage_factor->update();
+                $wastage_factor->products()->attach($request->products);
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, 'فاکتور ضایعات ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
             }
-            $wastage_factor->customer_type = $request->input('customer_type');
-            $wastage_factor->wastage_type = $request->input('wastage_type');
-            $wastage_factor->factor_no = $request->input('factor_no');
-            $wastage_factor->factor_date = $request->input('factor_date');
-            $wastage_factor->settlement_deadline = $request->input('settlement_deadline');
-            $wastage_factor->settlement_date = $request->input('settlement_date');
-            $wastage_factor->buyer()->associate($request->buyer);
-            $wastage_factor->update();
-            $wastage_factor->products()->attach($request->products);
-            $row = $request["row"];
-            return self::index_fetch_factors($row, 200, 'فاکتور ضایعات ویرایش شد');
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -395,8 +412,12 @@ class WastageFactorController extends Controller
      */
     public function destroy($id)
     {
-        $wastage_factor = WastageFactor::find($id);
-        $wastage_factor->delete();
-        return self::index_fetch_factors(10, 200, 'فاکتور ضایعات حذف شد');
+        if (Gate::allows('wastage_factor')) {
+            $wastage_factor = WastageFactor::find($id);
+            $wastage_factor->delete();
+            return self::index_fetch_factors(10, 200, 'فاکتور ضایعات حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

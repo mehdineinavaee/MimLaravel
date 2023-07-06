@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\SellFactorAdvanced;
 use App\Models\TarafHesab;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -209,19 +210,23 @@ class SellFactorAdvancedController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_factors($row, 200, '');
+        if (Gate::allows('sell_factor_advanced')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, '');
+            }
+            $taraf_hesabs = TarafHesab::orderBy('fullname', 'asc')->get();
+            $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $products = Product::orderBy('product_name')->get();
+            $warehouses = Warehouse::orderBy('title', 'asc')->get();
+            return view('buy-sell/sell-factor-advanced.index')
+                ->with('taraf_hesabs', $taraf_hesabs)
+                ->with('brokers', $brokers)
+                ->with('products', $products)
+                ->with('warehouses', $warehouses);
+        } else {
+            return abort(401);
         }
-        $taraf_hesabs = TarafHesab::orderBy('fullname', 'asc')->get();
-        $brokers = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $products = Product::orderBy('product_name')->get();
-        $warehouses = Warehouse::orderBy('title', 'asc')->get();
-        return view('buy-sell/sell-factor-advanced.index')
-            ->with('taraf_hesabs', $taraf_hesabs)
-            ->with('brokers', $brokers)
-            ->with('products', $products)
-            ->with('warehouses', $warehouses);
     }
 
     /**
@@ -242,92 +247,8 @@ class SellFactorAdvancedController extends Controller
      */
     public function store(SellFactorAdvancedRequest $request)
     {
-        $sell_factor_advanced = new SellFactorAdvanced();
-        if ($request->customer_type == 2) {
-            $sell_factor_advanced->national_code = $request->input('national_code');
-            $sell_factor_advanced->viator = $request->input('viator');
-            $sell_factor_advanced->tel = $request->input('tel');
-            $sell_factor_advanced->address = $request->input('address');
-        } else {
-            $sell_factor_advanced->national_code = null;
-            $sell_factor_advanced->viator = null;
-            $sell_factor_advanced->tel = null;
-            $sell_factor_advanced->address = null;
-            $request->validate([
-                'applicant' => 'required',
-            ]);
-        }
-        $sell_factor_advanced->customer_type = $request->input('customer_type');
-        $sell_factor_advanced->factor_no = $request->input('factor_no');
-        $sell_factor_advanced->factor_date = $request->input('factor_date');
-        $sell_factor_advanced->commission = $request->input('commission');
-        $sell_factor_advanced->settlement_deadline = $request->input('settlement_deadline');
-        $sell_factor_advanced->settlement_date = $request->input('settlement_date');
-        $sell_factor_advanced->applicant()->associate($request->applicant);
-        $sell_factor_advanced->broker()->associate($request->broker);
-        $sell_factor_advanced->save();
-
-        foreach ($request->factor_items as $factor_item) {
-            DB::table('product_sell_factor_advanced')->insert([
-                'product_id' => $factor_item['product_id'],
-                'sell_factor_advanced_id' => $sell_factor_advanced->id,
-                'total' => $factor_item['total'],
-                'amount' => $factor_item['amount'],
-                'discount' => $factor_item['discount'],
-                'considerations' => $factor_item['considerations'],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-        $row = $request["row"];
-        return self::index_fetch_factors($row, 200, 'پیش فاکتور فروش ذخیره شد');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\SellFactorAdvanced  $sellFactorAdvanced
-     * @return \Illuminate\Http\Response
-     */
-    public function show(SellFactorAdvanced $sellFactorAdvanced)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\SellFactorAdvanced  $sellFactorAdvanced
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $sell_factor_advanced = SellFactorAdvanced::find($id);
-        if ($sell_factor_advanced) {
-            return response()->json([
-                'status' => 200,
-                'sell_factor_advanced' => $sell_factor_advanced,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'پیش فاکتور فروش یافت نشد',
-            ]);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SellFactorAdvanced  $sellFactorAdvanced
-     * @return \Illuminate\Http\Response
-     */
-    public function update(SellFactorAdvancedRequest $request, $id)
-    {
-        $sell_factor_advanced = SellFactorAdvanced::find($id);
-        if ($sell_factor_advanced) {
+        if (Gate::allows('sell_factor_advanced')) {
+            $sell_factor_advanced = new SellFactorAdvanced();
             if ($request->customer_type == 2) {
                 $sell_factor_advanced->national_code = $request->input('national_code');
                 $sell_factor_advanced->viator = $request->input('viator');
@@ -350,15 +271,111 @@ class SellFactorAdvancedController extends Controller
             $sell_factor_advanced->settlement_date = $request->input('settlement_date');
             $sell_factor_advanced->applicant()->associate($request->applicant);
             $sell_factor_advanced->broker()->associate($request->broker);
-            $sell_factor_advanced->update();
-            $sell_factor_advanced->products()->attach($request->products);
+            $sell_factor_advanced->save();
+
+            foreach ($request->factor_items as $factor_item) {
+                DB::table('product_sell_factor_advanced')->insert([
+                    'product_id' => $factor_item['product_id'],
+                    'sell_factor_advanced_id' => $sell_factor_advanced->id,
+                    'total' => $factor_item['total'],
+                    'amount' => $factor_item['amount'],
+                    'discount' => $factor_item['discount'],
+                    'considerations' => $factor_item['considerations'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+
             $row = $request["row"];
-            return self::index_fetch_factors($row, 200, 'پیش فاکتور فروش ویرایش شد');
+            return self::index_fetch_factors($row, 200, 'پیش فاکتور فروش ذخیره شد');
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\SellFactorAdvanced  $sellFactorAdvanced
+     * @return \Illuminate\Http\Response
+     */
+    public function show(SellFactorAdvanced $sellFactorAdvanced)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\SellFactorAdvanced  $sellFactorAdvanced
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        if (Gate::allows('sell_factor_advanced')) {
+            $sell_factor_advanced = SellFactorAdvanced::find($id);
+            if ($sell_factor_advanced) {
+                return response()->json([
+                    'status' => 200,
+                    'sell_factor_advanced' => $sell_factor_advanced,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'پیش فاکتور فروش یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\SellFactorAdvanced  $sellFactorAdvanced
+     * @return \Illuminate\Http\Response
+     */
+    public function update(SellFactorAdvancedRequest $request, $id)
+    {
+        if (Gate::allows('sell_factor_advanced')) {
+            $sell_factor_advanced = SellFactorAdvanced::find($id);
+            if ($sell_factor_advanced) {
+                if ($request->customer_type == 2) {
+                    $sell_factor_advanced->national_code = $request->input('national_code');
+                    $sell_factor_advanced->viator = $request->input('viator');
+                    $sell_factor_advanced->tel = $request->input('tel');
+                    $sell_factor_advanced->address = $request->input('address');
+                } else {
+                    $sell_factor_advanced->national_code = null;
+                    $sell_factor_advanced->viator = null;
+                    $sell_factor_advanced->tel = null;
+                    $sell_factor_advanced->address = null;
+                    $request->validate([
+                        'applicant' => 'required',
+                    ]);
+                }
+                $sell_factor_advanced->customer_type = $request->input('customer_type');
+                $sell_factor_advanced->factor_no = $request->input('factor_no');
+                $sell_factor_advanced->factor_date = $request->input('factor_date');
+                $sell_factor_advanced->commission = $request->input('commission');
+                $sell_factor_advanced->settlement_deadline = $request->input('settlement_deadline');
+                $sell_factor_advanced->settlement_date = $request->input('settlement_date');
+                $sell_factor_advanced->applicant()->associate($request->applicant);
+                $sell_factor_advanced->broker()->associate($request->broker);
+                $sell_factor_advanced->update();
+                $sell_factor_advanced->products()->attach($request->products);
+                $row = $request["row"];
+                return self::index_fetch_factors($row, 200, 'پیش فاکتور فروش ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
         }
     }
 
@@ -370,8 +387,12 @@ class SellFactorAdvancedController extends Controller
      */
     public function destroy($id)
     {
-        $sell_factor_advanced = SellFactorAdvanced::find($id);
-        $sell_factor_advanced->delete();
-        return self::index_fetch_factors(10, 200, 'پیش فاکتور فروش حذف شد');
+        if (Gate::allows('sell_factor_advanced')) {
+            $sell_factor_advanced = SellFactorAdvanced::find($id);
+            $sell_factor_advanced->delete();
+            return self::index_fetch_factors(10, 200, 'پیش فاکتور فروش حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

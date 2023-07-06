@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BuyStatisticsReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class BuyStatisticsReportController extends Controller
      */
     public function index()
     {
-        return view('buy-sell-reports/buy-statistics-report.index');
+        if (Gate::allows('buy_statistics_report')) {
+            return view('buy-sell-reports/buy-statistics-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Models\City;
 use App\Models\PhoneBook;
 use App\Models\TarafHesab;
 use App\Models\TarafHesabGroup;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -20,26 +21,34 @@ class TarafHesabController extends Controller
 
     public function tarafHesabPDF()
     {
-        $taraf_hesabs = TarafHesab::orderBy('fullname', 'asc')->get();
+        if (Gate::allows('taraf_hesab')) {
+            $taraf_hesabs = TarafHesab::orderBy('fullname', 'asc')->get();
 
-        $data = [
-            'taraf_hesabs' => $taraf_hesabs
-        ];
+            $data = [
+                'taraf_hesabs' => $taraf_hesabs
+            ];
 
-        $pdf = PDF::loadView('taarife-payeh/taraf-hesab.myPDF', $data);
-        return $pdf->stream('document.pdf');
+            $pdf = PDF::loadView('taarife-payeh/taraf-hesab.myPDF', $data);
+            return $pdf->stream('document.pdf');
+        } else {
+            return abort(401);
+        }
     }
 
     public function addressPrintPDF($id)
     {
-        $taraf_hesab = TarafHesab::find($id);
+        if (Gate::allows('taraf_hesab')) {
+            $taraf_hesab = TarafHesab::find($id);
 
-        $data = [
-            'taraf_hesab' => $taraf_hesab
-        ];
+            $data = [
+                'taraf_hesab' => $taraf_hesab
+            ];
 
-        $pdf = PDF::loadView('taarife-payeh/taraf-hesab.address-print', $data);
-        return $pdf->stream('document.pdf');
+            $pdf = PDF::loadView('taarife-payeh/taraf-hesab.address-print', $data);
+            return $pdf->stream('document.pdf');
+        } else {
+            return abort(401);
+        }
     }
 
     public function index_fetch_taraf_hesab($row, $status, $message)
@@ -265,17 +274,21 @@ class TarafHesabController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_taraf_hesab($row, 200, '');
+        if (Gate::allows('taraf_hesab')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_taraf_hesab($row, 200, '');
+            }
+            $cities = City::all();
+            $vaseteh_foroosh = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
+            $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
+            $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
+            return view('taarife-payeh/taraf-hesab.index', compact('categories', 'allCategories'))
+                ->with('vaseteh_foroosh', $vaseteh_foroosh)
+                ->with('cities', $cities);
+        } else {
+            return abort(401);
         }
-        $cities = City::all();
-        $vaseteh_foroosh = TarafHesab::where('chk_broker', '=', "فعال")->orderBy('fullname', 'asc')->get();
-        $categories = TarafHesabGroup::where('parent_id', '=', 0)->orderBy('title', 'asc')->get();
-        $allCategories = TarafHesabGroup::orderBy('title', 'asc')->get();
-        return view('taarife-payeh/taraf-hesab.index', compact('categories', 'allCategories'))
-            ->with('vaseteh_foroosh', $vaseteh_foroosh)
-            ->with('cities', $cities);
     }
 
     /**
@@ -296,113 +309,8 @@ class TarafHesabController extends Controller
      */
     public function store(TarafHesabRequest $request)
     {
-        $taraf_hesab = new TarafHesab();
-        $taraf_hesab->chk_seller = $request->chk_seller;
-        $taraf_hesab->chk_buyer = $request->chk_buyer;
-        $taraf_hesab->chk_broker = $request->chk_broker;
-        $taraf_hesab->chk_investor = $request->chk_investor;
-        $taraf_hesab->chk_block_list = $request->chk_block_list;
-        $taraf_hesab->chk_active = $request->chk_active;
-        $taraf_hesab->chk_move_phone = $request->chk_move_phone;
-        $taraf_hesab->code = $request->input('code');
-        $taraf_hesab->fullname = $request->input('fullname');
-        $taraf_hesab->zip_code = $request->input('zip_code');
-        $taraf_hesab->phone = $request->input('phone');
-        // city_id رابطه با جدول شهرها
-        $taraf_hesab->broker = $request->input('broker');
-        $taraf_hesab->commission = $request->input('commission');
-        $taraf_hesab->address = $request->input('address');
-        $taraf_hesab->person_type = $request->input('person_type');
-        $taraf_hesab->ceo_fullname = $request->input('ceo_fullname');
-        $taraf_hesab->national_code = $request->input('national_code');
-        $taraf_hesab->birthdate = $request->input('birthdate');
-        $taraf_hesab->occupation = $request->input('occupation');
-        $taraf_hesab->fax = $request->input('fax');
-        $taraf_hesab->tel = $request->input('tel');
-        $taraf_hesab->activity_type = $request->input('activity_type');
-        $taraf_hesab->economic_code = $request->input('economic_code');
-        $taraf_hesab->email = $request->input('email');
-        $taraf_hesab->website = $request->input('website');
-        $taraf_hesab->credit_limit = str_replace(",", "", $request->input('credit_limit'));
-        $taraf_hesab->opt_warning = $request->opt_warning;
-        $taraf_hesab->opt_prohibition_sale = $request->opt_prohibition_sale;
-        $taraf_hesab->opt_uncleared = $request->opt_uncleared;
-        $taraf_hesab->opt_customer_balance = $request->opt_customer_balance;
-        $taraf_hesab->not_spent = $request->input('not_spent');
-        $taraf_hesab->city()->associate($request->city);
-        $taraf_hesab->save();
-        if ($taraf_hesab->chk_move_phone == "فعال") {
-            $phone_book = new PhoneBook();
-            $phone_book->contact = $request->input('fullname');
-            $phone_book->occupation = $request->input('occupation');
-            $phone_book->mobile = $request->input('phone');
-            $phone_book->fax = $request->input('fax');
-            $phone_book->tel = $request->input('tel');
-            $phone_book->activity_type = $request->input('activity_type');
-            $phone_book->email = $request->input('email');
-            $phone_book->website = $request->input('website');
-            $phone_book->address = $request->input('address');
-            $phone_book->save();
-        }
-        $row = $request["row"];
-        return self::index_fetch_taraf_hesab($row, 200, 'طرف حساب جدید ذخیره شد');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\TarafHesab  $tarafHesab
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $taraf_hesab = TarafHesab::find($id);
-        if ($taraf_hesab) {
-            return response()->json([
-                'status' => 200,
-                'taraf_hesab' => $taraf_hesab,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'طرف حساب یافت نشد',
-            ]);
-        }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\TarafHesab  $tarafHesab
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $taraf_hesab = TarafHesab::find($id);
-        if ($taraf_hesab) {
-            return response()->json([
-                'status' => 200,
-                'taraf_hesab' => $taraf_hesab,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'طرف حساب یافت نشد',
-            ]);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TarafHesab  $tarafHesab
-     * @return \Illuminate\Http\Response
-     */
-    public function update(TarafHesabRequest $request,  $id)
-    {
-        $taraf_hesab = TarafHesab::find($id);
-        if ($taraf_hesab) {
+        if (Gate::allows('taraf_hesab')) {
+            $taraf_hesab = new TarafHesab();
             $taraf_hesab->chk_seller = $request->chk_seller;
             $taraf_hesab->chk_buyer = $request->chk_buyer;
             $taraf_hesab->chk_broker = $request->chk_broker;
@@ -436,7 +344,7 @@ class TarafHesabController extends Controller
             $taraf_hesab->opt_customer_balance = $request->opt_customer_balance;
             $taraf_hesab->not_spent = $request->input('not_spent');
             $taraf_hesab->city()->associate($request->city);
-            $taraf_hesab->update();
+            $taraf_hesab->save();
             if ($taraf_hesab->chk_move_phone == "فعال") {
                 $phone_book = new PhoneBook();
                 $phone_book->contact = $request->input('fullname');
@@ -451,12 +359,133 @@ class TarafHesabController extends Controller
                 $phone_book->save();
             }
             $row = $request["row"];
-            return self::index_fetch_taraf_hesab($row, 200, 'طرف حساب ویرایش شد');
+            return self::index_fetch_taraf_hesab($row, 200, 'طرف حساب جدید ذخیره شد');
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\TarafHesab  $tarafHesab
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        if (Gate::allows('taraf_hesab')) {
+            $taraf_hesab = TarafHesab::find($id);
+            if ($taraf_hesab) {
+                return response()->json([
+                    'status' => 200,
+                    'taraf_hesab' => $taraf_hesab,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'طرف حساب یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
+        }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\TarafHesab  $tarafHesab
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        if (Gate::allows('taraf_hesab')) {
+            $taraf_hesab = TarafHesab::find($id);
+            if ($taraf_hesab) {
+                return response()->json([
+                    'status' => 200,
+                    'taraf_hesab' => $taraf_hesab,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'طرف حساب یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\TarafHesab  $tarafHesab
+     * @return \Illuminate\Http\Response
+     */
+    public function update(TarafHesabRequest $request,  $id)
+    {
+        if (Gate::allows('taraf_hesab')) {
+            $taraf_hesab = TarafHesab::find($id);
+            if ($taraf_hesab) {
+                $taraf_hesab->chk_seller = $request->chk_seller;
+                $taraf_hesab->chk_buyer = $request->chk_buyer;
+                $taraf_hesab->chk_broker = $request->chk_broker;
+                $taraf_hesab->chk_investor = $request->chk_investor;
+                $taraf_hesab->chk_block_list = $request->chk_block_list;
+                $taraf_hesab->chk_active = $request->chk_active;
+                $taraf_hesab->chk_move_phone = $request->chk_move_phone;
+                $taraf_hesab->code = $request->input('code');
+                $taraf_hesab->fullname = $request->input('fullname');
+                $taraf_hesab->zip_code = $request->input('zip_code');
+                $taraf_hesab->phone = $request->input('phone');
+                // city_id رابطه با جدول شهرها
+                $taraf_hesab->broker = $request->input('broker');
+                $taraf_hesab->commission = $request->input('commission');
+                $taraf_hesab->address = $request->input('address');
+                $taraf_hesab->person_type = $request->input('person_type');
+                $taraf_hesab->ceo_fullname = $request->input('ceo_fullname');
+                $taraf_hesab->national_code = $request->input('national_code');
+                $taraf_hesab->birthdate = $request->input('birthdate');
+                $taraf_hesab->occupation = $request->input('occupation');
+                $taraf_hesab->fax = $request->input('fax');
+                $taraf_hesab->tel = $request->input('tel');
+                $taraf_hesab->activity_type = $request->input('activity_type');
+                $taraf_hesab->economic_code = $request->input('economic_code');
+                $taraf_hesab->email = $request->input('email');
+                $taraf_hesab->website = $request->input('website');
+                $taraf_hesab->credit_limit = str_replace(",", "", $request->input('credit_limit'));
+                $taraf_hesab->opt_warning = $request->opt_warning;
+                $taraf_hesab->opt_prohibition_sale = $request->opt_prohibition_sale;
+                $taraf_hesab->opt_uncleared = $request->opt_uncleared;
+                $taraf_hesab->opt_customer_balance = $request->opt_customer_balance;
+                $taraf_hesab->not_spent = $request->input('not_spent');
+                $taraf_hesab->city()->associate($request->city);
+                $taraf_hesab->update();
+                if ($taraf_hesab->chk_move_phone == "فعال") {
+                    $phone_book = new PhoneBook();
+                    $phone_book->contact = $request->input('fullname');
+                    $phone_book->occupation = $request->input('occupation');
+                    $phone_book->mobile = $request->input('phone');
+                    $phone_book->fax = $request->input('fax');
+                    $phone_book->tel = $request->input('tel');
+                    $phone_book->activity_type = $request->input('activity_type');
+                    $phone_book->email = $request->input('email');
+                    $phone_book->website = $request->input('website');
+                    $phone_book->address = $request->input('address');
+                    $phone_book->save();
+                }
+                $row = $request["row"];
+                return self::index_fetch_taraf_hesab($row, 200, 'طرف حساب ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
+        } else {
+            return abort(401);
         }
     }
 
@@ -468,8 +497,12 @@ class TarafHesabController extends Controller
      */
     public function destroy($id)
     {
-        $taraf_hesab = TarafHesab::find($id);
-        $taraf_hesab->delete();
-        return self::index_fetch_taraf_hesab(10, 200, 'طرف حساب حذف شد');
+        if (Gate::allows('taraf_hesab')) {
+            $taraf_hesab = TarafHesab::find($id);
+            $taraf_hesab->delete();
+            return self::index_fetch_taraf_hesab(10, 200, 'طرف حساب حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

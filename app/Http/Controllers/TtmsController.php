@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ttms;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class TtmsController extends Controller
      */
     public function index()
     {
-        return view('buy-sell/ttms.index');
+        if (Gate::allows('ttms')) {
+            return view('buy-sell/ttms.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

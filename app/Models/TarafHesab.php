@@ -46,4 +46,19 @@ class TarafHesab extends Model
     {
         return $this->hasMany(BuyFactor::class);
     }
+
+    public function investments()
+    {
+        return $this->hasMany(Investment::class);
+    }
+
+    public function taraf_hesab_periods()
+    {
+        return $this->hasMany(TarafHesabPeriod::class);
+    }
+
+    public function receive_cheques()
+    {
+        return $this->hasMany(ReceiveCheque::class);
+    }
 }

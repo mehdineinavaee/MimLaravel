@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChequeBookReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class ChequeBookReportController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/cheque-book-report.index');
+        if (Gate::allows('cheque_book_report')) {
+            return view('cheque-management/cheque-book-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

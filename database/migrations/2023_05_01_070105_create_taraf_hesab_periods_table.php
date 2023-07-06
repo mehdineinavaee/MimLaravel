@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('taraf_hesab_periods', function (Blueprint $table) {
             $table->id();
+            $table->string('amount')->nullable(); // مبلغ
+            $table->string('opt_debtor')->nullable(); // بدهکار
+            $table->string('opt_creditor')->nullable(); // بستانکار
+            $table->string('considerations')->nullable(); // ملاحظات
             $table->timestamps();
         });
     }

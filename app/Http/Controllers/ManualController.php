@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Manual;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class ManualController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/manual.index');
+        if (Gate::allows('manual')) {
+            return view('cheque-management/manual.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

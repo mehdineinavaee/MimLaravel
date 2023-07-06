@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('investments', function (Blueprint $table) {
             $table->id();
-            $table->string('shareholder')->nullable(); // نام سهام دار
             $table->string('form_date')->nullable(); // تاریخ فرم
             $table->string('cash_amount')->nullable(); // مبلغ نقدی
             $table->string('cash_register')->nullable(); // نام صندوق

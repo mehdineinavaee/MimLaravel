@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductNoUnitRequest;
 use App\Models\ProductNoUnit;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -106,11 +107,15 @@ class ProductNoUnitController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_product_no_unit($row, 200, '');
+        if (Gate::allows('product_no_unit')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_product_no_unit($row, 200, '');
+            }
+            return view('taarife-payeh/product-no-unit.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/product-no-unit.index');
     }
 
     /**
@@ -131,13 +136,17 @@ class ProductNoUnitController extends Controller
      */
     public function store(ProductNoUnitRequest $request)
     {
-        $product_no_unit = new ProductNoUnit();
-        $product_no_unit->chk_active = $request->chk_active;
-        $product_no_unit->code = $request->input('code');
-        $product_no_unit->title = $request->input('title');
-        $product_no_unit->save();
-        $row = $request["row"];
-        return self::index_fetch_product_no_unit($row, 200, 'واحد شمارش کالا جدید ذخیره شد');
+        if (Gate::allows('product_no_unit')) {
+            $product_no_unit = new ProductNoUnit();
+            $product_no_unit->chk_active = $request->chk_active;
+            $product_no_unit->code = $request->input('code');
+            $product_no_unit->title = $request->input('title');
+            $product_no_unit->save();
+            $row = $request["row"];
+            return self::index_fetch_product_no_unit($row, 200, 'واحد شمارش کالا جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -159,17 +168,21 @@ class ProductNoUnitController extends Controller
      */
     public function edit($id)
     {
-        $product_no_unit = ProductNoUnit::find($id);
-        if ($product_no_unit) {
-            return response()->json([
-                'status' => 200,
-                'product_no_unit' => $product_no_unit,
-            ]);
+        if (Gate::allows('product_no_unit')) {
+            $product_no_unit = ProductNoUnit::find($id);
+            if ($product_no_unit) {
+                return response()->json([
+                    'status' => 200,
+                    'product_no_unit' => $product_no_unit,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'واحد شمارش کالا یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'واحد شمارش کالا یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -182,19 +195,23 @@ class ProductNoUnitController extends Controller
      */
     public function update(ProductNoUnitRequest $request, $id)
     {
-        $product_no_unit = ProductNoUnit::find($id);
-        if ($product_no_unit) {
-            $product_no_unit->chk_active = $request->chk_active;
-            $product_no_unit->code = $request->input('code');
-            $product_no_unit->title = $request->input('title');
-            $product_no_unit->update();
-            $row = $request["row"];
-            return self::index_fetch_product_no_unit($row, 200, 'واحد شمارش کالا ویرایش شد');
+        if (Gate::allows('product_no_unit')) {
+            $product_no_unit = ProductNoUnit::find($id);
+            if ($product_no_unit) {
+                $product_no_unit->chk_active = $request->chk_active;
+                $product_no_unit->code = $request->input('code');
+                $product_no_unit->title = $request->input('title');
+                $product_no_unit->update();
+                $row = $request["row"];
+                return self::index_fetch_product_no_unit($row, 200, 'واحد شمارش کالا ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -206,8 +223,12 @@ class ProductNoUnitController extends Controller
      */
     public function destroy($id)
     {
-        $product_no_unit = ProductNoUnit::find($id);
-        $product_no_unit->delete();
-        return self::index_fetch_product_no_unit(10, 200, 'واحد شمارش کالا حذف شد');
+        if (Gate::allows('product_no_unit')) {
+            $product_no_unit = ProductNoUnit::find($id);
+            $product_no_unit->delete();
+            return self::index_fetch_product_no_unit(10, 200, 'واحد شمارش کالا حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

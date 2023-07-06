@@ -13,7 +13,7 @@ class BankAccountsPeriodRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class BankAccountsPeriodRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'bank_account' => 'required',
+            'amount' => 'required',
+            'considerations' => 'required',
         ];
     }
 }

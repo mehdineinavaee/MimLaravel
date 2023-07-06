@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StaffRequest;
 use App\Models\Staff;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -122,11 +123,15 @@ class StaffController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_staff($row, 200, '');
+        if (Gate::allows('staff')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_staff($row, 200, '');
+            }
+            return view('taarife-payeh/staff.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/staff.index');
     }
 
     /**
@@ -147,19 +152,23 @@ class StaffController extends Controller
      */
     public function store(StaffRequest $request)
     {
-        $staff = new Staff();
-        $staff->chk_active = $request->chk_active;
-        $staff->chk_messenger = $request->chk_messenger;
-        $staff->opt_sex = $request->opt_sex;
-        $staff->first_name = $request->input('first_name');
-        $staff->last_name = $request->input('last_name');
-        $staff->father = $request->input('father');
-        $staff->birthdate = $request->input('birthdate');
-        $staff->national_code = $request->input('national_code');
-        $staff->occupation = $request->input('occupation');
-        $staff->save();
-        $row = $request["row"];
-        return self::index_fetch_staff($row, 200, 'پرسنل جدید ذخیره شد');
+        if (Gate::allows('staff')) {
+            $staff = new Staff();
+            $staff->chk_active = $request->chk_active;
+            $staff->chk_messenger = $request->chk_messenger;
+            $staff->opt_sex = $request->opt_sex;
+            $staff->first_name = $request->input('first_name');
+            $staff->last_name = $request->input('last_name');
+            $staff->father = $request->input('father');
+            $staff->birthdate = $request->input('birthdate');
+            $staff->national_code = $request->input('national_code');
+            $staff->occupation = $request->input('occupation');
+            $staff->save();
+            $row = $request["row"];
+            return self::index_fetch_staff($row, 200, 'پرسنل جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -181,17 +190,21 @@ class StaffController extends Controller
      */
     public function edit($id)
     {
-        $staff = Staff::find($id);
-        if ($staff) {
-            return response()->json([
-                'status' => 200,
-                'staff' => $staff,
-            ]);
+        if (Gate::allows('staff')) {
+            $staff = Staff::find($id);
+            if ($staff) {
+                return response()->json([
+                    'status' => 200,
+                    'staff' => $staff,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'پرسنل یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'پرسنل یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -204,25 +217,29 @@ class StaffController extends Controller
      */
     public function update(StaffRequest $request, $id)
     {
-        $staff = Staff::find($id);
-        if ($staff) {
-            $staff->chk_active = $request->chk_active;
-            $staff->chk_messenger = $request->chk_messenger;
-            $staff->opt_sex = $request->opt_sex;
-            $staff->first_name = $request->input('first_name');
-            $staff->last_name = $request->input('last_name');
-            $staff->father = $request->input('father');
-            $staff->birthdate = $request->input('birthdate');
-            $staff->national_code = $request->input('national_code');
-            $staff->occupation = $request->input('occupation');
-            $staff->update();
-            $row = $request["row"];
-            return self::index_fetch_staff($row, 200, 'پرسنل ویرایش شد');
+        if (Gate::allows('staff')) {
+            $staff = Staff::find($id);
+            if ($staff) {
+                $staff->chk_active = $request->chk_active;
+                $staff->chk_messenger = $request->chk_messenger;
+                $staff->opt_sex = $request->opt_sex;
+                $staff->first_name = $request->input('first_name');
+                $staff->last_name = $request->input('last_name');
+                $staff->father = $request->input('father');
+                $staff->birthdate = $request->input('birthdate');
+                $staff->national_code = $request->input('national_code');
+                $staff->occupation = $request->input('occupation');
+                $staff->update();
+                $row = $request["row"];
+                return self::index_fetch_staff($row, 200, 'پرسنل ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -234,8 +251,12 @@ class StaffController extends Controller
      */
     public function destroy($id)
     {
-        $staff = Staff::find($id);
-        $staff->delete();
-        return self::index_fetch_staff(10, 200, 'پرسنل حذف شد');
+        if (Gate::allows('staff')) {
+            $staff = Staff::find($id);
+            $staff->delete();
+            return self::index_fetch_staff(10, 200, 'پرسنل حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

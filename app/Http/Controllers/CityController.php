@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CityRequest;
 use App\Models\City;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use App\Exports\CityExport;
 use Excel;
@@ -18,7 +19,11 @@ class CityController extends Controller
 
     public function cityCSV()
     {
-        return Excel::download(new CityExport, 'citylist.xlsx');
+        if (Gate::allows('cities')) {
+            return Excel::download(new CityExport, 'citylist.xlsx');
+        } else {
+            return abort(401);
+        }
     }
 
     public function index_fetch_city($row, $status, $message)
@@ -110,11 +115,15 @@ class CityController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_city($row, 200, '');
+        if (Gate::allows('cities')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_city($row, 200, '');
+            }
+            return view('taarife-payeh/cities.index');
+        } else {
+            return abort(401);
         }
-        return view('taarife-payeh/cities.index');
     }
 
     /**
@@ -135,12 +144,16 @@ class CityController extends Controller
      */
     public function store(CityRequest $request)
     {
-        $city = new City();
-        $city->city_code = $request->input('city_code');
-        $city->city_name = $request->input('city_name');
-        $city->save();
-        $row = $request["row"];
-        return self::index_fetch_city($row, 200, 'شهر جدید ذخیره شد');
+        if (Gate::allows('cities')) {
+            $city = new City();
+            $city->city_code = $request->input('city_code');
+            $city->city_name = $request->input('city_name');
+            $city->save();
+            $row = $request["row"];
+            return self::index_fetch_city($row, 200, 'شهر جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -162,17 +175,21 @@ class CityController extends Controller
      */
     public function edit($id)
     {
-        $city = City::find($id);
-        if ($city) {
-            return response()->json([
-                'status' => 200,
-                'city' => $city,
-            ]);
+        if (Gate::allows('cities')) {
+            $city = City::find($id);
+            if ($city) {
+                return response()->json([
+                    'status' => 200,
+                    'city' => $city,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'شهر یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'شهر یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -185,18 +202,22 @@ class CityController extends Controller
      */
     public function update(CityRequest $request, $id)
     {
-        $city = City::find($id);
-        if ($city) {
-            $city->city_code = $request->input('city_code');
-            $city->city_name = $request->input('city_name');
-            $city->update();
-            $row = $request["row"];
-            return self::index_fetch_city($row, 200, 'شهر ویرایش شد');
+        if (Gate::allows('cities')) {
+            $city = City::find($id);
+            if ($city) {
+                $city->city_code = $request->input('city_code');
+                $city->city_name = $request->input('city_name');
+                $city->update();
+                $row = $request["row"];
+                return self::index_fetch_city($row, 200, 'شهر ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -208,8 +229,12 @@ class CityController extends Controller
      */
     public function destroy($id)
     {
-        $city = City::find($id);
-        $city->delete();
-        return self::index_fetch_city(10, 200, 'شهر حذف شد');
+        if (Gate::allows('cities')) {
+            $city = City::find($id);
+            $city->delete();
+            return self::index_fetch_city(10, 200, 'شهر حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

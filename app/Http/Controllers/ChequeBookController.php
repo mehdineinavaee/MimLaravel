@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChequeBookRequest;
 use App\Models\BankAccount;
 use App\Models\ChequeBook;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -116,13 +117,17 @@ class ChequeBookController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_cheque_book($row, 200, '');
+        if (Gate::allows('cheque_book')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_cheque_book($row, 200, '');
+            }
+            $bank_accounts = BankAccount::all();
+            return view('cheque-management/cheque-book.index')
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $bank_accounts = BankAccount::all();
-        return view('cheque-management/cheque-book.index')
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -143,16 +148,20 @@ class ChequeBookController extends Controller
      */
     public function store(ChequeBookRequest $request)
     {
-        $cheque_book = new ChequeBook();
-        $cheque_book->code = $request->input('code');
-        $cheque_book->receive_date = $request->input('receive_date');
-        $cheque_book->quantity = $request->input('quantity');
-        $cheque_book->cheque_from = $request->input('cheque_from');
-        $cheque_book->cheque_to = $request->input('cheque_to');
-        $cheque_book->bank_account()->associate($request->bank_account_details);
-        $cheque_book->save();
-        $row = $request["row"];
-        return self::index_fetch_cheque_book($row, 200, 'دسته چک ذخیره شد');
+        if (Gate::allows('cheque_book')) {
+            $cheque_book = new ChequeBook();
+            $cheque_book->code = $request->input('code');
+            $cheque_book->receive_date = $request->input('receive_date');
+            $cheque_book->quantity = $request->input('quantity');
+            $cheque_book->cheque_from = $request->input('cheque_from');
+            $cheque_book->cheque_to = $request->input('cheque_to');
+            $cheque_book->bank_account()->associate($request->bank_account_details);
+            $cheque_book->save();
+            $row = $request["row"];
+            return self::index_fetch_cheque_book($row, 200, 'دسته چک ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -174,17 +183,21 @@ class ChequeBookController extends Controller
      */
     public function edit($id)
     {
-        $cheque_book = ChequeBook::find($id);
-        if ($cheque_book) {
-            return response()->json([
-                'status' => 200,
-                'cheque_book' => $cheque_book,
-            ]);
+        if (Gate::allows('cheque_book')) {
+            $cheque_book = ChequeBook::find($id);
+            if ($cheque_book) {
+                return response()->json([
+                    'status' => 200,
+                    'cheque_book' => $cheque_book,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'دسته چک یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'دسته چک یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -197,22 +210,26 @@ class ChequeBookController extends Controller
      */
     public function update(ChequeBookRequest $request, $id)
     {
-        $cheque_book = ChequeBook::find($id);
-        if ($cheque_book) {
-            $cheque_book->code = $request->input('code');
-            $cheque_book->receive_date = $request->input('receive_date');
-            $cheque_book->quantity = $request->input('quantity');
-            $cheque_book->cheque_from = $request->input('cheque_from');
-            $cheque_book->cheque_to = $request->input('cheque_to');
-            $cheque_book->bank_account()->associate($request->bank_account_details);
-            $cheque_book->update();
-            $row = $request["row"];
-            return self::index_fetch_cheque_book($row, 200, 'دسته چک ویرایش شد');
+        if (Gate::allows('cheque_book')) {
+            $cheque_book = ChequeBook::find($id);
+            if ($cheque_book) {
+                $cheque_book->code = $request->input('code');
+                $cheque_book->receive_date = $request->input('receive_date');
+                $cheque_book->quantity = $request->input('quantity');
+                $cheque_book->cheque_from = $request->input('cheque_from');
+                $cheque_book->cheque_to = $request->input('cheque_to');
+                $cheque_book->bank_account()->associate($request->bank_account_details);
+                $cheque_book->update();
+                $row = $request["row"];
+                return self::index_fetch_cheque_book($row, 200, 'دسته چک ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -224,8 +241,12 @@ class ChequeBookController extends Controller
      */
     public function destroy($id)
     {
-        $cheque_book = ChequeBook::find($id);
-        $cheque_book->delete();
-        return self::index_fetch_cheque_book(10, 200, 'دسته چک حذف شد');
+        if (Gate::allows('cheque_book')) {
+            $cheque_book = ChequeBook::find($id);
+            $cheque_book->delete();
+            return self::index_fetch_cheque_book(10, 200, 'دسته چک حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

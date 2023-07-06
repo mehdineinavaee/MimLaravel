@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TarafHesabBuyReport;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class TarafHesabBuyReportController extends Controller
      */
     public function index()
     {
-        return view('buy-sell-reports/taraf-hesab-buy-report.index');
+        if (Gate::allows('taraf_hesab_buy_report')) {
+            return view('buy-sell-reports/taraf-hesab-buy-report.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

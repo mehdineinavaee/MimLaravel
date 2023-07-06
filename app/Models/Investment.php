@@ -14,4 +14,9 @@ class Investment extends Model
     {
         return $this->belongsTo(BankAccount::class);
     }
+
+    public function investor()
+    {
+        return $this->belongsTo(TarafHesab::class);
+    }
 }

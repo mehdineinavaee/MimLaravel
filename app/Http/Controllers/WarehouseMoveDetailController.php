@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InventoryProductsPeriod;
 use App\Models\WarehouseMove;
 use App\Models\WarehouseMoveDetail;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -137,17 +138,21 @@ class WarehouseMoveDetailController extends Controller
 
     public function receiver_warehouse_item($receiver_id, $product_id)
     {
-        $receiver_warehouse = InventoryProductsPeriod::where('warehouse_id', '=', $receiver_id)
-            ->where('product_id', '=', $product_id)->first();
-        if ($receiver_warehouse) {
-            return response()->json([
-                'status' => 200,
-                'amount' => $receiver_warehouse->amount,
-            ]);
+        if (Gate::allows('warehouse_moves')) {
+            $receiver_warehouse = InventoryProductsPeriod::where('warehouse_id', '=', $receiver_id)
+                ->where('product_id', '=', $product_id)->first();
+            if ($receiver_warehouse) {
+                return response()->json([
+                    'status' => 200,
+                    'amount' => $receiver_warehouse->amount,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-            ]);
+            return abort(401);
         }
     }
 
@@ -201,7 +206,11 @@ class WarehouseMoveDetailController extends Controller
      */
     public function edit($id)
     {
-        return self::fetch_products_according_to_warehouses_id($id, 200, '');
+        if (Gate::allows('warehouse_moves')) {
+            return self::fetch_products_according_to_warehouses_id($id, 200, '');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

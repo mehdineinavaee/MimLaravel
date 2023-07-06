@@ -264,19 +264,8 @@ class DatabaseSeeder extends Seeder
 
         DB::table('roles')->insert([
             [
-                'role_name' => 'کاربر معمولی',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ],
-
-            [
                 'role_name' => 'مدیر',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ],
-
-            [
-                'role_name' => 'مدیر کل',
+                'roles' => 'true',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],

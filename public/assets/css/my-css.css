@@ -51,7 +51,7 @@ button:focus {
     outline-width: 0;
 }
 .tabs {
-    margin: 2px 5px 0px 5px;
+    margin: 2px 20px 0px 5px;
     padding-bottom: 10px;
     cursor: pointer;
 }

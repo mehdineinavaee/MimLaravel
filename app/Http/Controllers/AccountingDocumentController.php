@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountingDocument;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class AccountingDocumentController extends Controller
      */
     public function index()
     {
-        return view('financial-management/accounting-documents.index');
+        if (Gate::allows('accounting_documents')) {
+            return view('financial-management/accounting-documents.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

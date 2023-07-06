@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChequeReturn;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -21,7 +22,11 @@ class ChequeReturnController extends Controller
      */
     public function index()
     {
-        return view('cheque-management/cheque-return.index');
+        if (Gate::allows('cheque_return')) {
+            return view('cheque-management/cheque-return.index');
+        } else {
+            return abort(401);
+        }
     }
 
     /**

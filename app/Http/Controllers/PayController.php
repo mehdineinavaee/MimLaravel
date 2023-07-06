@@ -6,6 +6,7 @@ use App\Http\Requests\PayRequest;
 use App\Models\BankAccount;
 use App\Models\Fund;
 use App\Models\Pay;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -182,15 +183,19 @@ class PayController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $row = $request["row"];
-            return self::index_fetch_pay($row, 200, '');
+        if (Gate::allows('pay')) {
+            if ($request->ajax()) {
+                $row = $request["row"];
+                return self::index_fetch_pay($row, 200, '');
+            }
+            $funds = Fund::where('form_type', '=', 2)->orderBy('id', 'asc')->get();
+            $bank_accounts = BankAccount::all();
+            return view('financial-management/pay.index')
+                ->with('funds', $funds)
+                ->with('bank_accounts', $bank_accounts);
+        } else {
+            return abort(401);
         }
-        $funds = Fund::where('form_type', '=', 2)->orderBy('id', 'asc')->get();
-        $bank_accounts = BankAccount::all();
-        return view('financial-management/pay.index')
-            ->with('funds', $funds)
-            ->with('bank_accounts', $bank_accounts);
     }
 
     /**
@@ -211,22 +216,26 @@ class PayController extends Controller
      */
     public function store(PayRequest $request)
     {
-        $pay = new Pay();
-        $pay->form_date = $request->input('form_date');
-        $pay->form_number = $request->input('form_number');
-        $pay->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-        $pay->considerations1 = $request->input('considerations1');
-        $pay->date = $request->input('date');
-        $pay->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-        $pay->wage = str_replace(",", "", $request->input('wage'));
-        $pay->issue_tracking = $request->input('issue_tracking');
-        $pay->considerations2 = $request->input('considerations2');
-        $pay->paid_discount = str_replace(",", "", $request->input('paid_discount'));
-        $pay->fund()->associate($request->cost_title);
-        $pay->bank_account()->associate($request->bank_account_details);
-        $pay->save();
-        $row = $request["row"];
-        return self::index_fetch_pay($row, 200, 'پرداخت هزینه جدید ذخیره شد');
+        if (Gate::allows('pay')) {
+            $pay = new Pay();
+            $pay->form_date = $request->input('form_date');
+            $pay->form_number = $request->input('form_number');
+            $pay->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+            $pay->considerations1 = $request->input('considerations1');
+            $pay->date = $request->input('date');
+            $pay->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+            $pay->wage = str_replace(",", "", $request->input('wage'));
+            $pay->issue_tracking = $request->input('issue_tracking');
+            $pay->considerations2 = $request->input('considerations2');
+            $pay->paid_discount = str_replace(",", "", $request->input('paid_discount'));
+            $pay->fund()->associate($request->cost_title);
+            $pay->bank_account()->associate($request->bank_account_details);
+            $pay->save();
+            $row = $request["row"];
+            return self::index_fetch_pay($row, 200, 'پرداخت هزینه جدید ذخیره شد');
+        } else {
+            return abort(401);
+        }
     }
 
     /**
@@ -248,17 +257,21 @@ class PayController extends Controller
      */
     public function edit($id)
     {
-        $pay = Pay::find($id);
-        if ($pay) {
-            return response()->json([
-                'status' => 200,
-                'pay' => $pay,
-            ]);
+        if (Gate::allows('pay')) {
+            $pay = Pay::find($id);
+            if ($pay) {
+                return response()->json([
+                    'status' => 200,
+                    'pay' => $pay,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'پرداخت هزینه یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'پرداخت هزینه یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -271,28 +284,32 @@ class PayController extends Controller
      */
     public function update(PayRequest $request, $id)
     {
-        $pay = Pay::find($id);
-        if ($pay) {
-            $pay->form_date = $request->input('form_date');
-            $pay->form_number = $request->input('form_number');
-            $pay->cash_amount = str_replace(",", "", $request->input('cash_amount'));
-            $pay->considerations1 = $request->input('considerations1');
-            $pay->date = $request->input('date');
-            $pay->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
-            $pay->wage = str_replace(",", "", $request->input('wage'));
-            $pay->issue_tracking = $request->input('issue_tracking');
-            $pay->considerations2 = $request->input('considerations2');
-            $pay->paid_discount = str_replace(",", "", $request->input('paid_discount'));
-            $pay->fund()->associate($request->cost_title);
-            $pay->bank_account()->associate($request->bank_account_details);
-            $pay->update();
-            $row = $request["row"];
-            return self::index_fetch_pay($row, 200, 'پرداخت هزینه ویرایش شد');
+        if (Gate::allows('pay')) {
+            $pay = Pay::find($id);
+            if ($pay) {
+                $pay->form_date = $request->input('form_date');
+                $pay->form_number = $request->input('form_number');
+                $pay->cash_amount = str_replace(",", "", $request->input('cash_amount'));
+                $pay->considerations1 = $request->input('considerations1');
+                $pay->date = $request->input('date');
+                $pay->deposit_amount = str_replace(",", "", $request->input('deposit_amount'));
+                $pay->wage = str_replace(",", "", $request->input('wage'));
+                $pay->issue_tracking = $request->input('issue_tracking');
+                $pay->considerations2 = $request->input('considerations2');
+                $pay->paid_discount = str_replace(",", "", $request->input('paid_discount'));
+                $pay->fund()->associate($request->cost_title);
+                $pay->bank_account()->associate($request->bank_account_details);
+                $pay->update();
+                $row = $request["row"];
+                return self::index_fetch_pay($row, 200, 'پرداخت هزینه ویرایش شد');
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'اطلاعاتی یافت نشد',
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'اطلاعاتی یافت نشد',
-            ]);
+            return abort(401);
         }
     }
 
@@ -304,8 +321,12 @@ class PayController extends Controller
      */
     public function destroy($id)
     {
-        $pay = Pay::find($id);
-        $pay->delete();
-        return self::index_fetch_pay(10, 200, 'پرداخت هزینه حذف شد');
+        if (Gate::allows('pay')) {
+            $pay = Pay::find($id);
+            $pay->delete();
+            return self::index_fetch_pay(10, 200, 'پرداخت هزینه حذف شد');
+        } else {
+            return abort(401);
+        }
     }
 }

@@ -17,15 +17,15 @@
                 </button>
             </h3>
             <br />
-            <div class="bg-light" style="border-radius: 10px; padding: 2rem;">
+            <div class="bg-light" style="border-radius: 10px; padding: 1rem;">
                 <div class="row col-lg-12 col-md-12 col-sm-12">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center">
                         <label class="form-check-label" for="index_opt1">
                             <input class="form-check-input" type="radio" name="group1" id="index_opt1">
                             نمایش بر اساس مبالغ کل
                         </label>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center">
                         <label class="form-check-label" for="index_opt2">
                             <input class="form-check-input" type="radio" name="group1" id="index_opt2">
                             نمایش بر اساس مبالغ جزء
@@ -59,11 +59,11 @@
                 style="text-align: center; width: 100%">
                 <thead>
                     <tr>
-                        <th colspan="12">لیست فرم های پرداخت شرکاء (سرمایه گذاری)</th>
+                        <th colspan="13">لیست فرم های پرداخت شرکاء (سرمایه گذاری)</th>
                     </tr>
                     <tr>
                         <th colspan="5" style="min-width: 100px">مشخصات فرم</th>
-                        <th colspan="7" style="min-width: 100px">ریز مبالغ موجود در فرم</th>
+                        <th colspan="8" style="min-width: 100px">ریز مبالغ موجود در فرم</th>
                     </tr>
                     <tr>
                         <th style="min-width: 100px">ردیف</th>
@@ -78,9 +78,10 @@
                         <th style="min-width: 300px">شماره چک / پیگیری</th>
                         <th style="min-width: 200px">سر رسید</th>
                         <th style="min-width: 200px">پشت نمره</th>
+                        <th style="min-width: 100px">اقدامات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="myData">
 
                 </tbody>
                 <tfoot>
@@ -97,6 +98,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th>اقدامات</th>
                     </tr>
                 </tfoot>
             </table>
@@ -113,7 +115,7 @@
         <!-- /.card-body -->
     </div>
     @include('financial-management.investment.create')
-    {{-- @include('financial-management.investment.edit') --}}
+    @include('financial-management.investment.edit')
     @include('common.delete')
 @endsection
 
