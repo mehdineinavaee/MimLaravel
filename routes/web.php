@@ -212,6 +212,7 @@ Route::resource('products-barcode', ProductsBarcodeController::class);
 
 // Financial Management
 Route::resource('accounting-documents', AccountingDocumentController::class);
+Route::get('/index-search-accounting-documents', [AccountingDocumentController::class, 'index_search_accounting_documents'])->name('index_search_accounting_documents');
 Route::resource('receive-from-the-account', ReceiveFromTheAccountController::class);
 Route::get('/index-search-receive-from-the-account', [ReceiveFromTheAccountController::class, 'index_search_receive_from_the_account'])->name('index_search_receive_from_the_account');
 Route::resource('payment-to-account', PaymentToAccountController::class);

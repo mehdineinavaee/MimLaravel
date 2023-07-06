@@ -74,7 +74,7 @@
                                             روش آخرین قیمت خرید
                                         </option>
                                         <option value="3">
-                                            روش FIFO
+                                            (FIFO) روش اولین ورودی اولین خروجی
                                         </option>
                                         {{-- @endforeach --}}
                                     </select>
@@ -147,31 +147,31 @@
                     $.each(response.customer_report, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                    <td>" +
+                                                                                                    <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                    <td>" +
+                                                                                                    <td>" +
                             item.product_code +
                             "</td>\
-                                                                                    <td>" +
+                                                                                                    <td>" +
                             item.product_name +
                             "</td>\
-                                                                                    <td>" +
+                                                                                                    <td>" +
                             item.amount +
                             "</td>\
-                                                                                    <td>" +
+                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                        <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                        <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                    </tr>'
+                                                                                                    </tr>'
                         );
                     });
                 },
