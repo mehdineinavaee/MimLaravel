@@ -16,7 +16,7 @@
                     </div>
                     <div class="line"></div>
                     <fieldset class="show" id="index_tab011">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_to_date">تا تاریخ</label>
@@ -46,7 +46,7 @@
                                     <div id="index_warehouse_name_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_calculate_profit">نام گروه کالا</label>
                                     <select id="index_calculate_profit" name="index_calculate_profit"
@@ -61,20 +61,23 @@
                                     <div id="index_calculate_profit_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12" style="margin-right:1.5rem; margin-top:1rem;">
-                                <label class="form-check-label" for="index_zeroCheckBox">
-                                    <input class="form-check-input" type="checkbox" value="" id="index_zeroCheckBox">
-                                    کالاهای با موجودی صفر در لیست قرار گیرد
-                                </label>
+                            <div class="row col-lg-12 col-md-12 col-sm-12">
+                                <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center">
+                                    <label class="form-check-label" for="index_chk_zero">
+                                        <input class="form-check-input" type="checkbox" name="index_chk_zero"
+                                            id="index_chk_zero">
+                                        کالاهای با موجودی صفر در لیست قرار گیرد
+                                    </label>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12" style="text-align: center">
+                                    <label class="form-check-label" for="index_chk_tafkik">
+                                        <input class="form-check-input" type="checkbox" name="index_chk_tafkik"
+                                            id="index_chk_tafkik">
+                                        به تفکیک انبار
+                                    </label>
+                                </div>
                             </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12" style="margin-right:1.5rem; margin-top:1rem;">
-                                <label class="form-check-label" for="index_tafkikCheckBox">
-                                    <input class="form-check-input" type="checkbox" value=""
-                                        id="index_tafkikCheckBox">
-                                    به تفکیک انبار
-                                </label>
-                            </div>
-                        </div>
+                        </h6>
                     </fieldset>
                 </div>
                 <br />
@@ -144,31 +147,31 @@
                     $.each(response.riali_report, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                        <td>" +
+                                                                                                            <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                            <td>" +
                             item.product_code +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                            <td>" +
                             item.product_name +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                            <td>" +
                             item.amount +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                        <td>" +
+                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                        </tr>'
+                                                                                                            </tr>'
                         );
                     });
                 },

@@ -8,7 +8,7 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
-                <div class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:353px;">
+                <div class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:345px;">
                     <div class="row d-flex mx-1 mx-sm-3">
                         <div class="tabs active" id="index_tab01">
                             <h6 class="font-weight-bold">شروط</h6>
@@ -19,7 +19,7 @@
                     </div>
                     <div class="line"></div>
                     <fieldset class="show" id="index_tab011">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_from_date">از تاریخ</label>
@@ -99,27 +99,44 @@
                                     <div id="index_calculate_profit_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                     <fieldset id="index_tab021">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
-                                    <label for="index_ceo_fullname">نام مدیر عامل</label>
-                                    <input type="text" id="index_ceo_fullname" name="index_ceo_fullname"
-                                        class="form-control" autocomplete="off" />
-                                    <div id="index_ceo_error" class="invalid-feedback"></div>
+                                    <label for="index_product_name">گروه طرف های حساب</label>
+                                    <select id="index_product_name" name="index_product_name" class="form-control select2"
+                                        style="width: 100%;">
+                                        <option value="" selected>کلیه گروه طرف های حساب</option>
+                                        {{-- @foreach ($cities as $city) --}}
+                                        <option value="1">
+                                            نام گروه طرف حساب
+                                        </option>
+                                        {{-- @endforeach --}}
+                                    </select>
+                                    <div id="index_product_name_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
-                                    <label for="index_economic_code">کد اقتصادی</label>
-                                    <input type="text" id="index_economic_code" name="index_economic_code"
-                                        class="form-control" autocomplete="off" />
-                                    <div id="index_economic_code_error" class="invalid-feedback"></div>
+                                    <label for="index_calculate_profit">گروه فاکتورها</label>
+                                    <select id="index_calculate_profit" name="index_calculate_profit"
+                                        class="form-control select2" style="width: 100%;">
+                                        <option value="" selected>کلیه گروه فاکتورها</option>
+                                        {{-- @foreach ($cities as $city) --}}
+                                        <option value="1">
+                                            گروه فاکتور یک
+                                        </option>
+                                        <option value="2">
+                                            گروه فاکتور دو
+                                        </option>
+                                        {{-- @endforeach --}}
+                                    </select>
+                                    <div id="index_calculate_profit_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                 </div>
                 <br />
@@ -192,31 +209,31 @@
                     $.each(response.factors_benefit, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                                    <td>" +
+                                                                                                            <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                            <td>" +
                             item.product_code +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                            <td>" +
                             item.product_name +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                            <td>" +
                             item.amount +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                                        <td>" +
+                                                                                                                <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                                        <td>" +
+                                                                                                                <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                                    </tr>'
+                                                                                                            </tr>'
                         );
                     });
                 },

@@ -8,7 +8,7 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
-                <div class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:410px;">
+                <div class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:397px;">
                     <div class="row d-flex mx-1 mx-sm-3">
                         <div class="tabs active" id="index_tab01">
                             <h6 class="font-weight-bold">شروط</h6>
@@ -22,7 +22,7 @@
                     </div>
                     <div class="line"></div>
                     <fieldset class="show" id="index_tab011">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <label for="index_product_code_name">کد / نام کالا</label>
                                 <div class="input-group mb-3">
@@ -99,10 +99,10 @@
                                     </label>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                     <fieldset id="index_tab021">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_taraf_hesab_group">گروه طرف های حساب</label>
@@ -133,10 +133,10 @@
                                     <div id="index_factor_group_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                     <fieldset id="index_tab031">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_column">ستون</label>
@@ -179,7 +179,7 @@
                                     <div id="index_sort_type_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                 </div>
                 <br />

@@ -63,7 +63,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th>23,000</th>
+                        <th>0,000</th>
                         <th></th>
                         <th></th>
                     </tr>

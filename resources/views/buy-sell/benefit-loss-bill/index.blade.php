@@ -16,7 +16,7 @@
                     </div>
                     <div class="line"></div>
                     <fieldset class="show" id="index_tab011">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="from_date">از تاریخ</label>
@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                 </div>
                 <br />

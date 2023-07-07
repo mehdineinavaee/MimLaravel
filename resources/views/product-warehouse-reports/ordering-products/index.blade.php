@@ -19,7 +19,7 @@
                     </div>
                     <div class="line"></div>
                     <fieldset class="show" id="index_tab011">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_warehouse_name">نام انبار</label>
@@ -50,10 +50,10 @@
                                     <div id="index_product_group_name_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                     <fieldset id="index_tab021">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_column">ستون</label>
@@ -87,7 +87,7 @@
                                     <div id="index_sort_type_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                 </div>
                 <br />
@@ -167,31 +167,31 @@
                     $.each(response.ordering_product, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                                    <td>" +
+                                                                                                        <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                        <td>" +
                             item.product_code +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                        <td>" +
                             item.product_name +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                        <td>" +
                             item.amount +
                             "</td>\
-                                                                                                    <td>" +
+                                                                                                        <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                                        <td>" +
+                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                                        <td>" +
+                                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                                    </tr>'
+                                                                                                        </tr>'
                         );
                     });
                 },

@@ -8,7 +8,7 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
-                <div class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:268px;">
+                <h6 class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:268px;">
                     <div class="row pt-4">
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-3">
@@ -161,7 +161,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </h6>
                 <br />
                 <button type="button" class="btn btn-success showInTable" data-toggle="modal"
                     data-target="#createInfo">

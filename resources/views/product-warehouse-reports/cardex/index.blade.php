@@ -16,7 +16,7 @@
                     </div>
                     <div class="line"></div>
                     <fieldset class="show" id="index_tab011">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_warehouse_name">نام انبار</label>
@@ -43,7 +43,7 @@
                                         value="نام کالا رو انتخاب نمایید" />
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_document_type">نوع سند</label>
                                     <select id="index_document_type" name="index_document_type" class="form-control select2"
@@ -92,7 +92,7 @@
                                     مانده از صفحه قبل در صفحه اول صفر باشد
                                 </label>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                 </div>
                 <br />
@@ -195,31 +195,31 @@
                     $.each(response.cardex, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                        <td>" +
+                                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                        <td>" +
+                                                                                <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                        </tr>'
+                                                                                </tr>'
                         );
                     });
                 },

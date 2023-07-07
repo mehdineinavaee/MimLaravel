@@ -8,7 +8,7 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
-                <div class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:268px;">
+                <div class="bg-light" style="border-radius: 10px; padding: 1rem; min-height:265px;">
                     <div class="row d-flex mx-1 mx-sm-3">
                         <div class="tabs active" id="index_tab01">
                             <h6 class="font-weight-bold">شروط</h6>
@@ -19,7 +19,7 @@
                     </div>
                     <div class="line"></div>
                     <fieldset class="show" id="index_tab011">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_taraf_hesab">طرف حساب</label>
@@ -68,10 +68,10 @@
                                     <div id="index_fiscal_year_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                     <fieldset id="index_tab021">
-                        <div class="row pt-4">
+                        <h6 class="row pt-4">
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <div class="form-group mb-3">
                                     <label for="index_product_name">گروه طرف های حساب</label>
@@ -105,7 +105,7 @@
                                     <div id="index_calculate_profit_error" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </h6>
                     </fieldset>
                 </div>
                 <br />
@@ -186,35 +186,35 @@
                     $.each(response.sell_report, function(index, item) {
                         $("#data").append(
                             "<tr>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             (index + 1) +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             item.product_code +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             item.product_name +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             item.amount +
                             "</td>\
-                                                                                            <td>" +
+                                                                                                <td>" +
                             new Intl.NumberFormat().format(item.price) +
                             " ریال" +
                             "</td>\
-                                                                                                <td>" +
+                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.discount) +
                             " ریال" +
                             "</td>\
-                                                                                                <td>" +
+                                                                                                    <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             "</td>\
-                                                                                        <td>" +
+                                                                                            <td>" +
                             new Intl.NumberFormat().format(item.total) +
                             " ریال" +
                             '</td>\
-                                                                                            </tr>'
+                                                                                                </tr>'
                         );
                     });
                 },
